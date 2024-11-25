@@ -1,6 +1,0 @@
-@FileSamurai_HostAddress = http://localhost:5206
-
-GET {{FileSamurai_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
