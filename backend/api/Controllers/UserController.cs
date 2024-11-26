@@ -20,4 +20,11 @@ public class UserController(IUserService userService) : ControllerBase
   
         return Ok(userRsaKeyPair);  
     }
+
+    [HttpPost]
+    public ActionResult<UserRsaKeyPair> Post(string password, string id)
+    {
+        var userRsaKeyPair = userService.GenerateRsaKeyPair(password, id);
+        return Ok(userRsaKeyPair);  
+    }  
 }
