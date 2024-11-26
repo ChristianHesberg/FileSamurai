@@ -5,10 +5,11 @@ namespace shared.adapters;
 
 public class UserDataSqliteAdapter(Context context) : IUserDataPort
 {
-    public void AddUserKeyPair(UserRsaKeyPair userRsaKeyPair)
+    public UserRsaKeyPair AddUserKeyPair(UserRsaKeyPair userRsaKeyPair)
     {
-        context.UserRsaKeyPairs.Add(userRsaKeyPair);
+        var res = context.UserRsaKeyPairs.Add(userRsaKeyPair);
         context.SaveChanges();
+        return res.Entity;
     }
 
     public UserRsaKeyPair? GetUserRsaKeyPair(string userId)

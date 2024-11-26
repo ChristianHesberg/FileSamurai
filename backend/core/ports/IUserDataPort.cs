@@ -4,6 +4,6 @@ namespace core.ports;
 
 public interface IUserDataPort
 {
-    public void AddUserKeyPair(UserRsaKeyPair userRsaKeyPair);
+    public UserRsaKeyPair AddUserKeyPair(UserRsaKeyPair userRsaKeyPair);
     public UserRsaKeyPair? GetUserRsaKeyPair(string userId);
 }

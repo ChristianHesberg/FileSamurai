@@ -21,5 +21,5 @@ public class UserController(IUserService userService) : ControllerBase
         }  
   
         return Ok(userRsaKeyPair);  
-    } 
+    }
 }
