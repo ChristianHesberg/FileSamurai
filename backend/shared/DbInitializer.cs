@@ -4,6 +4,7 @@ public class DbInitializer : IDbInitializer
 {
     public void Initialize(Context context)
     {
-        throw new NotImplementedException();
+        context.Database.EnsureCreated();
+        context.SaveChanges();
     }
 }

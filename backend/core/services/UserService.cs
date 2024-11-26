@@ -4,7 +4,7 @@ using core.ports;
 
 namespace core.services;
 
-public class UserService(IUserDataPort userDataPort)
+public class UserService(IUserDataPort userDataPort) : IUserService
 {
     private readonly CryptoUtils _utils = new();
     private void GenerateRsaKeyPair(string password, string userId)
@@ -23,4 +23,9 @@ public class UserService(IUserDataPort userDataPort)
         
         userDataPort.AddUserKeyPair(userKeyPair);
     }
+
+    public UserRsaKeyPair? GetUserRsaKeyPair(string userId)
+    {
+        return userDataPort.GetUserRsaKeyPair(userId);
+    } 
 }

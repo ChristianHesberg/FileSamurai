@@ -10,4 +10,9 @@ public class UserDataSqliteAdapter(Context context) : IUserDataPort
         context.UserRsaKeyPairs.Add(userRsaKeyPair);
         context.SaveChanges();
     }
+
+    public UserRsaKeyPair? GetUserRsaKeyPair(string userId)
+    {
+        return context.UserRsaKeyPairs.FirstOrDefault(r => r.Id == userId);
+    }
 }
