@@ -4,5 +4,5 @@ namespace core.ports;
 
 public interface IUserDataPort
 {
-    public void AddUserKeyPair(string userId, byte[] publicKey,  AesGcmEncryptionOutput encryptedPrivateKey);
+    public void AddUserKeyPair(UserRsaKeyPair userRsaKeyPair);
 }
