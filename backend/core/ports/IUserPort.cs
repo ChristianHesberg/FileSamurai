@@ -2,7 +2,7 @@
 
 namespace core.ports;
 
-public interface IUserDataPort
+public interface IUserPort
 {
     public UserRsaKeyPair AddUserKeyPair(UserRsaKeyPair userRsaKeyPair);
     public UserRsaKeyPair? GetUserRsaKeyPair(string userId);

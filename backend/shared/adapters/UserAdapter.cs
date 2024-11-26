@@ -3,7 +3,7 @@ using core.ports;
 
 namespace shared.adapters;
 
-public class UserDataSqliteAdapter(Context context) : IUserDataPort
+public class UserAdapter(Context context) : IUserPort
 {
     public UserRsaKeyPair AddUserKeyPair(UserRsaKeyPair userRsaKeyPair)
     {

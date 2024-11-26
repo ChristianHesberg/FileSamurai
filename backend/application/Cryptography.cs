@@ -1,9 +1,10 @@
 ﻿using System.Security.Cryptography;
+using core.application_interfaces;
 using core.models;
 
-namespace core;
+namespace application;
 
-public class CryptoUtils
+public class Cryptography : ICryptography
 {
     public RsaKeyPair GenerateRsaKeyPair()
     {

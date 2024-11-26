@@ -5,10 +5,13 @@ namespace shared;
 
 public class Context : DbContext
 {
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)  
-    {  
-        optionsBuilder.UseSqlite("Data Source=../database/database.db");  
+    protected Context()
+    {
     }
-    
+
+    public Context(DbContextOptions options) : base(options)
+    {
+    }
+
     public DbSet<UserRsaKeyPair> UserRsaKeyPairs { get; set; }
 }
