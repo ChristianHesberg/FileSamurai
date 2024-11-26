@@ -7,7 +7,7 @@ public class Context : DbContext
 {
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)  
     {  
-        optionsBuilder.UseSqlite("Data Source=database.db");  
+        optionsBuilder.UseSqlite("Data Source=../database/database.db");  
     }
     
     public DbSet<UserRsaKeyPair> UserRsaKeyPairs { get; set; }
