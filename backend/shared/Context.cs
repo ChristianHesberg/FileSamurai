@@ -21,7 +21,7 @@ public class Context : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        //SeedUserRsaKeyPair(modelBuilder);
+        SeedUserRsaKeyPair(modelBuilder);
     }
 
     private void SeedUserRsaKeyPair(ModelBuilder builder)
@@ -36,7 +36,8 @@ public class Context : DbContext
             PublicKey = keyPair.PublicKey,
             PrivateKey = encryptionOutput.CipherText,
             Nonce = encryptionOutput.Nonce,
-            Tag = encryptionOutput.Tag
+            Tag = encryptionOutput.Tag,
+            Salt = encryptionOutput.Salt
         };
         builder.Entity<UserRsaKeyPair>().HasData(userKeyPair);
     }

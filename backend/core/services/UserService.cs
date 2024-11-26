@@ -18,7 +18,8 @@ public class UserService(IUserPort userPort, ICryptography cryptography) : IUser
             PublicKey = keyPair.PublicKey,
             PrivateKey = encryptionOutput.CipherText,
             Nonce = encryptionOutput.Nonce,
-            Tag = encryptionOutput.Tag
+            Tag = encryptionOutput.Tag,
+            Salt = encryptionOutput.Salt
         };
         
         return userPort.AddUserKeyPair(userKeyPair);

@@ -21,8 +21,13 @@ public class Cryptography : ICryptography
         };
     }
     
-    public AesGcmEncryptionOutput Encrypt(byte[] plaintext, byte[] key)
+    public AesGcmEncryptionOutput Encrypt(byte[] plaintext, byte[] password,  int saltSize = 16)
     {
+        var salt = new byte[saltSize];  
+        RandomNumberGenerator.Fill(salt);  
+        
+        var key = DeriveKeyFromPassword(password, salt);  
+        
         using var aes = new AesGcm(key, 16);
         var nonce = new byte[AesGcm.NonceByteSizes.MaxSize];
         RandomNumberGenerator.Fill(nonce);
@@ -36,17 +41,27 @@ public class Cryptography : ICryptography
         {
             CipherText = ciphertext,
             Nonce = nonce,
-            Tag = tag
+            Tag = tag,
+            Salt = salt
         };
     }
     
-    public byte[] Decrypt(byte[] ciphertext, byte[] nonce, byte[] tag, byte[] key)
+    public byte[] Decrypt(byte[] ciphertext, byte[] nonce, byte[] tag, byte[] password, byte[] salt)
     {
+        var key = DeriveKeyFromPassword(password, salt); 
+        
         using var aes = new AesGcm(key, 16);
         var plaintextBytes = new byte[ciphertext.Length];
 
         aes.Decrypt(nonce, ciphertext, tag, plaintextBytes);
 
         return plaintextBytes;
+    }
+    
+    private static byte[] DeriveKeyFromPassword(byte[] password, byte[] salt, int keySize = 32,  int iterations = 10000)
+    {
+        using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterations, HashAlgorithmName.SHA512);
+        var key = pbkdf2.GetBytes(keySize);  
+        return key;
     }
 }

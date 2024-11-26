@@ -17,7 +17,6 @@ public class UserController(IUserService userService) : ControllerBase
         {  
             return NotFound();  
         }  
-  
         return Ok(userRsaKeyPair);  
     }
 

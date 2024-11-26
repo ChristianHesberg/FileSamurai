@@ -7,4 +7,5 @@ public class UserRsaKeyPair
     public byte[] PrivateKey { get; set; }
     public byte[] Nonce { get; set; }
     public byte[] Tag { get; set; }
+    public byte [] Salt { get; set; }
 }
