@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api", "api\api.csproj", "{01A051C8-775F-4D77-8ADF-C74342573515}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cryptography_service", "cryptography_service\cryptography_service.csproj", "{EF78F777-5768-46E8-BFB4-2C2EC2FB4D36}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "core", "core\core.csproj", "{26899AFA-2BB7-475B-A3DB-5D5C9F3DC804}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,9 +14,9 @@ Global
 		{01A051C8-775F-4D77-8ADF-C74342573515}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01A051C8-775F-4D77-8ADF-C74342573515}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01A051C8-775F-4D77-8ADF-C74342573515}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EF78F777-5768-46E8-BFB4-2C2EC2FB4D36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EF78F777-5768-46E8-BFB4-2C2EC2FB4D36}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EF78F777-5768-46E8-BFB4-2C2EC2FB4D36}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EF78F777-5768-46E8-BFB4-2C2EC2FB4D36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26899AFA-2BB7-475B-A3DB-5D5C9F3DC804}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26899AFA-2BB7-475B-A3DB-5D5C9F3DC804}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26899AFA-2BB7-475B-A3DB-5D5C9F3DC804}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26899AFA-2BB7-475B-A3DB-5D5C9F3DC804}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
