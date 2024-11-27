@@ -1,5 +1,3 @@
-using application;
-using core.application_interfaces;
 using core.ports;
 using core.services;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<Context>(opt => opt.UseSqlite("Data Source=../database/database.db"));
 
 builder.Services.AddScoped<IUserPort, UserAdapter>();
-builder.Services.AddScoped<ICryptography, Cryptography>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddControllers();

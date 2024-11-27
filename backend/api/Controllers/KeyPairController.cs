@@ -6,9 +6,9 @@ namespace api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UserController(IUserService userService) : ControllerBase
+public class KeyPairController(IUserService userService) : ControllerBase
 {
-    [HttpGet("key-pair/{id}")]  
+    [HttpGet("{id}")]  
     public ActionResult<UserRsaKeyPair> Get(string id)  
     {  
         var userRsaKeyPair = userService.GetUserRsaKeyPair(id);  
@@ -23,7 +23,6 @@ public class UserController(IUserService userService) : ControllerBase
     [HttpPost]
     public ActionResult<UserRsaKeyPair> Post(string password, string id)
     {
-        var userRsaKeyPair = userService.GenerateRsaKeyPair(password, id);
-        return Ok(userRsaKeyPair);  
+        return Ok();  
     }  
 }
