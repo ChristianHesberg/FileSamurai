@@ -1,6 +1,7 @@
 import {RsaKeyPairModel} from "../models/rsaKeyPair.model";
 import {createCipheriv, createDecipheriv, generateKeyPairSync, pbkdf2Sync, randomBytes} from "node:crypto";
 import {AesGcmEncryptionOutput} from "../models/aesGcmEncryptionOutput.model";
+import {EncryptedRsaKeyPairModel} from "../models/encryptedRsaKeyPair.model";
 
 export function generateRsaKeyPair(): RsaKeyPairModel {
     const { publicKey, privateKey } = generateKeyPairSync('rsa', {
@@ -19,6 +20,18 @@ export function generateRsaKeyPair(): RsaKeyPairModel {
         private_key: privateKey,
         public_key: publicKey
     };
+}
+
+export function generateRsaKeyPairWithEncryption(password: string): EncryptedRsaKeyPairModel {
+    const { private_key, public_key } = generateRsaKeyPair();
+    const { cipherText, nonce, tag, salt } = encrypt(private_key, password);
+    return {
+        encryptedPrivateKey: cipherText,
+        publicKey: public_key,
+        nonce: nonce,
+        tag: tag,
+        salt: salt
+    }
 }
 
 
