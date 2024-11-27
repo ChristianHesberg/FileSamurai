@@ -26,7 +26,7 @@ export function generateRsaKeyPairWithEncryption(password: string): EncryptedRsa
     const { private_key, public_key } = generateRsaKeyPair();
     const { cipherText, nonce, tag, salt } = encrypt(private_key, password);
     return {
-        encryptedPrivateKey: cipherText,
+        privateKey: cipherText,
         publicKey: public_key,
         nonce: nonce,
         tag: tag,
@@ -53,23 +53,33 @@ function encrypt(plaintext: Buffer, password: string, saltSize: number = 16): Ae
     const tag = cipher.getAuthTag();
 
     return {
-        cipherText: cipherTextBuffer.toString('hex'),
-        nonce: nonce.toString('hex'),
-        tag: tag.toString('hex'),
-        salt: salt.toString('hex')
+        cipherText: cipherTextBuffer.toString('base64'),
+        nonce: nonce.toString('base64'),
+        tag: tag.toString('base64'),
+        salt: salt.toString('base64')
     };
 }
 
 function decrypt(encryptedData: AesGcmEncryptionOutput, password: string): Buffer {
     const { cipherText, nonce, tag, salt } = encryptedData;
 
-    const key = deriveKeyFromPassword(password, Buffer.from(salt, 'hex'));
+    const key = deriveKeyFromPassword(password, Buffer.from(salt, 'base64'));
 
-    const decipher = createDecipheriv('aes-256-gcm', key, Buffer.from(nonce, 'hex'));
-    decipher.setAuthTag(Buffer.from(tag, 'hex'));
+    const decipher = createDecipheriv('aes-256-gcm', key, Buffer.from(nonce, 'base64'));
+    decipher.setAuthTag(Buffer.from(tag, 'base64'));
 
     return Buffer.concat([
-        decipher.update(Buffer.from(cipherText, 'hex')),
+        decipher.update(Buffer.from(cipherText, 'base64')),
         decipher.final()
     ]);
 }
+let obj = generateRsaKeyPairWithEncryption('secret');
+
+console.log(JSON.stringify({
+    id: 'id',
+    privateKey: obj.privateKey,
+    publicKey: obj.publicKey,
+    nonce: obj.nonce,
+    tag: obj.tag,
+    salt: obj.salt,
+}));
