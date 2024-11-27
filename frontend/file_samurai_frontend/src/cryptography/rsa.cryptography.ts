@@ -13,7 +13,7 @@ export function generateRsaKeyPair(): RsaKeyPairModel {
         },
         privateKeyEncoding: {
             type: 'pkcs8',
-            format: 'der'
+            format: 'pem'
         }
     });
 
@@ -27,7 +27,7 @@ export function generateRsaKeyPairWithEncryption(password: string, saltSize: num
     const salt = randomBytes(saltSize);
     const key = deriveKeyFromPassword(password, salt);
     const { private_key, public_key } = generateRsaKeyPair();
-    const { cipherText, nonce, tag } = encryptAes256Gcm(private_key, key);
+    const { cipherText, nonce, tag } = encryptAes256Gcm(Buffer.from(private_key), key);
     return {
         privateKey: cipherText,
         publicKey: public_key,
@@ -45,11 +45,11 @@ function decryptWithPrivateKey(encryptedData: Buffer, privateKey: Buffer): Buffe
     return privateDecrypt(privateKey, encryptedData);
 }
 
-let obj = generateRsaKeyPairWithEncryption('secret');
+//let obj = generateRsaKeyPairWithEncryption('secret');
 
-const test = encryptWithPublicKey(Buffer.from('some data'), obj.publicKey);
+/*const test = encryptWithPublicKey(Buffer.from('some data'), obj.publicKey);
 const decryptedPrivateKey = decryptAes256Gcm({cipherText: obj.privateKey, nonce: obj.nonce, tag: obj.tag}, deriveKeyFromPassword('secret', Buffer.from(obj.salt, 'base64')));
-console.log(decryptWithPrivateKey(test, decryptedPrivateKey));
+console.log(decryptWithPrivateKey(test, decryptedPrivateKey).toString());*/
 
 /*console.log(JSON.stringify({
     id: 'id',
