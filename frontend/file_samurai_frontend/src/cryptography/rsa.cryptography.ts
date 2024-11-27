@@ -1,6 +1,6 @@
 import {RsaKeyPairModel} from "../models/rsaKeyPair.model";
 import {generateKeyPairSync, privateDecrypt, publicEncrypt, randomBytes} from "node:crypto";
-import { encryptAes256Gcm } from "./aes-256-gcm.cryptography"
+import { encryptAes256Gcm, decryptAes256Gcm } from "./aes-256-gcm.cryptography"
 import {EncryptedRsaKeyPairModel} from "../models/encryptedRsaKeyPair.model";
 import {deriveKeyFromPassword} from "./utils.cryptography";
 
@@ -37,15 +37,19 @@ export function generateRsaKeyPairWithEncryption(password: string, saltSize: num
     }
 }
 
-function encryptFEKwithPublicKey(fek: Buffer, publicKey: string): Buffer {
-    return publicEncrypt(publicKey, fek);
+function encryptWithPublicKey(data: Buffer, publicKey: string): Buffer {
+    return publicEncrypt(publicKey, data);
 }
 
-function decryptFEKwithPrivateKey(encryptedFek: Buffer, privateKey: Buffer): Buffer {
-    return privateDecrypt(privateKey, encryptedFek);
+function decryptWithPrivateKey(encryptedData: Buffer, privateKey: Buffer): Buffer {
+    return privateDecrypt(privateKey, encryptedData);
 }
 
-//let obj = generateRsaKeyPairWithEncryption('secret');
+let obj = generateRsaKeyPairWithEncryption('secret');
+
+const test = encryptWithPublicKey(Buffer.from('some data'), obj.publicKey);
+const decryptedPrivateKey = decryptAes256Gcm({cipherText: obj.privateKey, nonce: obj.nonce, tag: obj.tag}, deriveKeyFromPassword('secret', Buffer.from(obj.salt, 'base64')));
+console.log(decryptWithPrivateKey(test, decryptedPrivateKey));
 
 /*console.log(JSON.stringify({
     id: 'id',
