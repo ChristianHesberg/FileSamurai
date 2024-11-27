@@ -11,7 +11,7 @@ export function generateRsaKeyPair(): RsaKeyPairModel {
         },
         privateKeyEncoding: {
             type: 'pkcs8',
-            format: 'pem'
+            format: 'der'
         }
     });
 
@@ -26,7 +26,7 @@ function deriveKeyFromPassword(password: string, salt: Buffer, keyLength: number
     return pbkdf2Sync(password, salt, 100000, keyLength, 'sha512');
 }
 
-function encrypt(plaintext: string, password: string, saltSize: number = 16): AesGcmEncryptionOutput {
+function encrypt(plaintext: Buffer, password: string, saltSize: number = 16): AesGcmEncryptionOutput {
     const salt = randomBytes(saltSize);
     const key = deriveKeyFromPassword(password, salt);
 
@@ -34,7 +34,7 @@ function encrypt(plaintext: string, password: string, saltSize: number = 16): Ae
     const cipher = createCipheriv('aes-256-gcm', key, nonce);
 
     const cipherTextBuffer = Buffer.concat([
-        cipher.update(plaintext, 'utf8'),
+        cipher.update(plaintext),
         cipher.final()
     ]);
     const tag = cipher.getAuthTag();
@@ -47,7 +47,7 @@ function encrypt(plaintext: string, password: string, saltSize: number = 16): Ae
     };
 }
 
-function decrypt(encryptedData: AesGcmEncryptionOutput, password: string): string {
+function decrypt(encryptedData: AesGcmEncryptionOutput, password: string): Buffer {
     const { cipherText, nonce, tag, salt } = encryptedData;
 
     const key = deriveKeyFromPassword(password, Buffer.from(salt, 'hex'));
@@ -55,29 +55,8 @@ function decrypt(encryptedData: AesGcmEncryptionOutput, password: string): strin
     const decipher = createDecipheriv('aes-256-gcm', key, Buffer.from(nonce, 'hex'));
     decipher.setAuthTag(Buffer.from(tag, 'hex'));
 
-    const decryptedTextBuffer = Buffer.concat([
+    return Buffer.concat([
         decipher.update(Buffer.from(cipherText, 'hex')),
         decipher.final()
     ]);
-
-    return decryptedTextBuffer.toString('utf8');
 }
-
-// Example usage
-const rsaKeyPair = generateRsaKeyPair();
-const password = 'securepassword';
-
-console.log('unencrypted private key:', rsaKeyPair.private_key);
-// Encrypt the private key
-const encryptedPrivateKey = encrypt(rsaKeyPair.private_key, password);
-console.log('Encrypted Private Key:', encryptedPrivateKey.cipherText);
-console.log('Nonce:', encryptedPrivateKey.nonce);
-console.log('Tag:', encryptedPrivateKey.tag);
-console.log('Salt:', encryptedPrivateKey.salt);
-
-// Decrypt the private key
-const decryptedPrivateKey = decrypt(encryptedPrivateKey, password);
-console.log('Decrypted Private Key:', decryptedPrivateKey);
-
-// The public key is usually not encrypted, but you can if needed
-console.log('Public Key:', rsaKeyPair.public_key);

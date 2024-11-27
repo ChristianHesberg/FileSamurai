@@ -1,4 +1,4 @@
 export interface RsaKeyPairModel{
-    private_key: string,
+    private_key: Buffer,
     public_key: string,
 }
