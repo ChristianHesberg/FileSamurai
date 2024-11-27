@@ -21,8 +21,9 @@ public class KeyPairController(IUserService userService) : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult<UserRsaKeyPair> Post(string password, string id)
+    public ActionResult<UserRsaKeyPair> Post(UserRsaKeyPair keyPair)
     {
-        return Ok();  
+        var res = userService.AddUserRsaKeyPair(keyPair);
+        return Ok(res);  
     }  
 }
