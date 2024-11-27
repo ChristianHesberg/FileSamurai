@@ -1,26 +1,24 @@
-import React from 'react';
+import React, {useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
+import {GoogleLogin, googleLogout, GoogleOAuthProvider} from '@react-oauth/google';
+import {useAuth} from "./providers/AuthProvider";
+import {Login} from "./pages/Login";
+import {Route, Routes} from "react-router";
+import {Home} from "./pages/Home";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <div>
+            <div>
+                <h1>Welcome to the FileSamurai</h1>
+                <Routes>
+                    <Route path={"/home"} element={<Home/>}/>
+                    <Route path={"/"} element={<Login/>}/>
+                </Routes>
+            </div>
+        </div>
+    );
 }
 
 export default App;
