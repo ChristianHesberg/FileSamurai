@@ -26,7 +26,7 @@ export function generateRsaKeyPairWithEncryption(password: string): EncryptedRsa
     const { private_key, public_key } = generateRsaKeyPair();
     const { cipherText, nonce, tag, salt } = encrypt(private_key, password);
     return {
-        encryptedPrivateKey: cipherText,
+        privateKey: cipherText,
         publicKey: public_key,
         nonce: nonce,
         tag: tag,
@@ -77,7 +77,7 @@ let obj = generateRsaKeyPairWithEncryption('secret');
 
 console.log(JSON.stringify({
     id: 'id',
-    privateKey: obj.encryptedPrivateKey,
+    privateKey: obj.privateKey,
     publicKey: obj.publicKey,
     nonce: obj.nonce,
     tag: obj.tag,

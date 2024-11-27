@@ -6,6 +6,11 @@ namespace core.services;
 
 public class UserService(IUserPort userPort) : IUserService
 {
+    public string? GetUserPublicKey(string userId)
+    {
+        return userPort.GetUserPublicKey(userId);
+    }
+
     public UserRsaKeyPair AddUserRsaKeyPair(UserRsaKeyPair keyPair)
     {
         return userPort.AddUserKeyPair(keyPair);

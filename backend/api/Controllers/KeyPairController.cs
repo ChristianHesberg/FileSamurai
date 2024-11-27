@@ -19,6 +19,18 @@ public class KeyPairController(IUserService userService) : ControllerBase
         }  
         return Ok(userRsaKeyPair);  
     }
+    
+    [HttpGet("public/{id}")]  
+    public ActionResult<UserRsaKeyPair> GetPublicKey(string id)  
+    {  
+        var publicKey = userService.GetUserPublicKey(id);  
+  
+        if (publicKey == null)  
+        {  
+            return NotFound();  
+        }  
+        return Ok(publicKey);  
+    }
 
     [HttpPost]
     public ActionResult<UserRsaKeyPair> Post(UserRsaKeyPair keyPair)

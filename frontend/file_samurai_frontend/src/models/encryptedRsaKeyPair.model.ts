@@ -1,5 +1,5 @@
 export interface EncryptedRsaKeyPairModel {
-    encryptedPrivateKey: string;
+    privateKey: string;
     publicKey: string;
     nonce: string;
     tag: string;
