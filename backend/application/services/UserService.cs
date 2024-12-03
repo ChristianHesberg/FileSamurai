@@ -1,4 +1,5 @@
-﻿using application.ports;
+﻿using application.dtos;
+using application.ports;
 using core.models;
 
 namespace application.services;
@@ -10,12 +11,30 @@ public class UserService(IUserPort userPort) : IUserService
         return userPort.GetUserPublicKey(userId);
     }
 
-    public UserRsaKeyPair AddUserRsaKeyPair(UserRsaKeyPair keyPair)
+    public UserRsaPrivateKeyDto? GetUserPrivateKey(string userId)
     {
-        return userPort.AddUserKeyPair(keyPair);
+        var keyPair = userPort.GetUserRsaKeyPair(userId);
+        if (keyPair == null) return null;
+        return new UserRsaPrivateKeyDto()
+        {
+            PrivateKey = keyPair.PrivateKey,
+            Nonce = keyPair.Nonce,
+            Tag = keyPair.Tag,
+            Salt = keyPair.Salt
+        };
     }
-    public UserRsaKeyPair? GetUserRsaKeyPair(string userId)
+
+    public void AddUserRsaKeyPair(UserRsaKeyPairDto keyPair)
     {
-        return userPort.GetUserRsaKeyPair(userId);
-    } 
+        var converted = new UserRsaKeyPair()
+        {
+            UserId = keyPair.UserId,
+            PublicKey = keyPair.PublicKey,
+            PrivateKey = keyPair.PrivateKey,
+            Nonce = keyPair.Nonce,
+            Tag = keyPair.Tag,
+            Salt = keyPair.Salt
+        };
+        userPort.AddUserKeyPair(converted);
+    }
 }

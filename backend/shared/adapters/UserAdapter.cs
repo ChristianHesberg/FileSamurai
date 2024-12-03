@@ -5,11 +5,10 @@ namespace shared.adapters;
 
 public class UserAdapter(Context context) : IUserPort
 {
-    public UserRsaKeyPair AddUserKeyPair(UserRsaKeyPair userRsaKeyPair)
+    public void AddUserKeyPair(UserRsaKeyPair userRsaKeyPair)
     {
         var res = context.UserRsaKeyPairs.Add(userRsaKeyPair);
         context.SaveChanges();
-        return res.Entity;
     }
 
     public UserRsaKeyPair? GetUserRsaKeyPair(string userId)
