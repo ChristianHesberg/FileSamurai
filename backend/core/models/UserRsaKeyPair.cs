@@ -8,4 +8,5 @@ public class UserRsaKeyPair
     public string Nonce { get; set; }
     public string Tag { get; set; }
     public string Salt { get; set; }
+    public User User { get; set; }
 }
