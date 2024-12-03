@@ -6,7 +6,7 @@ namespace core.models;
 public class UserFileAccess
 {
     [Key]
-    public string Id { get; set; }
+    public string Id { get; set; } = Guid.NewGuid().ToString();
     public string EncryptedFileKey { get; set; }
     public string Role { get; set; }
     

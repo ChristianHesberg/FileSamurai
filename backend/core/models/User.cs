@@ -6,7 +6,7 @@ namespace core.models;
 public class User
 {
     [Key]
-    public string Id { get; set; }
+    public string Id { get; set; } = Guid.NewGuid().ToString();
     
     public UserRsaKeyPair UserRsaKeyPair { get; set; }
     public List<UserFileAccess>? UserFileAccesses { get; set; }

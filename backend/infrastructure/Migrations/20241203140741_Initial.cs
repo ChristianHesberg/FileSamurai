@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace shared.Migrations
+namespace infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration

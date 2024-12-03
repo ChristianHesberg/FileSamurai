@@ -5,8 +5,7 @@ namespace core.models;
 
 public class UserRsaKeyPair
 {
-    [Key]
-    public string Id { get; set; }
+    [Key] public string Id { get; set; } = Guid.NewGuid().ToString();
     public string PublicKey { get; set; }
     public string PrivateKey { get; set; }
     public string Nonce { get; set; }

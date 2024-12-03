@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using File = core.models.File;
 
-namespace shared;
+namespace infrastructure;
 
 public class Context : DbContext
 {
