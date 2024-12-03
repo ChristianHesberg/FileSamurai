@@ -14,11 +14,6 @@ public class Context : DbContext
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-    }
-
     public DbSet<User> Users { get; set; }
     public DbSet<UserRsaKeyPair> UserRsaKeyPairs { get; set; }
     public DbSet<UserFileAccess> UserFileAccesses { get; set; }
