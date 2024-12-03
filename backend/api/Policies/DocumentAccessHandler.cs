@@ -36,8 +36,8 @@ public class DocumentAccessHandler(Context context, IHttpContextAccessor context
         
         //CHECK USERS IS IN the same GROUP AS THE DOCUMENT
 
-        var userFileGroup = await context.UserGroupMemberships.AnyAsync(db =>
-            file != null && db.Member.Id == userId && db.Group.GroupId == file.Group.GroupId);
+        var userFileGroup = await context.Users.AnyAsync(db =>
+            file != null && db.Groups.Contains(file.Group));
 
 
         if (hasAccess && userFileGroup)
