@@ -1,6 +1,6 @@
 ﻿namespace application.dtos;
 
-public class AddUserFileAccessDto
+public class AddOrGetUserFileAccessDto
 {
     public string EncryptedFileKey { get; set; }
     public string Role { get; set; }
