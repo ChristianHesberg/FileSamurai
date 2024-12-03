@@ -1,9 +1,9 @@
 ﻿using core.models;
 using File = core.models.File;
 
-namespace application.ports;
+namespace application.services;
 
-public interface IFilePort
+public interface IFileService
 {
     public void AddFile(File file);
     public File? GetFile(string fileId);

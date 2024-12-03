@@ -1,8 +1,8 @@
 using application.ports;
 using application.services;
 using Microsoft.EntityFrameworkCore;
-using shared;
-using shared.adapters;
+using infrastructure;
+using infrastructure.adapters;
 
 var builder = WebApplication.CreateBuilder(args);
 
