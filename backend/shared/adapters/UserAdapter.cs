@@ -16,4 +16,11 @@ public class UserAdapter(Context context) : IUserPort
     {
         return context.UserRsaKeyPairs.FirstOrDefault(r => r.Id == userId);
     }
+
+    public string? GetUserPublicKey(string userId)
+    {
+        var entity = context.UserRsaKeyPairs.FirstOrDefault(r => r.Id == userId);
+        if (entity == null) return null;
+        return entity.PublicKey;
+    }
 }
