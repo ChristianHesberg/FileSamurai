@@ -1,10 +1,10 @@
 ﻿using core.models;
 
-namespace core.ports;
+namespace application.services;
 
-public interface IUserPort
+public interface IUserService
 {
-    public UserRsaKeyPair AddUserKeyPair(UserRsaKeyPair userRsaKeyPair);
     public UserRsaKeyPair? GetUserRsaKeyPair(string userId);
     public string? GetUserPublicKey(string userId);
+    public UserRsaKeyPair AddUserRsaKeyPair(UserRsaKeyPair keyPair);
 }

@@ -1,5 +1,5 @@
-﻿using core.models;
-using core.services;
+﻿using application.services;
+using core.models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;

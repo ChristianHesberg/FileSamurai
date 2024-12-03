@@ -1,8 +1,7 @@
-﻿using System.Text;
+﻿using application.ports;
 using core.models;
-using core.ports;
 
-namespace core.services;
+namespace application.services;
 
 public class UserService(IUserPort userPort) : IUserService
 {

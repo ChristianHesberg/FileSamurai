@@ -1,5 +1,5 @@
-using core.ports;
-using core.services;
+using application.ports;
+using application.services;
 using Microsoft.EntityFrameworkCore;
 using shared;
 using shared.adapters;

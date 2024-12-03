@@ -1,5 +1,5 @@
-﻿using core.models;
-using core.ports;
+﻿using application.ports;
+using core.models;
 
 namespace shared.adapters;
 
