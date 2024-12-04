@@ -9,7 +9,7 @@ namespace api.Controllers;
 [Route("[controller]")]
 public class KeyPairController(IUserService userService) : ControllerBase
 {
-    [HttpGet("{id}")]  
+    [HttpGet("private/{id}")]  
     public ActionResult<UserRsaPrivateKeyDto> GetPrivateKey(string id)  
     {  
         var userRsaKeyPair = userService.GetUserPrivateKey(id);  
