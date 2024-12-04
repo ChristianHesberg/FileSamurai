@@ -1,5 +1,6 @@
-﻿using core.models;
-using core.services;
+﻿using application.dtos;
+using application.services;
+using core.models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;
@@ -8,10 +9,10 @@ namespace api.Controllers;
 [Route("[controller]")]
 public class KeyPairController(IUserService userService) : ControllerBase
 {
-    [HttpGet("{id}")]  
-    public ActionResult<UserRsaKeyPair> Get(string id)  
+    [HttpGet("private/{id}")]  
+    public ActionResult<UserRsaPrivateKeyDto> GetPrivateKey(string id)  
     {  
-        var userRsaKeyPair = userService.GetUserRsaKeyPair(id);  
+        var userRsaKeyPair = userService.GetUserPrivateKey(id);  
   
         if (userRsaKeyPair == null)  
         {  
@@ -21,7 +22,7 @@ public class KeyPairController(IUserService userService) : ControllerBase
     }
     
     [HttpGet("public/{id}")]  
-    public ActionResult<UserRsaKeyPair> GetPublicKey(string id)  
+    public ActionResult<string> GetPublicKey(string id)  
     {  
         var publicKey = userService.GetUserPublicKey(id);  
   
@@ -33,9 +34,9 @@ public class KeyPairController(IUserService userService) : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult<UserRsaKeyPair> Post(UserRsaKeyPair keyPair)
+    public ActionResult Post(UserRsaKeyPairDto keyPair)
     {
-        var res = userService.AddUserRsaKeyPair(keyPair);
-        return Ok(res);  
+        userService.AddUserRsaKeyPair(keyPair);
+        return Ok();  
     }  
 }

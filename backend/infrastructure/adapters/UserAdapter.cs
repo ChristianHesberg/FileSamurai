@@ -1,15 +1,14 @@
-﻿using core.models;
-using core.ports;
+﻿using application.ports;
+using core.models;
 
-namespace shared.adapters;
+namespace infrastructure.adapters;
 
 public class UserAdapter(Context context) : IUserPort
 {
-    public UserRsaKeyPair AddUserKeyPair(UserRsaKeyPair userRsaKeyPair)
+    public void AddUserKeyPair(UserRsaKeyPair userRsaKeyPair)
     {
-        var res = context.UserRsaKeyPairs.Add(userRsaKeyPair);
+        context.UserRsaKeyPairs.Add(userRsaKeyPair);
         context.SaveChanges();
-        return res.Entity;
     }
 
     public UserRsaKeyPair? GetUserRsaKeyPair(string userId)
