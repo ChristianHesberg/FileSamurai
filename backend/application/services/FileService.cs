@@ -9,26 +9,70 @@ public class FileService(IFilePort filePort): IFileService
 {
     public void AddFile(AddFileDto file)
     {
-        throw new NotImplementedException();
+        var converted = new File()
+        {
+            Title = file.Title,
+            FileContents = file.FileContents,
+            GroupId = file.GroupId
+        };
+        filePort.AddFile(converted);
     }
 
-    public UpdateOrGetFileDto? GetFile(string fileId)
+    public (UpdateOrGetFileDto, AddOrGetUserFileAccessDto)? GetFile(string fileId, string userId)
     {
-        throw new NotImplementedException();
+        var file = filePort.GetFile(fileId);
+        var accessObject = filePort.GetUserFileAccess(userId, fileId);
+        
+        if (file == null || accessObject == null) return null;
+
+        var convertedFile = new UpdateOrGetFileDto()
+        {
+            Id = file.Id,
+            Title = file.Title,
+            FileContents = file.FileContents
+        };
+        var convertedAccessObject = new AddOrGetUserFileAccessDto()
+        {
+            FileId = accessObject.FileId,
+            UserId = accessObject.UserId,
+            EncryptedFileKey = accessObject.EncryptedFileKey,
+            Role = accessObject.Role
+        };
+        return (convertedFile, convertedAccessObject);
     }
 
-    public bool UpdateFile(UpdateOrGetFileDto orGetFile)
+    public bool UpdateFile(UpdateOrGetFileDto file)
     {
-        throw new NotImplementedException();
+        var converted = new File()
+        {
+            Id = file.Id,
+            Title = file.Title,
+            FileContents = file.FileContents
+        };
+        return filePort.UpdateFile(converted);
     }
 
-    public void AddUserFileAccess(AddOrGetUserFileAccessDto orGetUserFileAccess)
+    public void AddUserFileAccess(AddOrGetUserFileAccessDto userFileAccess)
     {
-        throw new NotImplementedException();
+        var converted = new UserFileAccess()
+        {
+            UserId = userFileAccess.UserId,
+            FileId = userFileAccess.FileId,
+            EncryptedFileKey = userFileAccess.EncryptedFileKey,
+            Role = userFileAccess.Role
+        };
+        filePort.AddUserFileAccess(converted);
     }
 
     public AddOrGetUserFileAccessDto? GetUserFileAccess(string userId, string fileId)
     {
-        throw new NotImplementedException();
+        var res = filePort.GetUserFileAccess(userId, fileId);
+        return res == null ? null : new AddOrGetUserFileAccessDto()
+        {
+            UserId = res.UserId,
+            FileId = res.FileId,
+            EncryptedFileKey = res.EncryptedFileKey,
+            Role = res.Role
+        };
     }
 }
