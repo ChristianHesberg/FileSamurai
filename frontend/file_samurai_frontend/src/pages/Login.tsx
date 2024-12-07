@@ -14,15 +14,20 @@ export function Login() {
     }
 
     return (
-        <div className={"m-20 bg-red-600"}>
-            <GoogleLogin
-                onSuccess={credentialResponse => {
-                    handleSuccess(credentialResponse)
-                }}
-                onError={() => {
-                    console.log('Login Failed');
-                }}
-            />
+        <div className={"flex flex-col  items-center h-screen mt-40"}>
+            <p className={"text-2xl"}>Welcome to FileSamurai</p>
+            <div className={"flex-col"}>
+                <p className={"text-2xl text-center p-2"}> Login</p>
+                <GoogleLogin
+                    onSuccess={credentialResponse => {
+                        handleSuccess(credentialResponse)
+                    }}
+                    onError={() => {
+                        console.log('Login Failed');
+                    }}
+                />
+            </div>
+
         </div>
 
     )
