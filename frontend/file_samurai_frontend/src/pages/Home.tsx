@@ -1,6 +1,8 @@
 import React from "react";
 import {useAuth} from "../providers/AuthProvider";
 import {Navigate} from "react-router-dom";
+import SettingsDropdown from "../components/SettingsDropdown";
+import FileTable from "../components/FileTable";
 
 export function Home() {
     const {user, logout} = useAuth();
@@ -9,15 +11,16 @@ export function Home() {
     return (
         <div>
             {user ? (
-                <div>
-                    <h2>Welcome, {user.name}</h2>
-                    <img src={user.picture} alt="Profile"/>
-                    <p>Email: {user.email}</p>
-                    <button onClick={logout}>
-                        Logout
-                    </button>
+
+                <div className={"flex-col "}>
+                    <div className={"flex justify-end w-full"}>
+                        <SettingsDropdown/>
+                    </div>
+                    <h1 className={"text-lg"}>All files</h1>
+                    <FileTable/>
+
                 </div>
-            ) : (<Navigate to={"/"}/>    )
+            ) : (<Navigate to={"/"}/>)
             }
         </div>
     )
