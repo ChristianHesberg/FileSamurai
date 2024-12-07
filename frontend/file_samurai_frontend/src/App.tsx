@@ -1,8 +1,5 @@
-import React, {useState} from 'react';
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
-import {GoogleLogin, googleLogout, GoogleOAuthProvider} from '@react-oauth/google';
-import {useAuth} from "./providers/AuthProvider";
 import {Login} from "./pages/Login";
 import {Route, Routes} from "react-router";
 import {Home} from "./pages/Home";

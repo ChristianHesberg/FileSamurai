@@ -1,6 +1,6 @@
 import React from "react";
 import {useAuth} from "../providers/AuthProvider";
-import {Link, Navigate} from "react-router-dom";
+import {Navigate} from "react-router-dom";
 
 export function Home() {
     const {user, logout} = useAuth();
