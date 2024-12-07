@@ -1,6 +1,6 @@
 import {CredentialResponse, GoogleLogin} from "@react-oauth/google";
 import React from "react";
-import {useNavigate, useNavigation} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useAuth} from "../providers/AuthProvider";
 
 export function Login() {
@@ -14,14 +14,17 @@ export function Login() {
     }
 
     return (
-        <GoogleLogin
-            onSuccess={credentialResponse => {
-                handleSuccess(credentialResponse)
-            }}
-            onError={() => {
-                console.log('Login Failed');
-            }}
-        />
+        <div className={"m-20 bg-red-600"}>
+            <GoogleLogin
+                onSuccess={credentialResponse => {
+                    handleSuccess(credentialResponse)
+                }}
+                onError={() => {
+                    console.log('Login Failed');
+                }}
+            />
+        </div>
+
     )
 
 }
