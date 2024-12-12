@@ -31,4 +31,9 @@ public class GroupService(IGroupPort groupPort) : IGroupService
                 Name = group.Name
             };
     }
+
+    public bool AddUserToGroup(AddUserToGroupDto toGroupDto)
+    {
+        return groupPort.AddUserToGroup(toGroupDto.userEmail, toGroupDto.groupId);
+    }
 }

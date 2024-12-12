@@ -7,4 +7,5 @@ public interface IGroupService
 {
     public GroupDto AddGroup(GroupCreationDto group);
     public GroupDto? GetGroup(string id);
+    public bool AddUserToGroup(AddUserToGroupDto toGroupDto);
 }
