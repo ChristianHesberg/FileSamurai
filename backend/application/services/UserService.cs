@@ -43,4 +43,21 @@ public class UserService(IUserPort userPort) : IUserService
                 Email = user.Email
             };
     }
+
+    public List<GroupDto>? GetGroupsForUser(string id)
+    {
+        var groups = userPort.GetGroupsForUser(id);
+        if (groups == null) return null;
+        var list = new List<GroupDto>();
+        foreach (var group in groups)
+        {
+            list.Add(new GroupDto()
+            {
+                Id = group.Id,
+                Name = group.Name
+            });
+        }
+
+        return list;
+    }
 }

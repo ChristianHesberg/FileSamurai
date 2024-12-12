@@ -8,4 +8,5 @@ public interface IUserService
     public UserDto AddUser(UserCreationDto user);
     public UserDto? GetUser(string id);
     public UserDto? GetUserByEmail(string email);
+    public List<GroupDto>? GetGroupsForUser(string id);
 }

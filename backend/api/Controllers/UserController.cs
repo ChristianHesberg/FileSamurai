@@ -8,6 +8,14 @@ namespace api.Controllers;
 [Route("[controller]")]
 public class UserController(IUserService userService) : ControllerBase
 {
+    [HttpPost]
+    public ActionResult<string> PostUser(UserCreationDto user)
+    {
+        var res = userService.AddUser(user);
+        //TODO create jwt from res
+        return Ok();
+    }
+    
     [HttpGet("{id}")]
     public ActionResult<UserDto> GetUser(string id)
     {
@@ -22,12 +30,10 @@ public class UserController(IUserService userService) : ControllerBase
         return user == null ? NotFound() : Ok(user);
     }
 
-    [HttpPost]
-    public ActionResult<string> PostUser(UserCreationDto user)
+    [HttpGet("groups/{id}")]
+    public ActionResult<List<GroupDto>> GetGroupsForUser(string id)
     {
-        var res = userService.AddUser(user);
-        //TODO create jwt from res
-        return Ok();
+        var groups = userService.GetGroupsForUser(id);
+        return groups == null ? NotFound() : Ok(groups);
     }
-    
 }

@@ -1,5 +1,7 @@
-﻿using application.ports;
+﻿using application.dtos;
+using application.ports;
 using core.models;
+using Microsoft.EntityFrameworkCore;
 
 namespace infrastructure.adapters;
 
@@ -20,5 +22,11 @@ public class UserAdapter(Context context) : IUserPort
     public User? GetUserByEmail(string email)
     {
         return context.Users.FirstOrDefault(user => user.Email == email);
+    }
+
+    public List<Group>? GetGroupsForUser(string id)
+    {
+        var user = context.Users.Include(user => user.Groups).FirstOrDefault(e => e.Id == id);
+        return user?.Groups;
     }
 }

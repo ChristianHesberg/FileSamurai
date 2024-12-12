@@ -16,8 +16,7 @@ public class GroupService(IGroupPort groupPort) : IGroupService
         return new GroupDto()
         {
             Id = res.Id,
-            Name = res.Name,
-            SharingId = res.SharingId
+            Name = res.Name
         };
     }
 
@@ -29,8 +28,7 @@ public class GroupService(IGroupPort groupPort) : IGroupService
             : new GroupDto()
             {
                 Id = group.Id,
-                Name = group.Name,
-                SharingId = group.SharingId
+                Name = group.Name
             };
     }
 }

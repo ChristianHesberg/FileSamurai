@@ -7,4 +7,5 @@ public interface IUserPort
     public User AddUser(User user);
     public User? GetUser(string id);
     public User? GetUserByEmail(string email);
+    public List<Group>? GetGroupsForUser(string id);
 }
