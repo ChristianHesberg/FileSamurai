@@ -4,37 +4,43 @@ using core.models;
 
 namespace application.services;
 
-public class UserService(IUserKeyPairPort userKeyPairPort) : IUserService
+public class UserService(IUserPort userPort) : IUserService
 {
-    public string? GetUserPublicKey(string userId)
+    public UserDto AddUser(UserCreationDto user)
     {
-        return userKeyPairPort.GetUserPublicKey(userId);
-    }
-
-    public UserRsaPrivateKeyDto? GetUserPrivateKey(string userId)
-    {
-        var keyPair = userKeyPairPort.GetUserRsaKeyPair(userId);
-        if (keyPair == null) return null;
-        return new UserRsaPrivateKeyDto()
+        var converted = new User()
         {
-            PrivateKey = keyPair.PrivateKey,
-            Nonce = keyPair.Nonce,
-            Tag = keyPair.Tag,
-            Salt = keyPair.Salt
+            Email = user.Email
+        };
+        var res = userPort.AddUser(converted);
+        return new UserDto()
+        {
+            Id = res.Id,
+            Email = res.Email
         };
     }
 
-    public void AddUserRsaKeyPair(UserRsaKeyPairDto keyPair)
+    public UserDto? GetUser(string id)
     {
-        var converted = new UserRsaKeyPair()
-        {
-            UserId = keyPair.UserId,
-            PublicKey = keyPair.PublicKey,
-            PrivateKey = keyPair.PrivateKey,
-            Nonce = keyPair.Nonce,
-            Tag = keyPair.Tag,
-            Salt = keyPair.Salt
-        };
-        userKeyPairPort.AddUserKeyPair(converted);
+        var user = userPort.GetUser(id);
+        return user == null
+            ? null
+            : new UserDto()
+            {
+                Id = user.Id,
+                Email = user.Email
+            };
+    }
+
+    public UserDto? GetUserByEmail(string email)
+    {
+        var user = userPort.GetUserByEmail(email);
+        return user == null
+            ? null
+            : new UserDto()
+            {
+                Id = user.Id,
+                Email = user.Email
+            };
     }
 }

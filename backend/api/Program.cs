@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<Context>(opt => opt.UseSqlite("Data Source=../database/database.db"));
 
 builder.Services.AddScoped<IUserKeyPairPort, UserKeyPairKeyPairAdapter>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserKeyPairService, UserKeyPairKeyPairService>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>  
 {  

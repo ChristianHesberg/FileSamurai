@@ -7,12 +7,12 @@ namespace api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class KeyPairController(IUserService userService) : ControllerBase
+public class KeyPairController(IUserKeyPairService userKeyPairService) : ControllerBase
 {
     [HttpGet("private/{id}")]  
     public ActionResult<UserRsaPrivateKeyDto> GetPrivateKey(string id)  
     {  
-        var userRsaKeyPair = userService.GetUserPrivateKey(id);  
+        var userRsaKeyPair = userKeyPairService.GetUserPrivateKey(id);  
   
         if (userRsaKeyPair == null)  
         {  
@@ -24,7 +24,7 @@ public class KeyPairController(IUserService userService) : ControllerBase
     [HttpGet("public/{id}")]  
     public ActionResult<string> GetPublicKey(string id)  
     {  
-        var publicKey = userService.GetUserPublicKey(id);  
+        var publicKey = userKeyPairService.GetUserPublicKey(id);  
   
         if (publicKey == null)  
         {  
@@ -36,7 +36,7 @@ public class KeyPairController(IUserService userService) : ControllerBase
     [HttpPost]
     public ActionResult Post(UserRsaKeyPairDto keyPair)
     {
-        userService.AddUserRsaKeyPair(keyPair);
+        userKeyPairService.AddUserRsaKeyPair(keyPair);
         return Ok();  
     }  
 }

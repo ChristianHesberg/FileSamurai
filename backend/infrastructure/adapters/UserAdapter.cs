@@ -16,6 +16,9 @@ public class UserAdapter(Context context) : IUserPort
     {
         return context.Users.Find(id);
     }
-    
-    
+
+    public User? GetUserByEmail(string email)
+    {
+        return context.Users.FirstOrDefault(user => user.Email == email);
+    }
 }
