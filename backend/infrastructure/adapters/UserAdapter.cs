@@ -5,21 +5,17 @@ namespace infrastructure.adapters;
 
 public class UserAdapter(Context context) : IUserPort
 {
-    public void AddUserKeyPair(UserRsaKeyPair userRsaKeyPair)
+    public User AddUser(User user)
     {
-        context.UserRsaKeyPairs.Add(userRsaKeyPair);
+        var added =context.Users.Add(user);
         context.SaveChanges();
+        return added.Entity;
     }
 
-    public UserRsaKeyPair? GetUserRsaKeyPair(string userId)
+    public User? GetUser(string id)
     {
-        return context.UserRsaKeyPairs.FirstOrDefault(r => r.Id == userId);
+        return context.Users.Find(id);
     }
-
-    public string? GetUserPublicKey(string userId)
-    {
-        var entity = context.UserRsaKeyPairs.FirstOrDefault(r => r.Id == userId);
-        if (entity == null) return null;
-        return entity.PublicKey;
-    }
+    
+    
 }

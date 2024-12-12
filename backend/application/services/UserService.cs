@@ -4,16 +4,16 @@ using core.models;
 
 namespace application.services;
 
-public class UserService(IUserPort userPort) : IUserService
+public class UserService(IUserKeyPairPort userKeyPairPort) : IUserService
 {
     public string? GetUserPublicKey(string userId)
     {
-        return userPort.GetUserPublicKey(userId);
+        return userKeyPairPort.GetUserPublicKey(userId);
     }
 
     public UserRsaPrivateKeyDto? GetUserPrivateKey(string userId)
     {
-        var keyPair = userPort.GetUserRsaKeyPair(userId);
+        var keyPair = userKeyPairPort.GetUserRsaKeyPair(userId);
         if (keyPair == null) return null;
         return new UserRsaPrivateKeyDto()
         {
@@ -35,6 +35,6 @@ public class UserService(IUserPort userPort) : IUserService
             Tag = keyPair.Tag,
             Salt = keyPair.Salt
         };
-        userPort.AddUserKeyPair(converted);
+        userKeyPairPort.AddUserKeyPair(converted);
     }
 }
