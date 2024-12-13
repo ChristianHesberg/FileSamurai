@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {useAuth} from "../providers/AuthProvider";
+import {Navigate, useNavigate} from "react-router-dom";
 
 const SettingsDropdown: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
     const {user, logout} = useAuth();
+    const navigate = useNavigate()
 
+    const handleLogoutClick = () => {
+        logout()
+        navigate("/login")
+    }
     const toggleDropdown = () => {
         setIsOpen((prev) => !prev);
     };
@@ -43,7 +49,7 @@ const SettingsDropdown: React.FC = () => {
                         <button
                             className="block px-4 py-2 text-sm bg-neutral-900 hover:bg-neutral-700 w-full border border-neutral-700 rounded"
                             role="menuitem"
-                            onClick={logout}
+                            onClick={ handleLogoutClick}
                         >
                             Logout
                         </button>
