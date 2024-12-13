@@ -5,12 +5,11 @@ import {useAuth} from "../providers/AuthProvider";
 
 export function Login() {
     const navigate = useNavigate()
-    const {user, login, logout} = useAuth();
+    const {login} = useAuth();
 
     const handleSuccess = (credentialResponse: CredentialResponse) => {
         login(credentialResponse)
-        navigate("/home")
-        console.log(credentialResponse);
+        navigate("/files")
     }
 
     return (
