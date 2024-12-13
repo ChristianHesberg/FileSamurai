@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {useAuth} from "../providers/AuthProvider";
-import {Navigate, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+
 
 const SettingsDropdown: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
