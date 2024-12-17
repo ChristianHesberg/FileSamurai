@@ -2,6 +2,6 @@
 
 public class AddUserToGroupDto
 {
-    public string userEmail { get; set; }
-    public string groupId { get; set; }
+    public string UserEmail { get; set; }
+    public string GroupId { get; set; }
 }

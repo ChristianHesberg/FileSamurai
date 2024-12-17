@@ -34,6 +34,6 @@ public class GroupService(IGroupPort groupPort) : IGroupService
 
     public bool AddUserToGroup(AddUserToGroupDto toGroupDto)
     {
-        return groupPort.AddUserToGroup(toGroupDto.userEmail, toGroupDto.groupId);
+        return groupPort.AddUserToGroup(toGroupDto.UserEmail, toGroupDto.GroupId);
     }
 }
