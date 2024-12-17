@@ -5,14 +5,11 @@ import {Route, Routes} from "react-router";
 import {Files} from "./pages/Files";
 import ProtectedRoute from "./providers/ProtectedRoute";
 import {Groups} from "./pages/Groups";
-import {Navigate, useLocation} from "react-router-dom";
+import {Navigate} from "react-router-dom";
 import Header from "./components/Header";
 import {useAuth} from "./providers/AuthProvider";
 
 function App() {
-    const location = useLocation()
-    const hideHeader = location.pathname === "/login";
-    const hideHeader2 = location.pathname === "/";
     const {user} = useAuth()
     return (
         <div className={"bg-neutral-950 text-gray-300 flex h-screen"}>
