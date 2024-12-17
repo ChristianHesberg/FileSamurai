@@ -13,6 +13,8 @@ public class FileService(IFilePort filePort): IFileService
         {
             Title = file.Title,
             FileContents = file.FileContents,
+            Nonce = file.Nonce,
+            Tag = file.Tag,
             GroupId = file.GroupId
         };
         filePort.AddFile(converted);

@@ -4,6 +4,6 @@ export function deriveKeyFromPassword(password: string, salt: Buffer, keyLength:
     return pbkdf2Sync(password, salt, 100000, keyLength, 'sha512');
 }
 
-export function generateKey(size: number): Buffer {
+export function generateKey(size: number = 32): Buffer {
     return randomBytes(size);
 }
