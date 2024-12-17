@@ -2,7 +2,6 @@
 
 namespace api.Policies;
 
-public class DocumentAccessRequirement(string documentId) : IAuthorizationRequirement
+public class DocumentAccessRequirement() : IAuthorizationRequirement
 {
-    public string DocumentId { get; } = documentId;
 }
