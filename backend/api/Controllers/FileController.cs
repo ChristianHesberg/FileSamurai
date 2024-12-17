@@ -9,7 +9,7 @@ namespace api.Controllers;
 public class FileController(IFileService fileService): ControllerBase
 {
     [HttpGet]
-    public ActionResult<(UpdateOrGetFileDto, AddOrGetUserFileAccessDto)> GetFile([FromQuery] string fileId, [FromQuery] string userId)
+    public ActionResult<GetFileDto> GetFile([FromQuery] string fileId, [FromQuery] string userId)
     {
         var result = fileService.GetFile(fileId, userId);
         return result == null ? NotFound() : Ok(result);
@@ -23,7 +23,7 @@ public class FileController(IFileService fileService): ControllerBase
     }
 
     [HttpPut]
-    public ActionResult PutFile(UpdateOrGetFileDto file)
+    public ActionResult PutFile(FileDto file)
     {
         var result = fileService.UpdateFile(file);
         return result ? Ok() : NotFound();

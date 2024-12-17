@@ -26,18 +26,20 @@ public class FileService(IFilePort filePort): IFileService
         return dto;
     }
 
-    public (UpdateOrGetFileDto, AddOrGetUserFileAccessDto)? GetFile(string fileId, string userId)
+    public GetFileDto? GetFile(string fileId, string userId)
     {
         var file = filePort.GetFile(fileId);
         var accessObject = filePort.GetUserFileAccess(userId, fileId);
         
         if (file == null || accessObject == null) return null;
 
-        var convertedFile = new UpdateOrGetFileDto()
+        var convertedFile = new FileDto()
         {
             Id = file.Id,
             Title = file.Title,
-            FileContents = file.FileContents
+            FileContents = file.FileContents,
+            Nonce = file.Nonce,
+            Tag = file.Tag,
         };
         var convertedAccessObject = new AddOrGetUserFileAccessDto()
         {
@@ -46,16 +48,22 @@ public class FileService(IFilePort filePort): IFileService
             EncryptedFileKey = accessObject.EncryptedFileKey,
             Role = accessObject.Role
         };
-        return (convertedFile, convertedAccessObject);
+        return new GetFileDto()
+        {
+            File = convertedFile,
+            UserFileAccess = convertedAccessObject
+        };
     }
 
-    public bool UpdateFile(UpdateOrGetFileDto file)
+    public bool UpdateFile(FileDto file)
     {
         var converted = new File()
         {
             Id = file.Id,
             Title = file.Title,
-            FileContents = file.FileContents
+            FileContents = file.FileContents,
+            Nonce = file.Nonce,
+            Tag = file.Tag,
         };
         return filePort.UpdateFile(converted);
     }

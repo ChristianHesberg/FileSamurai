@@ -13,7 +13,7 @@ public class UserKeyPairKeyPairAdapter(Context context) : IUserKeyPairPort
 
     public UserRsaKeyPair? GetUserRsaKeyPair(string userId)
     {
-        return context.UserRsaKeyPairs.Find(userId);
+        return context.UserRsaKeyPairs.FirstOrDefault(pair => pair.UserId == userId);
     }
 
     public string? GetUserPublicKey(string userId)
