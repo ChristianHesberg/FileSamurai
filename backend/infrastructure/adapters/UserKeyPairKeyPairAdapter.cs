@@ -18,7 +18,7 @@ public class UserKeyPairKeyPairAdapter(Context context) : IUserKeyPairPort
 
     public string? GetUserPublicKey(string userId)
     {
-        var entity = context.UserRsaKeyPairs.Find(userId);
+        var entity = context.UserRsaKeyPairs.FirstOrDefault(pair => pair.UserId == userId);
         if (entity == null) return null;
         return entity.PublicKey;
     }

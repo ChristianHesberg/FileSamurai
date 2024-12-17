@@ -6,14 +6,17 @@ import {encryptWithPublicKey} from "./rsa.cryptography";
 import {AddUserFileAccessDto} from "../models/addUserFileAccessDto";
 import {EDITOR_ROLE} from "../../constants";
 import {AddFileResponseDto} from "../models/addFileResponseDto";
+import * as fs from "node:fs";
 
 export async function createFile(userId: string, groupId: string, file: Buffer, title: string){
-    const key = generateKey();
+    const key = generateKey(32);
     const encryptedFileResponse = encryptFile(file, key, title, groupId);
     const fileResponse: AddFileResponseDto = await postFile(encryptedFileResponse);
 
     const userPublicKey: string = await getUserPublicKey(userId);
+    console.log(userPublicKey);
     const encryptedFAK = encryptWithPublicKey(key, userPublicKey);
+
     const addUserFileAccessDto: AddUserFileAccessDto = generateUserFileAccessDto(encryptedFAK, userId, fileResponse.id);
     await post('file/access', addUserFileAccessDto);
 }
@@ -57,3 +60,13 @@ async function getUserPublicKey(userId: string): Promise<string> {
         throw error;
     }
 }
+
+function test(){
+    fs.readFile('test.txt', (err, data) => {
+        if(err) console.log(err);
+        if(data) createFile('e9171352-c0e3-4705-8f52-5afca618c8b2', 'f42eb234-8f11-4339-b6c5-7aca9a9091be', data, 'COOL TITLE');
+    })
+}
+
+test();
+
