@@ -37,11 +37,11 @@ export function generateRsaKeyPairWithEncryption(password: string, saltSize: num
     }
 }
 
-function encryptWithPublicKey(data: Buffer, publicKey: string): Buffer {
+export function encryptWithPublicKey(data: Buffer, publicKey: string): Buffer {
     return publicEncrypt(publicKey, data);
 }
 
-function decryptWithPrivateKey(encryptedData: Buffer, privateKey: Buffer): Buffer {
+export function decryptWithPrivateKey(encryptedData: Buffer, privateKey: Buffer): Buffer {
     return privateDecrypt(privateKey, encryptedData);
 }
 

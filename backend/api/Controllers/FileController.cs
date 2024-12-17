@@ -16,10 +16,10 @@ public class FileController(IFileService fileService): ControllerBase
     }
 
     [HttpPost]
-    public ActionResult PostFile(AddFileDto file)
+    public ActionResult<PostFileResultDto> PostFile(AddFileDto file)
     {
-        fileService.AddFile(file);
-        return Ok();
+        var res = fileService.AddFile(file);
+        return Ok(res);
     }
 
     [HttpPut]

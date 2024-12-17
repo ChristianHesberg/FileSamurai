@@ -7,7 +7,7 @@ namespace application.services;
 
 public class FileService(IFilePort filePort): IFileService
 {
-    public void AddFile(AddFileDto file)
+    public PostFileResultDto AddFile(AddFileDto file)
     {
         var converted = new File()
         {
@@ -17,7 +17,13 @@ public class FileService(IFilePort filePort): IFileService
             Tag = file.Tag,
             GroupId = file.GroupId
         };
-        filePort.AddFile(converted);
+        var result = filePort.AddFile(converted);
+        var dto = new PostFileResultDto()
+        {
+            Id = result.Id,
+            Title = result.Title
+        };
+        return dto;
     }
 
     public (UpdateOrGetFileDto, AddOrGetUserFileAccessDto)? GetFile(string fileId, string userId)
