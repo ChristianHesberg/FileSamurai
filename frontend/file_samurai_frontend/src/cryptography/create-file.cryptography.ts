@@ -1,12 +1,12 @@
 import {generateKey} from "./utils.cryptography";
 import {encryptAes256Gcm} from "./aes-256-gcm.cryptography"
-import {get, post} from "../api/api_methods";
 import {AddFileDto} from "../models/addFileDto";
 import {encryptWithPublicKey} from "./rsa.cryptography";
 import {AddUserFileAccessDto} from "../models/addUserFileAccessDto";
 import {EDITOR_ROLE} from "../../constants";
 import {AddFileResponseDto} from "../models/addFileResponseDto";
 import * as fs from "node:fs";
+import axiosInstance from "../api/axios-instance";
 
 export async function createFile(userId: string, groupId: string, file: Buffer, title: string){
     const key = generateKey(32);
@@ -18,7 +18,7 @@ export async function createFile(userId: string, groupId: string, file: Buffer, 
     const encryptedFAK = encryptWithPublicKey(key, userPublicKey);
 
     const addUserFileAccessDto: AddUserFileAccessDto = generateUserFileAccessDto(encryptedFAK, userId, fileResponse.id);
-    await post('file/access', addUserFileAccessDto);
+    await postUserFileAccess(addUserFileAccessDto);
 }
 
 const encryptFile = (file: Buffer, key: Buffer, title: string, groupId: string): AddFileDto => {
@@ -42,23 +42,21 @@ const generateUserFileAccessDto = (encryptedFAK: Buffer, userId: string, fileId:
 }
 
 async function postFile(dto: AddFileDto): Promise<AddFileResponseDto> {
-    try {
-        const fileResult = await post('file', dto);
-        return await fileResult.json();
-    } catch(error){
-        console.log(error);
-        throw error;
-    }
+    const response = await axiosInstance.post<AddFileResponseDto>(`file`, dto);
+    return response.data;
 }
 
 async function getUserPublicKey(userId: string): Promise<string> {
-    try {
-        const userPublicKeyRequest = await get('keypair', `public/${userId}`)
-        return await userPublicKeyRequest.text();
-    } catch(error){
-        console.log(error);
-        throw error;
-    }
+    const response = await axiosInstance.get<string>(`keypair/public/${userId}`, {
+        headers: {
+            'Accept': 'text/plain',
+        },
+    });
+    return response.data;
+}
+
+async function postUserFileAccess(dto: AddUserFileAccessDto): Promise<void> {
+    await axiosInstance.post<AddUserFileAccessDto>('file/access', dto);
 }
 
 function test(){
