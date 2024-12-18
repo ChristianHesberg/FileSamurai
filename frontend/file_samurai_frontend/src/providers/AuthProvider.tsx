@@ -1,7 +1,7 @@
 import React, {createContext, useContext, useState, ReactNode, useEffect} from 'react';
 import {CredentialResponse, googleLogout} from '@react-oauth/google';
 import {jwtDecode} from "jwt-decode";
-import {getUserByEmail} from "../services/user.service";
+import {getUserByEmail, getUserIfNullRegister} from "../services/user.service";
 
 // Define the user type based on Google's JWT payload
 interface User {
@@ -42,7 +42,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
 
     const login = async (credentialResponse: CredentialResponse) => {
         const decoded: User = jwtDecode(credentialResponse.credential!);
-        const user = await getUserByEmail(decoded.email);
+        const user = await getUserIfNullRegister(decoded.email)
         decoded.userId = user.id;
         setUser(decoded);
         localStorage.setItem('user', JSON.stringify(decoded));
