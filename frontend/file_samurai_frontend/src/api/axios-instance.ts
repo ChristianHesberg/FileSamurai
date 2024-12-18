@@ -26,8 +26,29 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     (error: AxiosError) => {
-        console.error('HTTP Request failed:', error);
-        return Promise.reject(error);
+        // Extract relevant information from the error
+        const status = error.response?.status;
+        const data = error.response?.data;
+
+        // Log the error with relevant details
+        console.error(`HTTP Request failed with status ${status}: ${error.message}`, {
+            url: error.config?.url,
+            method: error.config?.method,
+            params: error.config?.params,
+            data: error.config?.data,
+            response: data,
+        });
+        /*
+        // Optionally, you can customize the error handling based on status codes or other criteria
+        if (status === 404) {
+            console.error('Resource not found.');
+        } else if (status === 500) {
+            console.error('Internal server error.');
+        } else {
+            console.error('An unexpected error occurred.');
+        }*/
+
+        return Promise.reject();
     }
 );
 
