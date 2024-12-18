@@ -1,9 +1,10 @@
 ﻿using application.dtos;
 using application.services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;
-
+[EnableCors("AllowAll")]
 [ApiController]
 [Route("[controller]")]
 public class UserController(IUserService userService) : ControllerBase
@@ -35,5 +36,18 @@ public class UserController(IUserService userService) : ControllerBase
     {
         var groups = userService.GetGroupsForUser(id);
         return groups == null ? NotFound() : Ok(groups);
+    }
+    
+    [HttpGet("getUserIfNullRegister/{userEmail}")]
+    public ActionResult<List<GroupDto>> GetUserIfNullRegister(string userEmail)
+    {
+        var user = userService.GetUserByEmail(userEmail);
+        if (user == null)
+        {
+            //TODO GET MAIL FROM AUTH HEADER?
+            userService.AddUser(new UserCreationDto(){Email = userEmail});
+        }
+        
+        return Ok(user);
     }
 }

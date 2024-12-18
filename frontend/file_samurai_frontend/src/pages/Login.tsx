@@ -8,8 +8,10 @@ export function Login() {
     const {login} = useAuth();
 
     const handleSuccess = async (credentialResponse: CredentialResponse) => {
-        await login(credentialResponse)
-        navigate("/files")
+        login(credentialResponse)
+            .then(() => navigate("/files"))
+            .catch(e => console.log("login error: " + e))
+
     }
 
     return (
