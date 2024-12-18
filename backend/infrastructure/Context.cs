@@ -14,6 +14,13 @@ public class Context : DbContext
     public Context(DbContextOptions options) : base(options)
     {
     }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)  
+    {  
+        modelBuilder.Entity<User>()  
+            .HasIndex(user => user.Email)  
+            .IsUnique();  
+    }  
 
     public DbSet<User> Users { get; set; }
 

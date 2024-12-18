@@ -1,26 +1,42 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import {Login} from "./pages/Login";
+import {Route, Routes} from "react-router";
+import {Files} from "./pages/Files";
+import ProtectedRoute from "./providers/ProtectedRoute";
+import {Groups} from "./pages/Groups";
+import {Navigate} from "react-router-dom";
+import Header from "./components/Header";
+import {useAuth} from "./providers/AuthProvider";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const {user} = useAuth()
+    return (
+        <div className={"bg-neutral-950 text-gray-300 flex h-screen"}>
+
+            <div className={"container mx-auto"}>
+                {user && <Header/>}
+                <Routes>
+                    <Route path="/" element={
+                        !user ?
+                            <Navigate to="/login"/> : <Navigate to={"files"}/>
+                    }/>
+
+                    <Route path={"/Login"} element={<Login/>}/>
+
+                    <Route path={"/files"} element={
+                        <ProtectedRoute>
+                            <Files/>
+                        </ProtectedRoute>}/>
+                    <Route path={"/groups"} element={
+                        <ProtectedRoute>
+                            <Groups/>
+                        </ProtectedRoute>}/>
+
+                </Routes>
+            </div>
+        </div>
+    );
 }
 
 export default App;

@@ -4,7 +4,8 @@ namespace application.ports;
 
 public interface IUserPort
 {
-    public void AddUserKeyPair(UserRsaKeyPair userRsaKeyPair);
-    public UserRsaKeyPair? GetUserRsaKeyPair(string userId);
-    public string? GetUserPublicKey(string userId);
+    public User AddUser(User user);
+    public User? GetUser(string id);
+    public User? GetUserByEmail(string email);
+    public List<Group>? GetGroupsForUser(string id);
 }
