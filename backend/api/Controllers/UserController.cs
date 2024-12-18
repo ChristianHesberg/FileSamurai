@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;
-[EnableCors("AllowAll")]
+
 [ApiController]
 [Route("[controller]")]
 public class UserController(IUserService userService) : ControllerBase
