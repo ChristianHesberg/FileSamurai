@@ -1,8 +1,8 @@
-import {decryptPrivateKey, generateUserFileAccessDto} from "./utils.cryptography";
+import {decryptPrivateKey} from "./utils.cryptography";
 import {decryptWithPrivateKey, encryptWithPublicKey} from "./rsa.cryptography";
-import {getEncryptedFileKey, getUserPrivateKey, getUserPublicKey, postUserFileAccess} from "../api/api-methods";
 import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
-import {VIEWER_ROLE} from "../../constants";
+import {getEncryptedFileKey, getUserPrivateKey, getUserPublicKey} from "../services/key.service";
+import {generateUserFileAccessDto, postUserFileAccess} from "../services/file.service";
 
 export async function shareFile(ownerId: string, recipientId: string, fileId: string, ownerPassword: string, role: string){
     const encryptedFileKey = await getEncryptedFileKey(ownerId, fileId);

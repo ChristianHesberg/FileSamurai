@@ -24,12 +24,3 @@ export function decryptPrivateKey(privateKey: UserPrivateKeyDto, password: strin
         deriveKeyFromPassword(password, Buffer.from(privateKey.salt, 'base64'))
     );
 }
-
-export const generateUserFileAccessDto = (encryptedFAK: Buffer, userId: string, fileId: string, role: string): AddOrGetUserFileAccessDto => {
-    return {
-        encryptedFileKey: encryptedFAK.toString('base64'),
-        role: role,
-        userId: userId,
-        fileId: fileId
-    }
-}

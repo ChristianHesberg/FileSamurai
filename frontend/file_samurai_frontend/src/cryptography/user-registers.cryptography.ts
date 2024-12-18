@@ -1,7 +1,7 @@
 import {EncryptedRsaKeyPairModel} from "../models/encryptedRsaKeyPair.model";
 import {generateRsaKeyPairWithEncryption} from "./rsa.cryptography";
 import {AddUserKeyPairDto} from "../models/addUserKeyPairDto";
-import {postKeypair} from "../api/api-methods";
+import {postKeypair} from "../services/key.service";
 
 export async function createUserKeyPair(password: string, email: string, userId: string){
     const concatenatedPassword: string = `${email}-${password}`;

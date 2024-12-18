@@ -3,7 +3,8 @@ import {UserPrivateKeyDto} from "../models/userPrivateKeyDto";
 import {decryptAes256Gcm} from "./aes-256-gcm.cryptography";
 import {decryptPrivateKey} from "./utils.cryptography";
 import {decryptWithPrivateKey} from "./rsa.cryptography";
-import {getFileInfo, getUserPrivateKey} from "../api/api-methods";
+import {getFileInfo} from "../services/file.service";
+import {getUserPrivateKey} from "../services/key.service";
 
 export async function decryptFile(userId: string, fileId: string, password: string){
     const response: FileResponseDto = await getFileInfo(userId, fileId);

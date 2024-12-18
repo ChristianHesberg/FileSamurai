@@ -1,12 +1,12 @@
-import {generateKey, generateUserFileAccessDto} from "./utils.cryptography";
+import {generateKey} from "./utils.cryptography";
 import {encryptAes256Gcm} from "./aes-256-gcm.cryptography"
 import {AddFileDto} from "../models/addFileDto";
 import {encryptWithPublicKey} from "./rsa.cryptography";
 import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
-import {EDITOR_ROLE} from "../../constants";
 import {AddFileResponseDto} from "../models/addFileResponseDto";
-import axiosInstance from "../api/axios-instance";
-import {getUserPublicKey, postFile, postUserFileAccess} from "../api/api-methods";
+import {generateUserFileAccessDto, postFile, postUserFileAccess} from "../services/file.service";
+import {getUserPublicKey} from "../services/key.service";
+import {EDITOR_ROLE} from "../../constants";
 
 export async function createFile(userId: string, groupId: string, file: Buffer, title: string){
     const key = generateKey(32);
@@ -16,7 +16,7 @@ export async function createFile(userId: string, groupId: string, file: Buffer, 
     const userPublicKey: string = await getUserPublicKey(userId);
     const encryptedFAK = encryptWithPublicKey(key, userPublicKey);
 
-    const addUserFileAccessDto: AddOrGetUserFileAccessDto = generateUserFileAccessDto(encryptedFAK, userId, fileResponse.id);
+    const addUserFileAccessDto: AddOrGetUserFileAccessDto = generateUserFileAccessDto(encryptedFAK, userId, fileResponse.id, EDITOR_ROLE);
     await postUserFileAccess(addUserFileAccessDto);
 }
 

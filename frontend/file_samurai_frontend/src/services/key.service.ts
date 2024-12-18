@@ -1,32 +1,14 @@
-import {AddFileDto} from "../models/addFileDto";
-import {AddFileResponseDto} from "../models/addFileResponseDto";
-import axiosInstance from "./axios-instance";
-import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
-import {FileResponseDto} from "../models/fileResponseDto";
+import axiosInstance from "../api/axios-instance";
 import {UserPrivateKeyDto} from "../models/userPrivateKeyDto";
+import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
 import {AddUserKeyPairDto} from "../models/addUserKeyPairDto";
-
-export async function postFile(dto: AddFileDto): Promise<AddFileResponseDto> {
-    const response = await axiosInstance.post<AddFileResponseDto>(`file`, dto);
-    return response.data;
-}
+import {AddFileResponseDto} from "../models/addFileResponseDto";
 
 export async function getUserPublicKey(userId: string): Promise<string> {
     const response = await axiosInstance.get<string>(`keypair/public/${userId}`, {
         headers: {
             'Accept': 'text/plain',
         },
-    });
-    return response.data;
-}
-
-export async function postUserFileAccess(dto: AddOrGetUserFileAccessDto): Promise<void> {
-    await axiosInstance.post<AddOrGetUserFileAccessDto>('file/access', dto);
-}
-
-export async function getFileInfo(userId: string, fileId: string): Promise<FileResponseDto> {
-    const response = await axiosInstance.get<FileResponseDto>(`file`, {
-        params: { userId, fileId }
     });
     return response.data;
 }
