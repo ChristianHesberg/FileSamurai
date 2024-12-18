@@ -1,6 +1,5 @@
 ﻿using application.dtos;
 using application.services;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;
