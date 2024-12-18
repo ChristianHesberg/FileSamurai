@@ -30,9 +30,9 @@ public class FileController(IFileService fileService): ControllerBase
     }
 
     [HttpGet("access")]
-    public ActionResult<AddOrGetUserFileAccessDto> GetUserFileAccess([FromQuery] string fileId, [FromQuery] string userId)
+    public ActionResult<AddOrGetUserFileAccessDto> GetUserFileAccess([FromQuery] string userId, [FromQuery] string fileId)
     {
-        var result = fileService.GetUserFileAccess(fileId, userId);
+        var result = fileService.GetUserFileAccess(userId, fileId);
         return result == null ? NotFound() : Ok(result);
     }
 

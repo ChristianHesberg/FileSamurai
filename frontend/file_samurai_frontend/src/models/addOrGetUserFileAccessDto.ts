@@ -1,4 +1,4 @@
-export interface AddUserFileAccessDto {
+export interface AddOrGetUserFileAccessDto {
     encryptedFileKey: string;
     role: string;
     userId: string;
