@@ -1,5 +1,6 @@
 ﻿using application.dtos;
 using application.services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;
@@ -9,6 +10,7 @@ namespace api.Controllers;
 public class FileController(IFileService fileService): ControllerBase
 {
     [HttpGet]
+    [Authorize(Policy = "FileAccess")]
     public ActionResult<(UpdateOrGetFileDto, AddOrGetUserFileAccessDto)> GetFile([FromQuery] string fileId, [FromQuery] string userId)
     {
         var result = fileService.GetFile(fileId, userId);
@@ -16,13 +18,15 @@ public class FileController(IFileService fileService): ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public ActionResult PostFile(AddFileDto file)
-    {
+    {   
         fileService.AddFile(file);
         return Ok();
     }
 
     [HttpPut]
+    [Authorize(Policy = "DocumentChange")]
     public ActionResult PutFile(UpdateOrGetFileDto file)
     {
         var result = fileService.UpdateFile(file);
@@ -30,6 +34,7 @@ public class FileController(IFileService fileService): ControllerBase
     }
 
     [HttpGet("access")]
+    [Authorize]
     public ActionResult<AddOrGetUserFileAccessDto> GetUserFileAccess([FromQuery] string fileId, [FromQuery] string userId)
     {
         var result = fileService.GetUserFileAccess(fileId, userId);
@@ -37,6 +42,7 @@ public class FileController(IFileService fileService): ControllerBase
     }
 
     [HttpPost("access")]
+    [Authorize(Policy = "FileAccess")]
     public ActionResult PostUserFileAccess(AddOrGetUserFileAccessDto userFileAccess)
     {
         fileService.AddUserFileAccess(userFileAccess);

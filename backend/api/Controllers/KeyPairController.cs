@@ -1,6 +1,7 @@
 ﻿using application.dtos;
 using application.services;
 using core.models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;
@@ -22,6 +23,7 @@ public class KeyPairController(IUserKeyPairService userKeyPairService) : Control
     }
     
     [HttpGet("public/{id}")]  
+    [Authorize]
     public ActionResult<string> GetPublicKey(string id)  
     {  
         var publicKey = userKeyPairService.GetUserPublicKey(id);  
@@ -34,6 +36,7 @@ public class KeyPairController(IUserKeyPairService userKeyPairService) : Control
     }
 
     [HttpPost]
+    [Authorize]
     public ActionResult Post(UserRsaKeyPairDto keyPair)
     {
         userKeyPairService.AddUserRsaKeyPair(keyPair);

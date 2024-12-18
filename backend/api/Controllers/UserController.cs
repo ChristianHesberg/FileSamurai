@@ -1,5 +1,6 @@
 ﻿using application.dtos;
 using application.services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;
@@ -17,6 +18,7 @@ public class UserController(IUserService userService) : ControllerBase
     }
     
     [HttpGet("{id}")]
+    [Authorize]
     public ActionResult<UserDto> GetUser(string id)
     {
         var user = userService.GetUser(id);
@@ -24,6 +26,7 @@ public class UserController(IUserService userService) : ControllerBase
     }
 
     [HttpGet("email/{id}")]
+    [Authorize]
     public ActionResult<UserDto> GetUserByEmail(string email)
     {
         var user = userService.GetUserByEmail(email);
@@ -31,6 +34,7 @@ public class UserController(IUserService userService) : ControllerBase
     }
 
     [HttpGet("groups/{id}")]
+    [Authorize]
     public ActionResult<List<GroupDto>> GetGroupsForUser(string id)
     {
         var groups = userService.GetGroupsForUser(id);

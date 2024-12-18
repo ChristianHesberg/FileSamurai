@@ -1,5 +1,6 @@
 ﻿using application.dtos;
 using application.services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;
@@ -9,6 +10,7 @@ namespace api.Controllers;
 public class GroupController(IGroupService groupService) : ControllerBase
 {
     [HttpPost]
+    [Authorize]
     public ActionResult<GroupDto> PostGroup(GroupCreationDto group)
     {
         var res = groupService.AddGroup(group);
@@ -16,6 +18,7 @@ public class GroupController(IGroupService groupService) : ControllerBase
     }
     
     [HttpGet("{id}")]
+    [Authorize]
     public ActionResult<GroupDto> GetGroup(string id)
     {
         var group = groupService.GetGroup(id);

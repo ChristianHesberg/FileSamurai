@@ -9,6 +9,7 @@ export function Login() {
 
     const handleSuccess = (credentialResponse: CredentialResponse) => {
         login(credentialResponse)
+        console.log(credentialResponse);
         navigate("/files")
     }
 
