@@ -23,7 +23,7 @@ public class UserController(IUserService userService) : ControllerBase
         return user == null ? NotFound() : Ok(user);
     }
 
-    [HttpGet("email/{id}")]
+    [HttpGet("email/{email}")]
     public ActionResult<UserDto> GetUserByEmail(string email)
     {
         var user = userService.GetUserByEmail(email);

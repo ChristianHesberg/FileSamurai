@@ -6,10 +6,11 @@ namespace infrastructure.adapters;
 
 public class FileAdapter(Context context) : IFilePort
 {
-    public void AddFile(File file)
+    public File AddFile(File file)
     {
-        context.Files.Add(file);
+        var entity = context.Files.Add(file);
         context.SaveChanges();
+        return entity.Entity;
     }
 
     public File? GetFile(string fileId)

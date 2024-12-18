@@ -1,8 +1,7 @@
 ﻿namespace application.dtos;
 
-public class UpdateOrGetFileDto
+public class PostFileResultDto
 {
     public string Id { get; set; }
-    public string FileContents { get; set; }
     public string Title { get; set; }
 }
