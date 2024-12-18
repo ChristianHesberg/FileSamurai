@@ -33,7 +33,8 @@ axiosInstance.interceptors.response.use(
 
 
 function getJwtToken(): string | null {
-    return localStorage.getItem('jwtToken');
+    return null;
+    //return localStorage.getItem('jwtToken');
 }
 
 export default axiosInstance;

@@ -22,5 +22,3 @@ export async function createUserKeyPair(password: string, email: string, userId:
 async function postKeypair(dto: AddUserKeyPairDto): Promise<void> {
     await axiosInstance.post<AddFileResponseDto>(`keypair`, dto);
 }
-
-createUserKeyPair('very_secret_password_that_you_cannot_guess', 'cool@email.com', 'e9171352-c0e3-4705-8f52-5afca618c8b2');
