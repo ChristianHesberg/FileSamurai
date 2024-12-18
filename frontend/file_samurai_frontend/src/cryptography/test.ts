@@ -3,7 +3,7 @@ import {createFile} from "./create-file.cryptography";
 import {decryptFile} from "./decrypt-file.cryptography";
 import {createUserKeyPair} from "./user-registers.cryptography";
 import {shareFile} from "./share-file.cryptography";
-import {VIEWER_ROLE} from "../../constants";
+import {VIEWER_ROLE} from "../constants";
 
 async function test(){
     fs.readFile('test.txt', async (err, data) => {

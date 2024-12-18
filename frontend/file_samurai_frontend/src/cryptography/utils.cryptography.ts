@@ -3,7 +3,7 @@ import {decryptAes256Gcm, encryptAes256Gcm} from "./aes-256-gcm.cryptography";
 import {UserPrivateKeyDto} from "../models/userPrivateKeyDto";
 import {AddFileDto} from "../models/addFileDto";
 import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
-import {EDITOR_ROLE} from "../../constants";
+import {EDITOR_ROLE} from "../constants";
 
 export function deriveKeyFromPassword(password: string, salt: Buffer, keyLength: number = 32): Buffer {
     return pbkdf2Sync(password, salt, 100000, keyLength, 'sha512');

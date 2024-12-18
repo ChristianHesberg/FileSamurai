@@ -6,7 +6,7 @@ import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
 import {AddFileResponseDto} from "../models/addFileResponseDto";
 import {generateUserFileAccessDto, postFile, postUserFileAccess} from "../services/file.service";
 import {getUserPublicKey} from "../services/key.service";
-import {EDITOR_ROLE} from "../../constants";
+import {EDITOR_ROLE} from "../constants";
 
 export async function createFile(userId: string, groupId: string, file: Buffer, title: string){
     const key = generateKey(32);
