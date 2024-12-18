@@ -8,14 +8,6 @@ namespace api.Controllers;
 [Route("[controller]")]
 public class UserController(IUserService userService) : ControllerBase
 {
-    [HttpPost]
-    public ActionResult<string> PostUser(UserCreationDto user)
-    {
-        var res = userService.AddUser(user);
-        //TODO create jwt from res
-        return Ok();
-    }
-    
     [HttpGet("{id}")]
     public ActionResult<UserDto> GetUser(string id)
     {
@@ -36,17 +28,13 @@ public class UserController(IUserService userService) : ControllerBase
         var groups = userService.GetGroupsForUser(id);
         return groups == null ? NotFound() : Ok(groups);
     }
-    
+
     [HttpGet("getUserIfNullRegister/{userEmail}")]
     public ActionResult<UserDto> GetUserIfNullRegister(string userEmail)
     {
-        var user = userService.GetUserByEmail(userEmail);
-        if (user == null)
-        {
-            //TODO GET MAIL FROM AUTH HEADER?
-            userService.AddUser(new UserCreationDto(){Email = userEmail});
-        }
-        
+        //TODO GET MAIL FROM AUTH HEADER?
+        var user = userService.GetUserByEmail(userEmail)
+                   ?? userService.AddUser(new UserCreationDto() { Email = userEmail });
         return Ok(user);
     }
 }
