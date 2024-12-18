@@ -38,7 +38,7 @@ public class UserController(IUserService userService) : ControllerBase
     }
     
     [HttpGet("getUserIfNullRegister/{userEmail}")]
-    public ActionResult<List<GroupDto>> GetUserIfNullRegister(string userEmail)
+    public ActionResult<UserDto> GetUserIfNullRegister(string userEmail)
     {
         var user = userService.GetUserByEmail(userEmail);
         if (user == null)
