@@ -28,13 +28,13 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>  
 {  
-    options.AddPolicy("AllowAll", builder =>  
+    options.AddPolicy("cors", builder =>  
     {  
-        builder.AllowAnyOrigin()  
+        builder.WithOrigins("http://localhost:3000")  
             .AllowAnyMethod()  
-            .AllowAnyHeader();  
+            .AllowAnyHeader();
     });  
-}); 
+});  
 
 var app = builder.Build();
 
@@ -47,7 +47,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAll"); 
+app.UseCors("cors"); 
 
 app.UseAuthorization();
 

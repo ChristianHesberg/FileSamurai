@@ -4,8 +4,7 @@ import {API_BASE_URL} from "../constants";
 const axiosInstance: AxiosInstance = axios.create({
     baseURL: API_BASE_URL,
     headers: {
-        'Accept': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        'Accept': 'application/json'
     },
 });
 
