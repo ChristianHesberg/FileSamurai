@@ -1,4 +1,6 @@
-﻿namespace application.dtos;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace application.dtos;
 
 public class AddFileDto
 {
