@@ -29,12 +29,10 @@ describe('CreateFileUseCase', () => {
         );
 
         mockCryptoService.encryptAes256Gcm.mockReturnValue(encryptionReturnValue);
-
         mockCryptoService.encryptWithPublicKey.mockReturnValue(encryptWithPublicKeyReturnValue);
         mockCryptoService.generateKey.mockReturnValue(generateKeyReturnValue);
 
         mockFileService.postFile.mockResolvedValue(postFileReturnValue);
-
         mockFileService.convertToUserFileAccessDto.mockReturnValue(convertToDtoReturnValue);
 
         mockKeyService.getUserPublicKey.mockResolvedValue(userPublicKeyReturnValue);
