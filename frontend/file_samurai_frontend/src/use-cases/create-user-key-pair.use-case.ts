@@ -1,16 +1,17 @@
 import {KeyService} from "../services/key.service";
 import {EncryptedRsaKeyPairModel} from "../models/encryptedRsaKeyPair.model";
-import {generateRsaKeyPairWithEncryption} from "../cryptography/rsa.cryptography";
 import {AddUserKeyPairDto} from "../models/addUserKeyPairDto";
+import {CryptographyService} from "../services/cryptography.service";
 
 export class CreateUserKeyPair {
     constructor(
-        private readonly keyService: KeyService
+        private readonly keyService: KeyService,
+        private readonly cryptoService: CryptographyService,
     ) {}
 
     async execute(password: string, email: string, userId: string): Promise<void> {
         const concatenatedPassword: string = `${email}-${password}`;
-        const keyPair: EncryptedRsaKeyPairModel = generateRsaKeyPairWithEncryption(concatenatedPassword);
+        const keyPair: EncryptedRsaKeyPairModel = this.cryptoService.generateRsaKeyPairWithEncryption(concatenatedPassword);
 
         const dto: AddUserKeyPairDto = {
             userId: userId,
