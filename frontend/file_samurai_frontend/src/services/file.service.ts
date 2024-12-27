@@ -21,7 +21,7 @@ export class FileService {
         await axiosInstance.post<AddOrGetUserFileAccessDto>('file/access', dto);
     }
 
-    generateUserFileAccessDto(encryptedFAK: Buffer, userId: string, fileId: string, role: string): AddOrGetUserFileAccessDto {
+    convertToUserFileAccessDto(encryptedFAK: Buffer, userId: string, fileId: string, role: string): AddOrGetUserFileAccessDto {
         return {
             encryptedFileKey: encryptedFAK.toString('base64'),
             role: role,

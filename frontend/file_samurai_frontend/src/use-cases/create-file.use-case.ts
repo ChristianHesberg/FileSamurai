@@ -21,7 +21,7 @@ export class CreateFileUseCase {
         const userPublicKey: string = await this.keyService.getUserPublicKey(userId);
         const encryptedFAK = this.cryptoService.encryptWithPublicKey(key, userPublicKey);
 
-        const addUserFileAccessDto: AddOrGetUserFileAccessDto = this.fileService.generateUserFileAccessDto(encryptedFAK, userId, fileResponse.id, EDITOR_ROLE);
+        const addUserFileAccessDto: AddOrGetUserFileAccessDto = this.fileService.convertToUserFileAccessDto(encryptedFAK, userId, fileResponse.id, EDITOR_ROLE);
         await this.fileService.postUserFileAccess(addUserFileAccessDto);
         return fileResponse;
     }

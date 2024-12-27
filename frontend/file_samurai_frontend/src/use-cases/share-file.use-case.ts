@@ -20,7 +20,7 @@ export class ShareFileUseCase{
         const shareePublicKey = await this.keyService.getUserPublicKey(recipientId);
         const encryptedFAK = this.cryptoService.encryptWithPublicKey(decryptedFEK, shareePublicKey);
 
-        const addUserFileAccessDto: AddOrGetUserFileAccessDto = this.fileService.generateUserFileAccessDto(encryptedFAK, recipientId, fileId, role);
+        const addUserFileAccessDto: AddOrGetUserFileAccessDto = this.fileService.convertToUserFileAccessDto(encryptedFAK, recipientId, fileId, role);
         await this.fileService.postUserFileAccess(addUserFileAccessDto);
     }
 }
