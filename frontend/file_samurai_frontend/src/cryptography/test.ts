@@ -1,14 +1,31 @@
 import fs from "node:fs";
-import {createFile} from "./create-file.cryptography";
-import {decryptFile} from "./decrypt-file.cryptography";
-import {createUserKeyPair} from "./user-registers.cryptography";
-import {shareFile} from "./share-file.cryptography";
+import {CreateFileUseCase} from "../use-cases/create-file.use-case";
+import {CreateUserKeyPair} from "../use-cases/create-user-key-pair.use-case";
 import {VIEWER_ROLE} from "../constants";
+import {FileService} from "../services/file.service";
+import {KeyService} from "../services/key.service";
+import {DecryptFileUseCase} from "../use-cases/decrypt-file.use-case";
+import {ShareFileUseCase} from "../use-cases/share-file.use-case";
+
+const fileService = new FileService();
+const keyService = new KeyService();
+const createFileUseCase = new CreateFileUseCase(
+    fileService,
+    keyService,
+);
+const decryptFileUseCase = new DecryptFileUseCase(
+    fileService,
+    keyService,
+)
+const shareFileUseCase = new ShareFileUseCase(
+    fileService,
+    keyService,
+)
 
 async function test(){
     fs.readFile('test.txt', async (err, data) => {
         if(err) console.log(err);
-        if(data) await createFile('e9171352-c0e3-4705-8f52-5afca618c8b2', 'f42eb234-8f11-4339-b6c5-7aca9a9091be', data, 'COOL TITLE');
+        if(data) await createFileUseCase.execute('e9171352-c0e3-4705-8f52-5afca618c8b2', 'f42eb234-8f11-4339-b6c5-7aca9a9091be', data, 'COOL TITLE');
     })
 }
 
