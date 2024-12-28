@@ -14,7 +14,7 @@ export class ShareFileUseCase{
         const encryptedFileKey = await this.keyService.getEncryptedFileKey(ownerId, fileId);
         const privateKey = await this.keyService.getUserPrivateKey(ownerId);
 
-        const decryptedPrivateKey = this.cryptoService.decryptPrivateKey(privateKey, ownerPassword)
+        const decryptedPrivateKey = this.cryptoService.decryptPrivateKey(privateKey, ownerPassword);
         const decryptedFEK = this.cryptoService.decryptWithPrivateKey(Buffer.from(encryptedFileKey, 'base64'), decryptedPrivateKey);
 
         const shareePublicKey = await this.keyService.getUserPublicKey(recipientId);

@@ -10,6 +10,7 @@ import {
 import {RsaKeyPairModel} from "../models/rsaKeyPair.model";
 import {EncryptedRsaKeyPairModel} from "../models/encryptedRsaKeyPair.model";
 import {UserPrivateKeyDto} from "../models/userPrivateKeyDto";
+import {DecryptionError} from "../errors/decryption.error";
 
 export class CryptographyService {
     encryptAes256Gcm(plaintext: Buffer, key: Buffer): AesGcmEncryptionOutput {
@@ -31,14 +32,17 @@ export class CryptographyService {
 
     decryptAes256Gcm(encryptedData: AesGcmEncryptionOutput, key: Buffer): Buffer {
         const { cipherText, nonce, tag } = encryptedData;
+        try{
+            const decipher = createDecipheriv('aes-256-gcm', key, Buffer.from(nonce, 'base64'));
+            decipher.setAuthTag(Buffer.from(tag, 'base64'));
 
-        const decipher = createDecipheriv('aes-256-gcm', key, Buffer.from(nonce, 'base64'));
-        decipher.setAuthTag(Buffer.from(tag, 'base64'));
-
-        return Buffer.concat([
-            decipher.update(Buffer.from(cipherText, 'base64')),
-            decipher.final()
-        ]);
+            return Buffer.concat([
+                decipher.update(Buffer.from(cipherText, 'base64')),
+                decipher.final()
+            ]);
+        } catch (error) {
+            throw new DecryptionError();
+        }
     }
 
     generateRsaKeyPair(): RsaKeyPairModel {
