@@ -6,20 +6,25 @@ import {FileService} from "../services/file.service";
 import {KeyService} from "../services/key.service";
 import {DecryptFileUseCase} from "../use-cases/decrypt-file.use-case";
 import {ShareFileUseCase} from "../use-cases/share-file.use-case";
+import {CryptographyService} from "../services/cryptography.service";
 
 const fileService = new FileService();
 const keyService = new KeyService();
+const cryptographyService = new CryptographyService();
 const createFileUseCase = new CreateFileUseCase(
     fileService,
     keyService,
+    cryptographyService
 );
 const decryptFileUseCase = new DecryptFileUseCase(
     fileService,
     keyService,
+    cryptographyService
 )
 const shareFileUseCase = new ShareFileUseCase(
     fileService,
     keyService,
+    cryptographyService
 )
 
 async function test(){
@@ -31,5 +36,5 @@ async function test(){
 
 //createUserKeyPair('very_secret_password_that_you_cannot_guess', 'lame@email.com', 'c3ffaafd-3ee1-482b-9c39-99768c1d07db');
 //test();
-//decryptFile('e9171352-c0e3-4705-8f52-5afca618c8b2', '3a25fdfb-1b73-47de-8cea-b40b18b6b93a', 'cool@email.com-very_secret_password_that_you_cannot_guess');
+decryptFileUseCase.execute('e9171352-c0e3-4705-8f52-5afca618c8b2', '3a25fdfb-1b73-47de-8cea-b40b18b6b93aaa', 'cool@email.com-very_secret_password_that_you_cannot_guess');
 //shareFile('e9171352-c0e3-4705-8f52-5afca618c8b2', 'c3ffaafd-3ee1-482b-9c39-99768c1d07db', '3a25fdfb-1b73-47de-8cea-b40b18b6b93a', 'cool@email.com-very_secret_password_that_you_cannot_guess', VIEWER_ROLE);

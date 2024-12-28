@@ -4,6 +4,9 @@ import {KeyService} from "../services/key.service";
 import {mock, mockReset} from 'jest-mock-extended'
 import {CryptographyService} from "../services/cryptography.service";
 import {EDITOR_ROLE} from "../constants";
+import {AesGcmEncryptionOutput} from "../models/aesGcmEncryptionOutput.model";
+import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
+import {AddFileResponseDto} from "../models/addFileResponseDto";
 
 describe('CreateFileUseCase', () => {
     const mockFileService = mock<FileService>();
@@ -14,6 +17,7 @@ describe('CreateFileUseCase', () => {
     const title = 'title';
     const groupId = 'groupId';
     const userId = 'userId';
+    const userPublicKeyReturnValue = 'userPublicKey';
 
     let useCase: CreateFileUseCase;
 
@@ -28,12 +32,12 @@ describe('CreateFileUseCase', () => {
             mockCryptoService
         );
 
-        mockCryptoService.encryptAes256Gcm.mockReturnValue(encryptionReturnValue);
-        mockCryptoService.encryptWithPublicKey.mockReturnValue(encryptWithPublicKeyReturnValue);
-        mockCryptoService.generateKey.mockReturnValue(generateKeyReturnValue);
+        mockCryptoService.encryptAes256Gcm.mockReturnValue(getAesEncryptionOutput());
+        mockCryptoService.encryptWithPublicKey.mockReturnValue(getBuffer());
+        mockCryptoService.generateKey.mockReturnValue(getBuffer());
 
-        mockFileService.postFile.mockResolvedValue(postFileReturnValue);
-        mockFileService.convertToUserFileAccessDto.mockReturnValue(convertToDtoReturnValue);
+        mockFileService.postFile.mockResolvedValue(GetAddFileResponseDto());
+        mockFileService.convertToUserFileAccessDto.mockReturnValue(GetAddOrGetUserFileAccessDto());
 
         mockKeyService.getUserPublicKey.mockResolvedValue(userPublicKeyReturnValue);
     });
@@ -41,15 +45,18 @@ describe('CreateFileUseCase', () => {
     describe('it should call services with correct values', () => {
         it('should call cryptoService encryptAes256Gcm with correct parameters', async () => {
             const spy = jest.spyOn(mockCryptoService, 'encryptAes256Gcm');
+            const keyReturnValue = getBuffer();
 
             await useCase.execute(userId, groupId, file, title);
 
             expect(spy).toHaveBeenCalledTimes(1);
-            expect(spy).toHaveBeenCalledWith(file, generateKeyReturnValue);
+            expect(spy).toHaveBeenCalledWith(file, keyReturnValue);
         });
 
         it('should call fileService postFile with correct parameters', async () => {
             const spy = jest.spyOn(mockFileService, 'postFile');
+            const encryptionReturnValue = getAesEncryptionOutput();
+
             const expectedCallValue = {
                 fileContents: encryptionReturnValue.cipherText,
                 nonce: encryptionReturnValue.nonce,
@@ -75,54 +82,60 @@ describe('CreateFileUseCase', () => {
 
         it('should call cryptoService encryptWithPublicKey with correct parameters', async () => {
             const spy = jest.spyOn(mockCryptoService, 'encryptWithPublicKey');
+            const keyReturnValue = getBuffer();
 
             await useCase.execute(userId, groupId, file, title);
 
             expect(spy).toHaveBeenCalledTimes(1);
-            expect(spy).toHaveBeenCalledWith(generateKeyReturnValue, userPublicKeyReturnValue);
+            expect(spy).toHaveBeenCalledWith(keyReturnValue, userPublicKeyReturnValue);
         });
 
         it('should call fileService convertToUserFileAccessDto with correct parameters', async () => {
             const spy = jest.spyOn(mockFileService, 'convertToUserFileAccessDto');
+            const keyReturnValue = getBuffer();
+            const dto = GetAddFileResponseDto();
 
             await useCase.execute(userId, groupId, file, title);
 
             expect(spy).toHaveBeenCalledTimes(1);
-            expect(spy).toHaveBeenCalledWith(encryptWithPublicKeyReturnValue, userId, postFileReturnValue.id, EDITOR_ROLE);
+            expect(spy).toHaveBeenCalledWith(keyReturnValue, userId, dto.id, EDITOR_ROLE);
         });
 
         it('should call fileService postUserFileAccess with correct parameters', async () => {
             const spy = jest.spyOn(mockFileService, 'postUserFileAccess');
+            const dto = GetAddOrGetUserFileAccessDto();
 
             await useCase.execute(userId, groupId, file, title);
 
             expect(spy).toHaveBeenCalledTimes(1);
-            expect(spy).toHaveBeenCalledWith(convertToDtoReturnValue);
+            expect(spy).toHaveBeenCalledWith(dto);
         });
 
         it('should return expected value', async () => {
             const result = await useCase.execute(userId, groupId, file, title);
+            const dto = GetAddFileResponseDto();
 
-            expect(result).toEqual(postFileReturnValue);
+            expect(result).toEqual(dto);
         });
     });
 });
 
-const encryptionReturnValue = {
+const getAesEncryptionOutput = (): AesGcmEncryptionOutput => ({
     cipherText: 'cipher',
     nonce: 'nonce',
     tag: 'tag',
-}
-const generateKeyReturnValue = Buffer.from('key');
-const encryptWithPublicKeyReturnValue = Buffer.from('FAK');
-const userPublicKeyReturnValue = 'userPublicKey';
-const convertToDtoReturnValue = {
+})
+
+const getBuffer = (): Buffer => Buffer.from('key');
+
+const GetAddOrGetUserFileAccessDto = (): AddOrGetUserFileAccessDto => ({
     encryptedFileKey: 'FAK',
     role: EDITOR_ROLE,
     userId: 'userId',
     fileId: 'id',
-};
-const postFileReturnValue = {
+});
+
+const GetAddFileResponseDto = (): AddFileResponseDto => ({
     id: 'id',
     title: 'title',
-}
+})
