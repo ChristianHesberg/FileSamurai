@@ -28,7 +28,7 @@ namespace infrastructure.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("GroupUser");
+                    b.ToTable("GroupUser", (string)null);
                 });
 
             modelBuilder.Entity("core.models.File", b =>
@@ -60,7 +60,7 @@ namespace infrastructure.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("Files");
+                    b.ToTable("Files", (string)null);
                 });
 
             modelBuilder.Entity("core.models.Group", b =>
@@ -74,7 +74,7 @@ namespace infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Groups");
+                    b.ToTable("Groups", (string)null);
                 });
 
             modelBuilder.Entity("core.models.User", b =>
@@ -91,7 +91,7 @@ namespace infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("core.models.UserFileAccess", b =>
@@ -121,7 +121,7 @@ namespace infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserFileAccesses");
+                    b.ToTable("UserFileAccesses", (string)null);
                 });
 
             modelBuilder.Entity("core.models.UserRsaKeyPair", b =>
@@ -158,7 +158,7 @@ namespace infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserRsaKeyPairs");
+                    b.ToTable("UserRsaKeyPairs", (string)null);
                 });
 
             modelBuilder.Entity("GroupUser", b =>

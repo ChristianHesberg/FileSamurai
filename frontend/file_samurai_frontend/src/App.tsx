@@ -8,6 +8,7 @@ import {Groups} from "./pages/Groups";
 import {Navigate} from "react-router-dom";
 import Header from "./components/Header";
 import {useAuth} from "./providers/AuthProvider";
+import {Register} from "./pages/Register";
 
 function App() {
     const {user} = useAuth()
@@ -32,6 +33,13 @@ function App() {
                         <ProtectedRoute>
                             <Groups/>
                         </ProtectedRoute>}/>
+                    <Route path={"/register"} element={
+                        <ProtectedRoute>
+                            <Register/>
+                        </ProtectedRoute>
+                    }/>
+
+
 
                 </Routes>
             </div>

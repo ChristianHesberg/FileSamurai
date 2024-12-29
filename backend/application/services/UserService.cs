@@ -1,5 +1,6 @@
 ﻿using application.dtos;
 using application.ports;
+using application.transformers;
 using core.models;
 
 namespace application.services;
@@ -8,6 +9,9 @@ public class UserService(IUserPort userPort) : IUserService
 {
     public UserDto AddUser(UserCreationDto user)
     {
+        var salt = PasswordHasher.GenerateSalt();
+        var hashedPW = PasswordHasher.HashPassword(user.Password, salt);
+        //todo hashpassword
         var converted = new User()
         {
             Email = user.Email

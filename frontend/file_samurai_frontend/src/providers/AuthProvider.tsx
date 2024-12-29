@@ -4,9 +4,11 @@ import {jwtDecode} from "jwt-decode";
 import {
     GetUserByEmailOrRegisterUseCaseFactory
 } from "../use-cases/factories/get-user-by-email-or-register.use-case.factory";
+import {User} from "../models/user.model";
+import {GetUserByEmailUseCaseFactory} from "../use-cases/factories/get-user-by-email.use-case.factory";
 
 // Define the user type based on Google's JWT payload
-interface User {
+interface GoogleUser {
     name: string;
     email: string;
     picture: string;
@@ -17,9 +19,9 @@ interface User {
 
 // Define the context value type
 interface AuthContextType {
-    user: User | null;
+    user: GoogleUser | null;
     isInitializing: boolean;
-    login: (credentialResponse: CredentialResponse) => Promise<void>;
+    login: (credentialResponse: CredentialResponse) => Promise<User>;
     logout: () => void;
 }
 
@@ -33,7 +35,7 @@ interface AuthProviderProps {
 
 // AuthProvider component
 export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<GoogleUser | null>(null);
     const [isInitializing, setIsInitializing] = useState<boolean>(true);
 
     useEffect(() => {
@@ -42,13 +44,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
         setIsInitializing(false)
     }, []);
 
-    const login = async (credentialResponse: CredentialResponse) => {
-        const decoded: User = jwtDecode(credentialResponse.credential!);
-        const useCase = GetUserByEmailOrRegisterUseCaseFactory.create();
-        const user = await useCase.execute(decoded.email);
-        decoded.userId = user.id;
+    const login = async (credentialResponse: CredentialResponse): Promise<User> => {
+        const decoded: GoogleUser = jwtDecode(credentialResponse.credential!);
+        //get user
+        const useCase = GetUserByEmailUseCaseFactory.create()
+        //if exists -> return
+        // if not exists -> return null
+
+       // const useCase = GetUserByEmailOrRegisterUseCaseFactory.create();
         setUser(decoded);
         localStorage.setItem('user', JSON.stringify(decoded));
+        const user = await useCase.execute(decoded.email);
+        decoded.userId = user.id;
+
+
+        return user
     };
 
     const logout = () => {

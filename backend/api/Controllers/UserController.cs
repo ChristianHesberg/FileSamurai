@@ -37,4 +37,11 @@ public class UserController(IUserService userService) : ControllerBase
                    ?? userService.AddUser(new UserCreationDto() { Email = userEmail });
         return Ok(user);
     }
+
+    [HttpPost("createUser")]
+    public ActionResult<UserDto> CreateUser(UserCreationDto creationDto)
+    {
+        var userDto = userService.AddUser(creationDto);
+        return Ok(userDto);
+    }
 }
