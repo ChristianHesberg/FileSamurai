@@ -1,4 +1,5 @@
 ﻿using application.errors;
+using FluentValidation.Results;
 
 namespace api.Middleware;
 
@@ -36,14 +37,15 @@ public class ExceptionHandlingMiddleware
     private Task HandleExceptionAsync(HttpContext context, Exception exception)  
     {  
         HttpStatusCode statusCode;  
-        string message;  
-        List<Validation
+        string message;
+        IList<string> validationFailures = [];
   
         // Customize your response based on the exception type  
         if (exception is CustomValidationException validationException)
         {
             statusCode = HttpStatusCode.BadRequest;  
-            message = $"{validationException.Message}{JsonConvert.SerializeObject(validationException.ValidationErrors)}";  
+            message = validationException.Message;
+            validationFailures = validationException.ValidationErrors;
         }  
         else if (exception is UnauthorizedAccessException)  
         {  
@@ -58,12 +60,14 @@ public class ExceptionHandlingMiddleware
   
         context.Response.StatusCode = (int)statusCode;  
         context.Response.ContentType = "application/json"; 
-  
-        var response = new  
-        {  
-            Message = message
-        };  
 
-        return context.Response.WriteAsync(JsonConvert.SerializeObject(response));  
+        return context.Response.WriteAsync(JsonConvert.SerializeObject(validationFailures.Count == 0 ? new  
+        {  
+            Message = message,
+        } : new
+        {
+            Message = message,
+            Errors = validationFailures
+        }));  
     }  
 }  

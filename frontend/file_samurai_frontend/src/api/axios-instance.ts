@@ -5,6 +5,7 @@ import {ForbiddenError} from "../errors/forbidden.error";
 import {UnauthorizedError} from "../errors/unauthorized.error";
 import {InternalServerError} from "../errors/internal-server.error";
 import {HttpError} from "../errors/http.error";
+import {BadRequestError} from "../errors/bad-request.error";
 
 const axiosInstance: AxiosInstance = axios.create({
     baseURL: API_BASE_URL,
@@ -43,24 +44,28 @@ axiosInstance.interceptors.response.use(
         });
 
         switch (status) {
+            case 400: {
+                const error = new BadRequestError(data);
+                return rejectError(error);
+            }
             case 401:{
-                const error = new UnauthorizedError();
+                const error = new UnauthorizedError(data);
                 return rejectError(error);
             }
             case 403:{
-                const error = new ForbiddenError();
+                const error = new ForbiddenError(data);
                 return rejectError(error);
             }
             case 404:{
-                const error = new NotFoundError();
+                const error = new NotFoundError(data);
                 return rejectError(error);
             }
             case 500:{
-                const error = new InternalServerError();
+                const error = new InternalServerError(data);
                 return rejectError(error);
             }
             default:{
-                const error = new HttpError('An unexpected error occurred', status);
+                const error = new HttpError('An unexpected error occurred', status, data);
                 return rejectError(error);
             }
         }
