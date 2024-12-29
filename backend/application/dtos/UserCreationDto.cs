@@ -1,6 +1,13 @@
-﻿namespace application.dtos;
+﻿using application.transformers;
+
+namespace application.dtos;
 
 public class UserCreationDto
 {
-    public string Email { get; set; }
+    private string _email;  
+    public string Email  
+    {  
+        get => _email;  
+        set => _email = InputSanitizer.Sanitize(value);  
+    } 
 }
