@@ -1,5 +1,4 @@
 ﻿using application.errors;
-using FluentValidation.Results;
 
 namespace api.Middleware;
 
