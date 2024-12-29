@@ -65,7 +65,7 @@ axiosInstance.interceptors.response.use(
                 return rejectError(error);
             }
             default:{
-                const error = new HttpError('An unexpected error occurred', status, data);
+                const error = new HttpError('An unexpected error occurred', 500);
                 return rejectError(error);
             }
         }
