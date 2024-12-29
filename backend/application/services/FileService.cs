@@ -1,14 +1,26 @@
 ﻿using application.dtos;
 using application.ports;
+using application.validation;
 using core.models;
+using FluentValidation;
+using FluentValidation.Results;
 using File = core.models.File;
 
 namespace application.services;
 
-public class FileService(IFilePort filePort): IFileService
+public class FileService(
+    IFilePort filePort,
+    IValidator<AddFileDto> addFileDtoValidator,
+    IValidator<GetFileOrAccessInputDto> getFileOrAccessInputDtoValidator,
+    IValidator<FileDto> fileDtoValidator,
+    IValidator<AddOrGetUserFileAccessDto> addOrGetUserFileAccessDtoValidator
+    ): IFileService
 {
     public PostFileResultDto AddFile(AddFileDto file)
     {
+        ValidationResult validationResult = addFileDtoValidator.Validate(file);
+        ValidationUtilities.ThrowIfInvalid(validationResult);
+        
         var converted = new File()
         {
             Title = file.Title,
@@ -26,10 +38,13 @@ public class FileService(IFilePort filePort): IFileService
         return dto;
     }
 
-    public GetFileDto? GetFile(string fileId, string userId)
+    public GetFileDto? GetFile(GetFileOrAccessInputDto dto)
     {
-        var file = filePort.GetFile(fileId);
-        var accessObject = filePort.GetUserFileAccess(userId, fileId);
+        ValidationResult validationResult = getFileOrAccessInputDtoValidator.Validate(dto);
+        ValidationUtilities.ThrowIfInvalid(validationResult);
+        
+        var file = filePort.GetFile(dto.FileId);
+        var accessObject = filePort.GetUserFileAccess(dto.UserId, dto.FileId);
         
         if (file == null || accessObject == null) return null;
 
@@ -57,6 +72,9 @@ public class FileService(IFilePort filePort): IFileService
 
     public bool UpdateFile(FileDto file)
     {
+        ValidationResult validationResult = fileDtoValidator.Validate(file);
+        ValidationUtilities.ThrowIfInvalid(validationResult);
+        
         var converted = new File()
         {
             Id = file.Id,
@@ -70,6 +88,9 @@ public class FileService(IFilePort filePort): IFileService
 
     public void AddUserFileAccess(AddOrGetUserFileAccessDto userFileAccess)
     {
+        ValidationResult validationResult = addOrGetUserFileAccessDtoValidator.Validate(userFileAccess);
+        ValidationUtilities.ThrowIfInvalid(validationResult);
+        
         var converted = new UserFileAccess()
         {
             UserId = userFileAccess.UserId,
@@ -80,9 +101,12 @@ public class FileService(IFilePort filePort): IFileService
         filePort.AddUserFileAccess(converted);
     }
 
-    public AddOrGetUserFileAccessDto? GetUserFileAccess(string userId, string fileId)
+    public AddOrGetUserFileAccessDto? GetUserFileAccess(GetFileOrAccessInputDto dto)
     {
-        var res = filePort.GetUserFileAccess(userId, fileId);
+        ValidationResult validationResult = getFileOrAccessInputDtoValidator.Validate(dto);
+        ValidationUtilities.ThrowIfInvalid(validationResult);
+        
+        var res = filePort.GetUserFileAccess(dto.UserId, dto.FileId);
         return res == null ? null : new AddOrGetUserFileAccessDto()
         {
             UserId = res.UserId,

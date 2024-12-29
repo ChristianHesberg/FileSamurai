@@ -1,5 +1,8 @@
+using application.dtos;
 using application.ports;
 using application.services;
+using application.validation;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using infrastructure;
 using infrastructure.adapters;
@@ -17,6 +20,11 @@ builder.Services.AddScoped<IFilePort, FileAdapter>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IGroupPort, GroupAdapter>();
 builder.Services.AddScoped<IGroupService, GroupService>();
+
+builder.Services.AddScoped<IValidator<AddFileDto>, AddFileDtoValidator>();
+builder.Services.AddScoped<IValidator<GetFileOrAccessInputDto>, GetFileOrAccessInputDtoValidator>();
+builder.Services.AddScoped<IValidator<FileDto>, FileDtoValidator>();
+builder.Services.AddScoped<IValidator<AddOrGetUserFileAccessDto>, AddOrGetUserFileAccessDtoValidator>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>  
 {  

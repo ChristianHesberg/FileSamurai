@@ -1,0 +1,21 @@
+﻿using application.dtos;
+using core.models;
+using FluentValidation;
+
+namespace application.validation;
+
+public class AddOrGetUserFileAccessDtoValidator : AbstractValidator<AddOrGetUserFileAccessDto>
+{
+    public AddOrGetUserFileAccessDtoValidator()
+    {
+        RuleFor(x => x.EncryptedFileKey).NotEmpty();
+        RuleFor(x => x.Role).NotEmpty();
+        RuleFor(x => x.Role).MaximumLength(30);
+        //Todo decide if we should make role an enum
+        //RuleFor(x => x.Role).IsInEnum();
+        RuleFor(x => x.UserId).NotEmpty();
+        RuleFor(x => x.UserId).MaximumLength(36);
+        RuleFor(x => x.FileId).NotEmpty();
+        RuleFor(x => x.FileId).MaximumLength(36);
+    }
+}
