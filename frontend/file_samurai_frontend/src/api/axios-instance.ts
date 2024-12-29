@@ -1,5 +1,10 @@
 import axios, {AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
 import {API_BASE_URL} from "../constants";
+import {NotFoundError} from "../errors/not-found.error";
+import {ForbiddenError} from "../errors/forbidden.error";
+import {UnauthorizedError} from "../errors/unauthorized.error";
+import {InternalServerError} from "../errors/internal-server.error";
+import {HttpError} from "../errors/http.error";
 
 const axiosInstance: AxiosInstance = axios.create({
     baseURL: API_BASE_URL,
@@ -26,11 +31,9 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     (error: AxiosError) => {
-        // Extract relevant information from the error
         const status = error.response?.status;
         const data = error.response?.data;
 
-        // Log the error with relevant details
         console.error(`HTTP Request failed with status ${status}: ${error.message}`, {
             url: error.config?.url,
             method: error.config?.method,
@@ -38,20 +41,36 @@ axiosInstance.interceptors.response.use(
             data: error.config?.data,
             response: data,
         });
-        /*
-        // Optionally, you can customize the error handling based on status codes or other criteria
-        if (status === 404) {
-            console.error('Resource not found.');
-        } else if (status === 500) {
-            console.error('Internal server error.');
-        } else {
-            console.error('An unexpected error occurred.');
-        }*/
 
-        return Promise.reject();
+        switch (status) {
+            case 401:{
+                const error = new UnauthorizedError();
+                return rejectError(error);
+            }
+            case 403:{
+                const error = new ForbiddenError();
+                return rejectError(error);
+            }
+            case 404:{
+                const error = new NotFoundError();
+                return rejectError(error);
+            }
+            case 500:{
+                const error = new InternalServerError();
+                return rejectError(error);
+            }
+            default:{
+                const error = new HttpError('An unexpected error occurred', status);
+                return rejectError(error);
+            }
+        }
     }
 );
 
+function rejectError(error: HttpError): Promise<never> {
+    console.log(error.message);
+    return Promise.reject(error);
+}
 
 function getJwtToken(): string | null {
     return null;
