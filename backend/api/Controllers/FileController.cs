@@ -1,4 +1,5 @@
 ﻿using application.dtos;
+using application.errors;
 using application.services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,7 +12,12 @@ public class FileController(IFileService fileService): ControllerBase
     [HttpGet]
     public ActionResult<GetFileDto> GetFile([FromQuery] string fileId, [FromQuery] string userId)
     {
-        var result = fileService.GetFile(fileId, userId);
+        var dto = new GetFileOrAccessInputDto()
+        {
+            UserId = userId,
+            FileId = fileId
+        };
+        var result = fileService.GetFile(dto);
         return result == null ? NotFound() : Ok(result);
     }
 
@@ -32,7 +38,12 @@ public class FileController(IFileService fileService): ControllerBase
     [HttpGet("access")]
     public ActionResult<AddOrGetUserFileAccessDto> GetUserFileAccess([FromQuery] string userId, [FromQuery] string fileId)
     {
-        var result = fileService.GetUserFileAccess(userId, fileId);
+        var dto = new GetFileOrAccessInputDto()
+        {
+            UserId = userId,
+            FileId = fileId
+        };
+        var result = fileService.GetUserFileAccess(dto);
         return result == null ? NotFound() : Ok(result);
     }
 

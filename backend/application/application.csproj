@@ -11,7 +11,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="validation\" />
+      <PackageReference Include="FluentValidation" Version="11.11.0" />
+      <PackageReference Include="HtmlSanitizer" Version="8.1.870" />
     </ItemGroup>
 
 </Project>
