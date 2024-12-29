@@ -1,3 +1,4 @@
+using api.Middleware;
 using application.dtos;
 using application.ports;
 using application.services;
@@ -45,6 +46,8 @@ builder.Services.AddCors(options =>
 });  
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>(); 
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

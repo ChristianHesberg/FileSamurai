@@ -24,15 +24,8 @@ public class FileController(IFileService fileService): ControllerBase
     [HttpPost]
     public ActionResult<PostFileResultDto> PostFile(AddFileDto file)
     {
-        try
-        {
-            var res = fileService.AddFile(file);
-            return Ok(res);
-        }
-        catch (CustomValidationException e)
-        {
-            return BadRequest(e.ValidationErrors);
-        }
+        var res = fileService.AddFile(file);
+        return Ok(res);
     }
 
     [HttpPut]

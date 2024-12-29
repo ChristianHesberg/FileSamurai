@@ -18,10 +18,9 @@ public class CustomValidationException : Exception
     }  
   
     public CustomValidationException(IList<string> validationErrors)  
-        : base("Validation failed with errors: ")  
-    {  
-        ValidationErrors = validationErrors;  
+        : base("Validation failed with errors: ")
+    {
+        ValidationErrors = validationErrors;
     }  
-    
  
 }  
