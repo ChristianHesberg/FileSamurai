@@ -12,8 +12,9 @@ export class UserService {
         return response.data;
     }
 
-    async registerUser(email: string) {
-        const response = await axiosInstance.post<User>(`user/createUser`, {email: email})
+    async registerUser(email: string, password: string) {
+        const body = {email: email, password: password}
+        const response = await axiosInstance.post<User>(`user/createUser`, body)
     }
 }
 

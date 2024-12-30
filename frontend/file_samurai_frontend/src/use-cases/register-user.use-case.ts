@@ -5,6 +5,6 @@ export class RegisterUserUseCase {
     }
 
     async execute(email:string,password:string){
-        return await this.userService.registerUser(email)
+        return await this.userService.registerUser(email,password)
     }
 }

@@ -11,7 +11,8 @@ public class UserService(IUserPort userPort) : IUserService
     {
         var salt = PasswordHasher.GenerateSalt();
         var hashedPW = PasswordHasher.HashPassword(user.Password, salt);
-        //todo hashpassword
+        //todo set salt and PW in the saved user.
+        //WHY THE FUCK CAN I NOT ADD NEW PROPS TO USER!?!?
         var converted = new User()
         {
             Email = user.Email
