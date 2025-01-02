@@ -20,12 +20,12 @@ public class GroupController(IGroupService groupService) : ControllerBase
             return Unauthorized("Authorization header is missing");
         }
 
-        var email =  JwtDecoder.DecodeJwtEmail(authHeader.ToString());
-       
+        var email = JwtDecoder.DecodeJwtEmail(authHeader.ToString());
+
         var res = groupService.AddGroup(group, email);
         return Ok(res);
     }
-    
+
     [HttpGet("{id}")]
     [Authorize]
     public ActionResult<GroupDto> GetGroup(string id)
@@ -34,13 +34,21 @@ public class GroupController(IGroupService groupService) : ControllerBase
         return group == null ? NotFound() : Ok(group);
     }
 
-    [HttpPost("addUser")] 
-    [Authorize (Policy = "GroupAddUser") ]
+    [HttpPost("addUser")]
+    [Authorize(Policy = "GroupAddUser")]
     public ActionResult<bool> AddUserToGroup(AddUserToGroupDto dto)
     {
         var res = groupService.AddUserToGroup(dto);
         return Ok(res);
     }
 
-    
+    //todo missing auth
+    [HttpGet("groupsForEmail")]
+    public ActionResult<List<GroupDto>> GetGroupsForEmail()
+    {
+        var auth = Request.Headers.Authorization;
+        var email = JwtDecoder.DecodeJwtEmail(auth.ToString());
+
+        return Ok(groupService.GetGroupsForEmail(email));
+    }
 }

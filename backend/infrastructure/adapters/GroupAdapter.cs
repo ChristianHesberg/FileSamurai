@@ -28,4 +28,9 @@ public class GroupAdapter(Context context) : IGroupPort
         context.SaveChanges();
         return true;
     }
+
+    public List<Group> GetGroupsForEmail(string email)
+    {
+        return context.Groups.Where(x => x.CreatorEmail == email).ToList();
+    }
 }

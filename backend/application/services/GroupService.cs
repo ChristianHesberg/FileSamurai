@@ -38,4 +38,10 @@ public class GroupService(IGroupPort groupPort) : IGroupService
     {
         return groupPort.AddUserToGroup(toGroupDto.UserEmail, toGroupDto.GroupId);
     }
+
+    public List<GroupDto> GetGroupsForEmail(string email)
+    {
+        var groups = groupPort.GetGroupsForEmail(email);
+        return groups.Select(g => new GroupDto() { Name = g.Name, GroupEmail = g.CreatorEmail, Id = g.Id }).ToList();
+    }
 }
