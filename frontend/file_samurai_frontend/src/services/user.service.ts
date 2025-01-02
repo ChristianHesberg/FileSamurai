@@ -13,7 +13,7 @@ export class UserService {
     }
 
     async registerUser(email: string, password: string) {
-        const body = {email: email, password: password}
+        const body = {email: email, Password: password}
         const response = await axiosInstance.post<User>(`user/createUser`, body)
     }
 }

@@ -1,4 +1,5 @@
-﻿using application.dtos;
+﻿using System.Text.Json;
+using application.dtos;
 using application.ports;
 using application.transformers;
 using core.models;
@@ -10,12 +11,14 @@ public class UserService(IUserPort userPort) : IUserService
     public UserDto AddUser(UserCreationDto user)
     {
         var salt = PasswordHasher.GenerateSalt();
+        Console.WriteLine(JsonSerializer.Serialize(user));
         var hashedPW = PasswordHasher.HashPassword(user.Password, salt);
-        //todo set salt and PW in the saved user.
-        //WHY THE FUCK CAN I NOT ADD NEW PROPS TO USER!?!?
+
         var converted = new User()
         {
-            Email = user.Email
+            Email = user.Email,
+            HashedPassword = hashedPW,
+            Salt = salt
         };
         var res = userPort.AddUser(converted);
         return new UserDto()
@@ -64,5 +67,11 @@ public class UserService(IUserPort userPort) : IUserService
         }
 
         return list;
+    }
+
+    public bool ValidatePassword(string password, string email)
+    {
+        //PasswordHasher.VerifyPassword(password, email);
+        throw new NotImplementedException();
     }
 }

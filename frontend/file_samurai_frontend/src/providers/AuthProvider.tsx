@@ -47,16 +47,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
     const login = async (credentialResponse: CredentialResponse): Promise<User> => {
         const decoded: GoogleUser = jwtDecode(credentialResponse.credential!);
         //get user
-        const useCase = GetUserByEmailUseCaseFactory.create()
+        const useCase = GetUserByEmailUseCaseFactory.create();
         //if exists -> return
         // if not exists -> return null
 
-       // const useCase = GetUserByEmailOrRegisterUseCaseFactory.create();
-        setUser(decoded);
+        // const useCase = GetUserByEmailOrRegisterUseCaseFactory.create();
         localStorage.setItem('user', JSON.stringify(decoded));
+        setUser(decoded);
         const user = await useCase.execute(decoded.email);
-        decoded.userId = user.id;
 
+        decoded.userId = user.id;
 
         return user
     };

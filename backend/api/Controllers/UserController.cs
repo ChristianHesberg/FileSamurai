@@ -44,4 +44,11 @@ public class UserController(IUserService userService) : ControllerBase
         var userDto = userService.AddUser(creationDto);
         return Ok(userDto);
     }
+
+    [HttpGet("validatePassword")]
+    public ActionResult<bool> ValidatePassword(string password)
+    {
+        var result = userService.ValidatePassword(password, "fillermail");
+        throw new NotImplementedException();
+    }
 }

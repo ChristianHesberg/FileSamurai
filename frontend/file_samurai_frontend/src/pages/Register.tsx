@@ -35,7 +35,7 @@ export function Register() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!error && password && confirmPassword) {
-            registerUserUseCase.execute(user!.email, password).then(r => console.log("registered!"))
+            registerUserUseCase.execute(user!.email, password).then(r => console.log("registered!")).catch(()=> console.log("failed register"))
         }
     };
 

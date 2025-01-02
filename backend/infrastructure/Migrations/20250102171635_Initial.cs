@@ -26,7 +26,10 @@ namespace infrastructure.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
+                    Email = table.Column<string>(type: "TEXT", nullable: false),
+                    HashedPassword = table.Column<string>(type: "TEXT", nullable: false),
+                    Salt = table.Column<byte[]>(type: "BLOB", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -39,6 +42,8 @@ namespace infrastructure.Migrations
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     FileContents = table.Column<string>(type: "TEXT", nullable: false),
+                    Nonce = table.Column<string>(type: "TEXT", nullable: false),
+                    Tag = table.Column<string>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     GroupId = table.Column<string>(type: "TEXT", nullable: false)
                 },
@@ -151,6 +156,12 @@ namespace infrastructure.Migrations
                 name: "IX_UserRsaKeyPairs_UserId",
                 table: "UserRsaKeyPairs",
                 column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
                 unique: true);
         }
 
