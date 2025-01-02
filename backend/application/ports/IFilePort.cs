@@ -1,5 +1,6 @@
 ﻿using core.models;
 using File = core.models.File;
+using Group = core.models.Group;
 
 namespace application.ports;
 
@@ -10,4 +11,5 @@ public interface IFilePort
     public bool UpdateFile(File file);
     public void AddUserFileAccess(UserFileAccess userFileAccess);
     public UserFileAccess? GetUserFileAccess(string userId, string fileId);
+    public Group? GetFileGroup(string fileId);
 }

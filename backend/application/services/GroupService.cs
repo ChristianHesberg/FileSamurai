@@ -6,11 +6,12 @@ namespace application.services;
 
 public class GroupService(IGroupPort groupPort) : IGroupService
 {
-    public GroupDto AddGroup(GroupCreationDto group)
+    public GroupDto AddGroup(GroupCreationDto group, string email)
     {
         var converted = new Group()
         {
-            Name = group.Name
+            Name = group.Name,
+            CreatorEmail = email
         };
         var res = groupPort.AddGroup(converted);
         return new GroupDto()
@@ -28,7 +29,8 @@ public class GroupService(IGroupPort groupPort) : IGroupService
             : new GroupDto()
             {
                 Id = group.Id,
-                Name = group.Name
+                Name = group.Name,
+                GroupEmail = group.CreatorEmail
             };
     }
 

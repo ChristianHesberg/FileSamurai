@@ -11,4 +11,5 @@ public interface IFileService
     public bool UpdateFile(FileDto orGetFile);
     public void AddUserFileAccess(AddOrGetUserFileAccessDto orGetUserFileAccess);
     public AddOrGetUserFileAccessDto? GetUserFileAccess(GetFileOrAccessInputDto dto);
+    public GroupDto? GetFileGroup(string fileId);
 }

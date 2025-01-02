@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace core.models;
@@ -16,4 +16,5 @@ public class UserFileAccess
     public File File { get; set; }
     [ForeignKey("File")]
     public string FileId { get; set; }
+
 }
