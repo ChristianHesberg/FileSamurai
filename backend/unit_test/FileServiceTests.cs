@@ -27,6 +27,7 @@ public class FileServiceTests
         getFileOrAccessInputDtoValidator = new Mock<IValidator<GetFileOrAccessInputDto>>();
         getFileOrAccessInputDtoValidator.Setup(v => v.Validate(It.IsAny<GetFileOrAccessInputDto>())).Returns(validationResult);  
         fileDtoValidator = new Mock<IValidator<FileDto>>();
+        fileDtoValidator.Setup(v => v.Validate(It.IsAny<FileDto>())).Returns(validationResult);  
         addOrGetUserFileAccessDtoValidator = new Mock<IValidator<AddOrGetUserFileAccessDto>>();
         fileService = new FileService(
             fileRepo.Object,
@@ -350,5 +351,90 @@ public class FileServiceTests
             fileId => fileId == inputDto.FileId
         )), Times.Once);  
     }
+    #endregion
+
+    #region UpdateFile
+
+    [Fact]
+     public void UpdateFile_ThrowsValidationException()
+    {
+        //Arrange
+        var dto = new FileDto()
+        {
+            Title = "title"
+        };
+        var validationFailures = new List<ValidationFailure>  
+        {  
+            new ValidationFailure(dto.Title, "Title is required.")  
+        };  
+        var validationResult = new ValidationResult(validationFailures);  
+  
+        fileDtoValidator.Setup(v => v.Validate(It.IsAny<FileDto>())).Returns(validationResult);  
+        
+        // Act
+        Action act = () => fileService.UpdateFile(dto);
+
+        // Assert
+        Assert.Throws<CustomValidationException>(act);
+        fileDtoValidator.Verify(v => v.Validate(dto), Times.Once);
+    }
+    
+    [Fact]
+    public void UpdateFile_ReturnsTrue()
+    {
+        //Arrange
+        var inputDto = new FileDto()
+        {
+            FileContents = "FileContents",
+            Nonce = "Nonce",
+            Title = "Title",
+            Tag = "Tag"
+        };
+        
+        fileRepo.Setup(repo => repo.UpdateFile(It.IsAny<File>())).Returns(true);
+        
+        //Act
+        var res = fileService.UpdateFile(inputDto);
+        
+        //Assert
+        Assert.Equivalent(res, true);
+    }
+    
+    [Fact]
+    public void UpdateFile_CallsRepoWithCorrectParameters()
+    {
+        //Arrange
+        var inputDto = new FileDto()
+        {
+            Id = "Id",
+            FileContents = "FileContents",
+            Nonce = "Nonce",
+            Title = "Title",
+            Tag = "Tag"
+        };
+        var convertedFile = new File()
+        {
+            Id = "Id",
+            FileContents = "FileContents",
+            Nonce = "Nonce",
+            Title = "Title",
+            Tag = "Tag"
+        };
+
+        fileRepo.Setup(repo => repo.UpdateFile(It.IsAny<File>())).Returns(true);
+        
+        //Act
+        fileService.UpdateFile(inputDto);
+        
+        //Assert
+        fileRepo.Verify(repo => repo.UpdateFile(It.Is<File>(
+            f => f.FileContents == convertedFile.FileContents 
+                 && f.Title == convertedFile.Title
+                 && f.Id == convertedFile.Id
+                 && f.Nonce == convertedFile.Nonce
+                 && f.Tag == convertedFile.Tag
+            )), Times.Once);  
+    }
+
     #endregion
 }
