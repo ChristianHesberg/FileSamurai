@@ -1,30 +1,28 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
+using application.dtos;
+using application.services;
 using infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Policies;
 
-public class DocumentChangeHandler(Context context, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentChangeRequirement>
+public class DocumentChangeHandler(IUserService userService,IFileService fileService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentChangeRequirement>
 {
     protected override async Task HandleRequirementAsync(
-        AuthorizationHandlerContext context1,
+        AuthorizationHandlerContext authorizationHandlerContext,
         DocumentChangeRequirement requirement)
     {
         var request = contextAccessor.HttpContext?.Request;
         request?.EnableBuffering();
     
-        var email = context1.User.FindFirst(ClaimTypes.Email)?.Value;
-        Console.WriteLine(email);
+        var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
+        if (email == null) return; 
         
-        if (email == null)
-        {
-            return; 
-        }
-        var userId = context.Users.FirstOrDefault(user => user.Email == email).Id;
-
-        if (userId == null) return;
+        
+        var user = userService.GetUserByEmail(email);
+        if (user == null) return;
         
         
         
@@ -51,18 +49,22 @@ public class DocumentChangeHandler(Context context, IHttpContextAccessor context
         
         
         //CHECKS if user has editor role for file
-        var userAccess = context.UserFileAccesses.FirstOrDefault(db =>
-            db.User.Id == userId && db.File.Id == fileIdFromBody);
-
-        //TODO REMOVE HARDCODED editor
-        if (userAccess?.Role == "editor")
+        GetFileOrAccessInputDto retrieveFile = new GetFileOrAccessInputDto()
         {
-            context1.Succeed(requirement); 
+            FileId = fileIdFromBody,
+            UserId = user.Id
+        }; 
+        
+        var file =  fileService.GetFile(retrieveFile);
+        if (file == null) return;
+        
+        
+        //TODO REMOVE HARDCODED editor
+        if (file?.UserFileAccess.Role == "editor")
+        {
+            authorizationHandlerContext.Succeed(requirement); 
             request.Body.Position = 0;
 
         }
-     
-        // Deny access if neither condition is met
-        return;
     }
 }

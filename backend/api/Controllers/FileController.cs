@@ -25,7 +25,7 @@ public class FileController(IFileService fileService): ControllerBase
     }
     
 
-    [HttpPut]
+    [HttpPost]
     [Authorize(Policy = "DocumentChange")]
     public ActionResult<PostFileResultDto> PostFile(AddFileDto file)
     {

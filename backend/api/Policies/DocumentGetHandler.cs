@@ -1,70 +1,56 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
+using application.dtos;
+using application.services;
 using infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Policies;
 
-public class DocumentGetHandler(Context context, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentGetRequirement>
+public class DocumentGetHandler(IUserService userService,IFileService fileService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentGetRequirement>
 {
     protected override async Task HandleRequirementAsync(
-        AuthorizationHandlerContext context1,
+        AuthorizationHandlerContext authorizationHandlerContext,
         DocumentGetRequirement requirement)
     {
-        Console.WriteLine("starting getting file policy");
         var request = contextAccessor.HttpContext.Request;
-        request.EnableBuffering();
         
-        var email = context1.User.FindFirst(ClaimTypes.Email)?.Value;
-        Console.WriteLine(email);
-
+        var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
+        if (email == null) return; 
         
-        if (email == null)
-        {
-            return; 
-        }
-        var user = context.Users.Include(u => u.Groups).FirstOrDefault(user => user.Email == email);
-        Console.WriteLine(user);
-
+        var user = userService.GetUserByEmail(email);
         if (user == null) return;
-        
-        var userId = user.Id;
-        Console.WriteLine(userId);
 
         // Extract fileId from the Query
-        var fileIdFromQuery = request.Query["fileId"].ToString();
-        if (string.IsNullOrEmpty(fileIdFromQuery))
-        {
-            return;
-        }
-
+        var fileId = request.Query["fileId"].ToString();
+        if (string.IsNullOrEmpty(fileId))return;
+        
         
         //CHECK IF USER IS IN TABLE FOR DOCUMENT ACCESS
-        var file = await context.Files.FindAsync(fileIdFromQuery);
+        GetFileOrAccessInputDto retrieveFile = new GetFileOrAccessInputDto()
+        {
+            FileId = fileId,
+            UserId = user.Id
+        }; 
         
+        //if file is meaning either file or fileaccess was null and therefor no allowed to view file
+        var file =  fileService.GetFile(retrieveFile);
         if (file == null) return;
         
-
         
-        var hasAccess = await context.UserFileAccesses.AnyAsync(db =>
-            db.User.Id == userId && db.File.Id == fileIdFromQuery);
-
+        // GET User Groups and File group
+        var userGroup = userService.GetGroupsForUser(user.Id);
+        if (userGroup == null) return;
+        
+        var fileGroup = fileService.GetFileGroup(file.File.Id);
+        if (fileGroup == null)return;
         
         //CHECK USERS IS IN the same GROUP AS THE DOCUMENT
-
-        bool userFileGroup = user.Groups.Contains(file.Group);
-
-        Console.WriteLine(hasAccess);
-        Console.WriteLine(userFileGroup);
-        if (hasAccess && userFileGroup)
+        if (userGroup.Contains(fileGroup))
         {
-            Console.WriteLine("passed");
-            context1.Succeed(requirement);
+            authorizationHandlerContext.Succeed(requirement);
             request.Body.Position = 0;
         }            
-        
-        // Deny access if neither condition is met
-        return;
     }
 }

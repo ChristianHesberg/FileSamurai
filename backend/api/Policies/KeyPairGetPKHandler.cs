@@ -1,41 +1,32 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
+using application.services;
 using infrastructure;
 using Microsoft.AspNetCore.Authorization;
 
 namespace api.Policies;
 
-public class KeyPairGetPKHandler(Context context, IHttpContextAccessor contextAccessor) : AuthorizationHandler<KeyPairGetPKRequirement>
+public class KeyPairGetPKHandler(IUserService userService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<KeyPairGetPKRequirement>
 {
     
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context1, KeyPairGetPKRequirement requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext authorizationHandlerContext, KeyPairGetPKRequirement requirement)
     {
         var request = contextAccessor.HttpContext?.Request;
-        request?.EnableBuffering();
-    
         
-        var email = context1.User.FindFirst(ClaimTypes.Email)?.Value;
-        Console.WriteLine(email);
+        var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
         
        
-        var userId = context.Users.FirstOrDefault(user => user.Email == email).Id;
+        var user = userService.GetUserByEmail(email);
         
-        // Grabs the userid in which the user wants to retreive PK From
+        // Grabs the userid in which the user wants to retrieve PK From
          var userIdFromRoute = request.RouteValues["id"]?.ToString();
-        if (string.IsNullOrEmpty(userIdFromRoute))
-        {
-            return;
-        }
+        if (string.IsNullOrEmpty(userIdFromRoute)) return;
+        
 
         //ensure user only Grabs their own PK 
-        if (userId == userIdFromRoute)
+        if (user.Id == userIdFromRoute)
         {
-            context1.Succeed(requirement); 
-            request!.Body.Position = 0;
+            authorizationHandlerContext.Succeed(requirement); 
         }
-        
-        return;
-        
-        
     }
 }

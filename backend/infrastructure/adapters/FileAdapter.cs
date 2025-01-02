@@ -1,6 +1,8 @@
 ﻿using application.ports;
 using core.models;
+using Microsoft.EntityFrameworkCore;
 using File = core.models.File;
+using Group = core.models.Group;
 
 namespace infrastructure.adapters;
 
@@ -37,5 +39,10 @@ public class FileAdapter(Context context) : IFilePort
     public UserFileAccess? GetUserFileAccess(string userId, string fileId)
     {
         return context.UserFileAccesses.FirstOrDefault(f => f.FileId == fileId && f.UserId == userId);
+    }
+
+    public Group? GetFileGroup(string fileId)
+    {
+        return context.Files.Include(e=> e.Group).FirstOrDefault(e => e.Id == fileId)?.Group;
     }
 }

@@ -1,27 +1,28 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 using System.Text.Json;
+using application.services;
 using infrastructure;
 using Microsoft.AspNetCore.Authorization;
 
 namespace api.Policies;
 
-public class KeyPairPostHandler(Context context, IHttpContextAccessor contextAccessor) : AuthorizationHandler<KeyPairPostRequirement>
+public class KeyPairPostHandler(IUserService userService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<KeyPairPostRequirement>
 {
     
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context1, KeyPairPostRequirement requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext authorizationHandlerContext, KeyPairPostRequirement requirement)
     {
         var request = contextAccessor.HttpContext?.Request;
         request?.EnableBuffering();
-    
         
-        var email = context1.User.FindFirst(ClaimTypes.Email)?.Value;
-        Console.WriteLine(email);
+        var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
+        if (email == null) return;
+
+        var user = userService.GetUserByEmail(email);
+        if (user == null) return;
         
-       
-        var userId = context.Users.FirstOrDefault(user => user.Email == email).Id;
-        
-        // Extract fileId from the body (JSON data)
-        string userIdFromBody = null;
+        // Extract userid from the body
+        string userIdFromBody = "";
         try
         {
             // Read the body and deserialize it into a dictionary (or model)
@@ -37,16 +38,14 @@ public class KeyPairPostHandler(Context context, IHttpContextAccessor contextAcc
         catch (Exception ex)
         {
             Console.WriteLine("Error reading body: " + ex.Message);
+            
         }
 
-        if (userId == userIdFromBody)
+        if (user.Id == userIdFromBody)
         {
-            context1.Succeed(requirement); 
+            authorizationHandlerContext.Succeed(requirement); 
             request!.Body.Position = 0;
         }
-        
-        return;
-        
         
     }
 }

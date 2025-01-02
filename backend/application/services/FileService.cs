@@ -5,6 +5,7 @@ using core.models;
 using FluentValidation;
 using FluentValidation.Results;
 using File = core.models.File;
+using Group = core.models.Group;
 
 namespace application.services;
 
@@ -70,6 +71,7 @@ public class FileService(
         };
     }
 
+ 
     public bool UpdateFile(FileDto file)
     {
         ValidationResult validationResult = fileDtoValidator.Validate(file);
@@ -114,5 +116,17 @@ public class FileService(
             EncryptedFileKey = res.EncryptedFileKey,
             Role = res.Role
         };
+    }
+    public GroupDto? GetFileGroup(string fileId)
+    {
+        var res = filePort.GetFileGroup(fileId);
+
+        return res == null
+            ? null
+            : new GroupDto()
+            {
+                Id = res.Id,
+                Name = res.Name
+            };
     }
 }

@@ -1,30 +1,29 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 using System.Text.Json;
+using AngleSharp.Io.Dom;
+using application.dtos;
+using application.services;
 using core.models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using infrastructure;
+
 
 namespace api.Policies;
 
-public class DocumentAccessHandler(Context context, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentAccessRequirement>
+public class DocumentAccessHandler(IUserService userService, IFileService fileService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentAccessRequirement>
 {
     protected override async Task HandleRequirementAsync(
-        AuthorizationHandlerContext context1,
+        AuthorizationHandlerContext authorizationHandlerContext,
         DocumentAccessRequirement requirement)
     {
         var request = contextAccessor.HttpContext.Request;
         request.EnableBuffering();
         
-        var email = context1.User.FindFirst(ClaimTypes.Email)?.Value;
-        Console.WriteLine(email);
-
+        var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
         
-        if (email == null)
-        {
-            return; 
-        }
-        var user = context.Users.Include(u => u.Groups).FirstOrDefault(user => user.Email == email);
+        if (email == null) return; 
+        
+        var user = userService.GetUserByEmail(email);
 
         if (user == null) return;
         
@@ -50,32 +49,29 @@ public class DocumentAccessHandler(Context context, IHttpContextAccessor context
         }
         Console.WriteLine("FileId from body: " + fileIdFromBody);
 
-        
-        //CHECK IF USER IS IN TABLE FOR DOCUMENT ACCESS
-        var file = await context.Files.FindAsync(fileIdFromBody);
-        
-        if (file == null) return;
-        
-
-        
-        var hasAccess = await context.UserFileAccesses.AnyAsync(db =>
-            db.User.Id == userId && db.File.Id == fileIdFromBody);
-
-        
-        //CHECK USERS IS IN the same GROUP AS THE DOCUMENT
-
-        bool userFileGroup = user.Groups.Contains(file.Group);
-
-        Console.WriteLine(hasAccess);
-        Console.WriteLine(userFileGroup);
-        if (hasAccess && userFileGroup)
+        //Retrieve the file + fileaccess for the user, if file or fileaccess is null user dont have access!  
+        GetFileOrAccessInputDto retrieveFile = new GetFileOrAccessInputDto()
         {
-            Console.WriteLine("passed");
-            context1.Succeed(requirement);
+            FileId = fileIdFromBody,
+            UserId = userId
+        }; 
+        
+        var file =  fileService.GetFile(retrieveFile);
+        if (file == null) return;
+
+        // GET User Groups and File group
+        var userGroup = userService.GetGroupsForUser(userId);
+        if (userGroup == null) return;
+        
+        var fileGroup = fileService.GetFileGroup(file.File.Id);
+        if (fileGroup == null)return;
+        
+        //CHECK USERS IS IN the same GROUP AS THE DOCUMENT && is an editor
+        if (userGroup.Contains(fileGroup) && file.UserFileAccess.Role == "Editor")
+        {
+            authorizationHandlerContext.Succeed(requirement);
             request.Body.Position = 0;
         }            
-        
-        // Deny access if neither condition is met
-        return;
+    
     }
 }
