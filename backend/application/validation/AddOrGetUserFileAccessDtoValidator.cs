@@ -13,9 +13,7 @@ public class AddOrGetUserFileAccessDtoValidator : AbstractValidator<AddOrGetUser
         RuleFor(x => x.Role).MaximumLength(30);
         //Todo decide if we should make role an enum
         //RuleFor(x => x.Role).IsInEnum();
-        RuleFor(x => x.UserId).NotEmpty();
-        RuleFor(x => x.UserId).MaximumLength(36);
-        RuleFor(x => x.FileId).NotEmpty();
-        RuleFor(x => x.FileId).MaximumLength(36);
+        RuleFor(x => x.UserId).MustBeValidGuid();
+        RuleFor(x => x.FileId).MustBeValidGuid();
     }
 }

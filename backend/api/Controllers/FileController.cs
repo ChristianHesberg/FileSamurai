@@ -1,5 +1,4 @@
 ﻿using application.dtos;
-using application.errors;
 using application.services;
 using Microsoft.AspNetCore.Mvc;
 

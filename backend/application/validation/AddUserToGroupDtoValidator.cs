@@ -9,7 +9,6 @@ public class AddUserToGroupDtoValidator : AbstractValidator<AddUserToGroupDto>
     {
         RuleFor(x => x.UserEmail).EmailAddress();
         RuleFor(x => x.UserEmail).MaximumLength(40);
-        RuleFor(x => x.GroupId).NotEmpty();
-        RuleFor(x => x.GroupId).MaximumLength(36);
+        RuleFor(x => x.GroupId).MustBeValidGuid();
     }
 }
