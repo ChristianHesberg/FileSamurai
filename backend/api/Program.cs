@@ -90,6 +90,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthorizationHandler, DocumentAccessHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, DocumentChangeHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, DocumentGetHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, DocumentAddHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, KeyPairPostHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, KeyPairGetPKHandler>();
 
@@ -100,6 +101,10 @@ builder.Services.AddAuthorizationBuilder()
     policy.Requirements.Add(new DocumentChangeRequirement()))
     .AddPolicy("DocumentGet", policy =>
         policy.Requirements.Add(new DocumentGetRequirement()))
+    .AddPolicy("DocumentAdd", policy =>
+        policy.Requirements.Add(new DocumentAddRequirement()))
+    .AddPolicy("DocumentGetUserFileAccess", policy =>
+        policy.Requirements.Add(new DocumentGetUserFileAccessRequirement()))
     .AddPolicy("PostRSAKeyPair", policy =>
         policy.Requirements.Add(new KeyPairPostRequirement()))
     .AddPolicy("GetUserPK", policy =>

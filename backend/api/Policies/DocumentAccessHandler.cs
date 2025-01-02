@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 using System.Text.Json;
-using AngleSharp.Io.Dom;
+
 using application.dtos;
 using application.services;
 using core.models;
@@ -38,9 +38,9 @@ public class DocumentAccessHandler(IUserService userService, IFileService fileSe
             var reader = new StreamReader(request.Body);
             var body = await reader.ReadToEndAsync();
             var jsonObject = JsonSerializer.Deserialize<Dictionary<string, string>>(body);
-            if (jsonObject?.ContainsKey("fileId") == true)
+            if (jsonObject?.TryGetValue("fileId", out var value) is true)
             {
-                fileIdFromBody = jsonObject["fileId"];
+                fileIdFromBody = value;
             }
         }
         catch (Exception ex)
