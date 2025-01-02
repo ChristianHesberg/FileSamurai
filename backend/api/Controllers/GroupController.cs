@@ -25,7 +25,8 @@ public class GroupController(IGroupService groupService) : ControllerBase
         return group == null ? NotFound() : Ok(group);
     }
 
-    [HttpPost("addUser")]
+    [HttpPost("addUser")] 
+    [Authorize]
     public ActionResult<bool> AddUserToGroup(AddUserToGroupDto dto)
     {
         var res = groupService.AddUserToGroup(dto);

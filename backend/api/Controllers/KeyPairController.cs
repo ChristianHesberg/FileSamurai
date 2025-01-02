@@ -10,7 +10,8 @@ namespace api.Controllers;
 [Route("[controller]")]
 public class KeyPairController(IUserKeyPairService userKeyPairService) : ControllerBase
 {
-    [HttpGet("private/{id}")]  
+    [HttpGet("private/{id}")]   
+    [Authorize(Policy = "GetUserPK")]
     public ActionResult<UserRsaPrivateKeyDto> GetPrivateKey(string id)  
     {  
         var userRsaKeyPair = userKeyPairService.GetUserPrivateKey(id);  
@@ -23,7 +24,7 @@ public class KeyPairController(IUserKeyPairService userKeyPairService) : Control
     }
     
     [HttpGet("public/{id}")]  
-    [Authorize]
+    [Authorize] 
     public ActionResult<string> GetPublicKey(string id)  
     {  
         var publicKey = userKeyPairService.GetUserPublicKey(id);  
@@ -36,7 +37,7 @@ public class KeyPairController(IUserKeyPairService userKeyPairService) : Control
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(Policy = "PostRSAKeyPair")]
     public ActionResult Post(UserRsaKeyPairDto keyPair)
     {
         userKeyPairService.AddUserRsaKeyPair(keyPair);

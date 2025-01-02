@@ -13,7 +13,6 @@ public class UserController(IUserService userService) : ControllerBase
     public ActionResult<string> PostUser(UserCreationDto user)
     {
         var res = userService.AddUser(user);
-        //TODO create jwt from res
         return Ok();
     }
     

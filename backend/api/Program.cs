@@ -79,12 +79,22 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IAuthorizationHandler, DocumentAccessHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, DocumentChangeHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, DocumentGetHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, KeyPairPostHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, KeyPairGetPKHandler>();
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("FileAccess", policy =>
         policy.Requirements.Add(new DocumentAccessRequirement()))
     .AddPolicy("DocumentChange", policy =>
-    policy.Requirements.Add(new DocumentChangeRequirement()));
+    policy.Requirements.Add(new DocumentChangeRequirement()))
+    .AddPolicy("DocumentGet", policy =>
+        policy.Requirements.Add(new DocumentGetRequirement()))
+    .AddPolicy("PostRSAKeyPair", policy =>
+        policy.Requirements.Add(new KeyPairPostRequirement()))
+    .AddPolicy("GetUserPK", policy =>
+    policy.Requirements.Add(new KeyPairGetPKRequirement()));
+
 
 var app = builder.Build();
 
