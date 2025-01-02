@@ -45,7 +45,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
     }, []);
 
     const login = async (credentialResponse: CredentialResponse): Promise<User> => {
-        const decoded: GoogleUser = jwtDecode(credentialResponse.credential!);
+        const credentials = credentialResponse.credential!
+        const decoded: GoogleUser = jwtDecode(credentials);
         //get user
         const useCase = GetUserByEmailUseCaseFactory.create();
         //if exists -> return
@@ -53,6 +54,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
 
         // const useCase = GetUserByEmailOrRegisterUseCaseFactory.create();
         localStorage.setItem('user', JSON.stringify(decoded));
+        localStorage.setItem("jwtToken", credentials)
         setUser(decoded);
         const user = await useCase.execute(decoded.email);
 
@@ -65,6 +67,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
         googleLogout();
         setUser(null);
         localStorage.removeItem('user');
+        localStorage.removeItem('jwtToken');
     };
 
     return (

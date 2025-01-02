@@ -71,7 +71,7 @@ public class UserService(IUserPort userPort) : IUserService
 
     public bool ValidatePassword(string password, string email)
     {
-        //PasswordHasher.VerifyPassword(password, email);
-        throw new NotImplementedException();
+        var user = userPort.GetUserByEmail(email);
+        return user != null && PasswordHasher.VerifyPassword(password, user.HashedPassword, user.Salt);
     }
 }

@@ -6,12 +6,15 @@ import Modal from "../components/Modal";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUnlock} from "@fortawesome/free-solid-svg-icons";
 import {NotFoundError} from "../errors/not-found.error";
+import {ValidatePasswordUseCaseFactory} from "../use-cases/factories/validate-password.use-case.factory";
 
 export function Login() {
     const navigate = useNavigate()
     const {login} = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false)
-
+    const [password, setPassword] = useState<string>("")
+    const [error, setError] = useState<string>("")
+    const validatePasswordUseCase = ValidatePasswordUseCaseFactory.create()
     const handleSuccess = async (credentialResponse: CredentialResponse) => {
         login(credentialResponse)
             .then((user) => {
@@ -19,32 +22,52 @@ export function Login() {
                 setIsModalOpen(true)
                 //navigate("/files")
             }).catch((error) => {
-            if (error instanceof NotFoundError){
+            if (error instanceof NotFoundError) {
                 navigate("/register")
             }
         })
     }
 
-
     const closeModal = () => {
         setIsModalOpen(false)
     };
+
+    function handlePasswordSubmit(event: React.FormEvent) {
+        event.preventDefault();
+        if (password.length == 0) return
+        validatePasswordUseCase.execute(password)
+            .then((res) => navigate("/files"))
+            .catch(e => setError("Incorrect password"))
+    }
+
+    function handlePasswordChange(event: React.ChangeEvent<HTMLInputElement>) {
+        setPassword(event.target.value)
+    }
+
     const modelContent = () => {
         return <div>
             <label className="block mb-2 ">Password
-                <div className="flex">
-                    <input type="text"
+                <form className="flex" onSubmit={handlePasswordSubmit}>
+                    <input id={"passwordInput"}
+                           type="text"
                            className="border-input border-neutral-700 bg-neutral-800 ring-offset-background placeholder:text-muted-foreground
            focus-visible:ring-ring flex h-10 w-full rounded-l-md border px-3 py-2  focus-visible:outline-none
             focus-visible:ring-2 focus-visible:ring-offset-2"
                            placeholder="very secret password"
+                           value={password}
+                           onChange={handlePasswordChange}
 
                     />
                     <button className="bg-lime-900 hover:bg-lime-700 rounded-r-md p-3"
-                            type="button">
+                            type="submit"
+                    >
                         <FontAwesomeIcon icon={faUnlock}/>
                     </button>
-                </div>
+                </form>
+                {error && (
+                    <p className={"text-red-500"}>{error}</p>
+                )}
+
             </label>
         </div>
     }

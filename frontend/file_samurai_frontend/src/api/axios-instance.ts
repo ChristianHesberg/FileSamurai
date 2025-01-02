@@ -78,8 +78,8 @@ function rejectError(error: HttpError): Promise<never> {
 }
 
 function getJwtToken(): string | null {
-    return null;
-    //return localStorage.getItem('jwtToken');
+
+    return localStorage.getItem('jwtToken');
 }
 
 export default axiosInstance;

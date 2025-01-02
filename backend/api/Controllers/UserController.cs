@@ -1,5 +1,6 @@
 ﻿using application.dtos;
 using application.services;
+using application.transformers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,6 @@ namespace api.Controllers;
 [Route("[controller]")]
 public class UserController(IUserService userService) : ControllerBase
 {
-
     [HttpPost]
     public ActionResult<string> PostUser(UserCreationDto user)
     {
@@ -60,7 +60,10 @@ public class UserController(IUserService userService) : ControllerBase
     [HttpGet("validatePassword")]
     public ActionResult<bool> ValidatePassword(string password)
     {
-        var result = userService.ValidatePassword(password, "fillermail");
-        throw new NotImplementedException();
+        var authHeaders = Request.Headers.Authorization.ToString();
+        var email = JwtDecoder.DecodeJwtEmail(authHeaders);
+        var result = userService.ValidatePassword(password, email);
+        if (result) return Ok(result);
+        return Unauthorized();
     }
 }
