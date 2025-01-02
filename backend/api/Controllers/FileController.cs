@@ -26,7 +26,7 @@ public class FileController(IFileService fileService): ControllerBase
     
 
     [HttpPost]
-    [Authorize(Policy = "DocumentChange")]
+    [Authorize(Policy = "DocumentAdd")]
     public ActionResult<PostFileResultDto> PostFile(AddFileDto file)
     {
         fileService.AddFile(file);
@@ -34,6 +34,7 @@ public class FileController(IFileService fileService): ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Policy = "DocumentChange")]
     public ActionResult PutFile(FileDto file)
     {
         var result = fileService.UpdateFile(file);
@@ -41,7 +42,8 @@ public class FileController(IFileService fileService): ControllerBase
     }
 
     [HttpGet("access")]
-    [Authorize]
+    [Authorize(Policy = "DocumentGetUserFileAccess")]
+
     public ActionResult<AddOrGetUserFileAccessDto> GetUserFileAccess([FromQuery] string userId, [FromQuery] string fileId)
     {
         var dto = new GetFileOrAccessInputDto()

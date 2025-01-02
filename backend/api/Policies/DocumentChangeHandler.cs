@@ -35,9 +35,9 @@ public class DocumentChangeHandler(IUserService userService,IFileService fileSer
             var reader = new StreamReader(request.Body);
             var body = await reader.ReadToEndAsync();
             var jsonObject = JsonSerializer.Deserialize<Dictionary<string, string>>(body);
-            if (jsonObject?.ContainsKey("id") == true)
+            if (jsonObject?.TryGetValue("id", out var value) is true)
             {
-                fileIdFromBody = jsonObject["id"];
+                fileIdFromBody = value;
             }
         }
         catch (Exception ex)

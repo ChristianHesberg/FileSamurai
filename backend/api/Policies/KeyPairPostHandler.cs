@@ -30,9 +30,10 @@ public class KeyPairPostHandler(IUserService userService, IHttpContextAccessor c
             var reader = new StreamReader(request.Body);
             var body = await reader.ReadToEndAsync();
             var jsonObject = JsonSerializer.Deserialize<Dictionary<string, string>>(body);
-            if (jsonObject?.ContainsKey("userId") == true)
+            if (jsonObject?.TryGetValue("userId", out var value) is true)
             {
-                userIdFromBody = jsonObject["userId"];
+                userIdFromBody = value;
+
             }
         }
         catch (Exception ex)

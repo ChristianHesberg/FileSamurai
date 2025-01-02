@@ -50,7 +50,6 @@ public class DocumentGetHandler(IUserService userService,IFileService fileServic
         if (userGroup.Contains(fileGroup))
         {
             authorizationHandlerContext.Succeed(requirement);
-            request.Body.Position = 0;
         }            
     }
 }

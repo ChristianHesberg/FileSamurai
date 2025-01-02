@@ -1,7 +1,9 @@
 ﻿using application.dtos;
 using application.services;
+using application.transformers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace api.Controllers;
 
@@ -13,7 +15,14 @@ public class GroupController(IGroupService groupService) : ControllerBase
     [Authorize]
     public ActionResult<GroupDto> PostGroup(GroupCreationDto group)
     {
-        var res = groupService.AddGroup(group);
+        if (!Request.Headers.TryGetValue("Authorization", out var authHeader))
+        {
+            return Unauthorized("Authorization header is missing");
+        }
+
+        var email =  JwtDecoder.DecodeJwtEmail(authHeader.ToString());
+       
+        var res = groupService.AddGroup(group, email);
         return Ok(res);
     }
     
@@ -26,10 +35,12 @@ public class GroupController(IGroupService groupService) : ControllerBase
     }
 
     [HttpPost("addUser")] 
-    [Authorize]
+    [Authorize (Policy = "GroupAddUser") ]
     public ActionResult<bool> AddUserToGroup(AddUserToGroupDto dto)
     {
         var res = groupService.AddUserToGroup(dto);
         return Ok(res);
     }
+
+    
 }
