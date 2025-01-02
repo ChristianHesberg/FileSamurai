@@ -1,12 +1,16 @@
 import React, {createContext, useContext, useState, ReactNode, useEffect} from 'react';
 import {CredentialResponse, googleLogout} from '@react-oauth/google';
 import {jwtDecode} from "jwt-decode";
+import {
+    GetUserByEmailOrRegisterUseCaseFactory
+} from "../use-cases/factories/get-user-by-email-or-register.use-case.factory";
 
 // Define the user type based on Google's JWT payload
 interface User {
     name: string;
     email: string;
     picture: string;
+    userId?: string;
 
     [key: string]: any; // For additional properties
 }
@@ -15,7 +19,7 @@ interface User {
 interface AuthContextType {
     user: User | null;
     isInitializing: boolean;
-    login: (credentialResponse: CredentialResponse) => void;
+    login: (credentialResponse: CredentialResponse) => Promise<void>;
     logout: () => void;
 }
 
@@ -38,8 +42,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
         setIsInitializing(false)
     }, []);
 
-    const login = (credentialResponse: CredentialResponse) => {
+    const login = async (credentialResponse: CredentialResponse) => {
         const decoded: User = jwtDecode(credentialResponse.credential!);
+        const useCase = GetUserByEmailOrRegisterUseCaseFactory.create();
+        const user = await useCase.execute(decoded.email);
+        decoded.userId = user.id;
         setUser(decoded);
         localStorage.setItem('user', JSON.stringify(decoded));
     };

@@ -1,5 +1,3 @@
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faBars} from "@fortawesome/free-solid-svg-icons/faBars";
 import getGroups from "../templateData/GroupData"
 import TableOptionsBtn from "./TableOptionsBtn";
 import Modal from "./Modal";

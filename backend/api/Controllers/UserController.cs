@@ -9,13 +9,14 @@ namespace api.Controllers;
 [Route("[controller]")]
 public class UserController(IUserService userService) : ControllerBase
 {
+
     [HttpPost]
     public ActionResult<string> PostUser(UserCreationDto user)
     {
         var res = userService.AddUser(user);
         return Ok();
     }
-    
+
     [HttpGet("{id}")]
     [Authorize]
     public ActionResult<UserDto> GetUser(string id)
@@ -24,8 +25,8 @@ public class UserController(IUserService userService) : ControllerBase
         return user == null ? NotFound() : Ok(user);
     }
 
-    [HttpGet("email/{id}")]
-    [Authorize]
+
+    [HttpGet("email/{email}")]
     public ActionResult<UserDto> GetUserByEmail(string email)
     {
         var user = userService.GetUserByEmail(email);
@@ -38,5 +39,14 @@ public class UserController(IUserService userService) : ControllerBase
     {
         var groups = userService.GetGroupsForUser(id);
         return groups == null ? NotFound() : Ok(groups);
+    }
+
+    [HttpGet("getUserIfNullRegister/{userEmail}")]
+    public ActionResult<UserDto> GetUserIfNullRegister(string userEmail)
+    {
+        //TODO GET MAIL FROM AUTH HEADER?
+        var user = userService.GetUserByEmail(userEmail)
+                   ?? userService.AddUser(new UserCreationDto() { Email = userEmail });
+        return Ok(user);
     }
 }

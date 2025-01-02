@@ -1,4 +1,5 @@
 ﻿using application.dtos;
+using application.errors;
 using application.services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,23 +12,29 @@ public class FileController(IFileService fileService): ControllerBase
 {
     [HttpGet]
     [Authorize(Policy = "DocumentGet")]
-    public ActionResult<(UpdateOrGetFileDto, AddOrGetUserFileAccessDto)> GetFile([FromQuery] string fileId, [FromQuery] string userId)
+    public ActionResult<GetFileDto> GetFile([FromQuery] string fileId, [FromQuery] string userId)
+
     {
-        var result = fileService.GetFile(fileId, userId);
+        var dto = new GetFileOrAccessInputDto()
+        {
+            UserId = userId,
+            FileId = fileId
+        };
+        var result = fileService.GetFile(dto);
         return result == null ? NotFound() : Ok(result);
     }
+    
 
-    [HttpPost]
-    [Authorize]
-    public ActionResult PostFile(AddFileDto file)
-    {   
+    [HttpPut]
+    [Authorize(Policy = "DocumentChange")]
+    public ActionResult<PostFileResultDto> PostFile(AddFileDto file)
+    {
         fileService.AddFile(file);
         return Ok();
     }
 
     [HttpPut]
-    [Authorize(Policy = "DocumentChange")]
-    public ActionResult PutFile(UpdateOrGetFileDto file)
+    public ActionResult PutFile(FileDto file)
     {
         var result = fileService.UpdateFile(file);
         return result ? Ok() : NotFound();
@@ -35,9 +42,14 @@ public class FileController(IFileService fileService): ControllerBase
 
     [HttpGet("access")]
     [Authorize]
-    public ActionResult<AddOrGetUserFileAccessDto> GetUserFileAccess([FromQuery] string fileId, [FromQuery] string userId)
+    public ActionResult<AddOrGetUserFileAccessDto> GetUserFileAccess([FromQuery] string userId, [FromQuery] string fileId)
     {
-        var result = fileService.GetUserFileAccess(fileId, userId);
+        var dto = new GetFileOrAccessInputDto()
+        {
+            UserId = userId,
+            FileId = fileId
+        };
+        var result = fileService.GetUserFileAccess(dto);
         return result == null ? NotFound() : Ok(result);
     }
 

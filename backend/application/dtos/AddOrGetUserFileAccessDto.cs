@@ -1,4 +1,7 @@
-﻿namespace application.dtos;
+﻿using System.ComponentModel.DataAnnotations;
+using core.models;
+
+namespace application.dtos;
 
 public class AddOrGetUserFileAccessDto
 {
