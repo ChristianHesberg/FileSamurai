@@ -1,5 +1,6 @@
 ﻿using application.dtos;
 using application.services;
+using application.transformers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,6 @@ namespace api.Controllers;
 [Route("[controller]")]
 public class UserController(IUserService userService) : ControllerBase
 {
-
     [HttpPost]
     public ActionResult<string> PostUser(UserCreationDto user)
     {
@@ -48,5 +48,23 @@ public class UserController(IUserService userService) : ControllerBase
         var user = userService.GetUserByEmail(userEmail)
                    ?? userService.AddUser(new UserCreationDto() { Email = userEmail });
         return Ok(user);
+    }
+
+    [HttpPost("createUser")]
+    public ActionResult<UserDto> CreateUser(UserCreationDto creationDto)
+    {
+        if (userService.GetUserByEmail(creationDto.Email) != null) return Conflict("User already exists");
+        var userDto = userService.AddUser(creationDto);
+        return Ok(userDto);
+    }
+
+    [HttpGet("validatePassword")]
+    public ActionResult<bool> ValidatePassword(string password)
+    {
+        var authHeaders = Request.Headers.Authorization.ToString();
+        var email = JwtDecoder.DecodeJwtEmail(authHeaders);
+        var result = userService.ValidatePassword(password, email);
+        if (result) return Ok(result);
+        return Unauthorized();
     }
 }

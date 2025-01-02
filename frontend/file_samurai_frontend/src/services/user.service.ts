@@ -7,9 +7,20 @@ export class UserService {
         return response.data;
     }
 
-    async getUserIfNullRegister(email:string) {
+    async getUserIfNullRegister(email: string) {
         const response = await axiosInstance.get<User>(`user/getUserIfNullRegister/${email}`);
         return response.data;
+    }
+
+    async registerUser(email: string, password: string) {
+        const body = {email: email, Password: password}
+        const response = await axiosInstance.post<User>(`user/createUser`, body)
+        return response.data
+    }
+
+    async validatePassword(password: string) {
+        const response = await axiosInstance.get<boolean>(`user/validatePassword?password=${password}`)
+        return response.data
     }
 }
 

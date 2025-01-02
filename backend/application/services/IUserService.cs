@@ -9,4 +9,5 @@ public interface IUserService
     public UserDto? GetUser(string id);
     public UserDto? GetUserByEmail(string email);
     public List<GroupDto>? GetGroupsForUser(string id);
+    public bool ValidatePassword(string password,string email);
 }
