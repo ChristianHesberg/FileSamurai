@@ -1,9 +1,6 @@
-import React, {createContext, useContext, useState, ReactNode, useEffect, Dispatch, SetStateAction} from 'react';
+import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react';
 import {CredentialResponse, googleLogout} from '@react-oauth/google';
 import {jwtDecode} from "jwt-decode";
-import {
-    GetUserByEmailOrRegisterUseCaseFactory
-} from "../use-cases/factories/get-user-by-email-or-register.use-case.factory";
 import {User} from "../models/user.model";
 import {GetUserByEmailUseCaseFactory} from "../use-cases/factories/get-user-by-email.use-case.factory";
 

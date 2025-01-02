@@ -1,7 +1,6 @@
 import React from "react";
 import FileTable from "../components/FileTable";
 import UploadFileBtn from "../components/UploadFileBtn";
-import {useAuth} from "../providers/AuthProvider";
 
 export function Files() {
     return (

@@ -10,12 +10,12 @@ import {ValidatePasswordUseCaseFactory} from "../use-cases/factories/validate-pa
 
 export function Login() {
     const navigate = useNavigate()
-    const {login, logout,initSecret,secret} = useAuth();
+    const {login, logout, initSecret} = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [error, setError] = useState<string>("")
     const validatePasswordUseCase = ValidatePasswordUseCaseFactory.create()
 
-    const [password,setPassword] = useState<string>("")
+    const [password, setPassword] = useState<string>("")
     const handleSuccess = async (credentialResponse: CredentialResponse) => {
         login(credentialResponse)
             .then(() => {
@@ -34,7 +34,7 @@ export function Login() {
 
     function handlePasswordSubmit(event: React.FormEvent) {
         event.preventDefault();
-        if (password.length == 0) return
+        if (password.length === 0) return
         validatePasswordUseCase.execute(password)
             .then(() => {
                 initSecret(password)
