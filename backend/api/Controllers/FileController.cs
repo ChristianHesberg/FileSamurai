@@ -43,6 +43,7 @@ public class FileController(IFileService fileService): ControllerBase
 
     [HttpGet("access")]
     [Authorize(Policy = "DocumentGetUserFileAccess")]
+
     public ActionResult<AddOrGetUserFileAccessDto> GetUserFileAccess([FromQuery] string userId, [FromQuery] string fileId)
     {
         var dto = new GetFileOrAccessInputDto()

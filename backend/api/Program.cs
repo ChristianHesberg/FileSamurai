@@ -95,6 +95,7 @@ builder.Services.AddScoped<IAuthorizationHandler, KeyPairPostHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, KeyPairGetPKHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, GroupAddUserHandler>();
 
+
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("FileAccess", policy =>
         policy.Requirements.Add(new DocumentAccessRequirement()))
@@ -112,6 +113,7 @@ builder.Services.AddAuthorizationBuilder()
     policy.Requirements.Add(new KeyPairGetPKRequirement()))
     .AddPolicy("GroupAddUser", policy =>
     policy.Requirements.Add(new GroupAddUserRequirement()));
+
 
 
 builder.Services.AddCors(options =>  

@@ -1,10 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text.Json;
-
 using application.dtos;
 using application.services;
-using core.models;
 using Microsoft.AspNetCore.Authorization;
 
 
@@ -41,6 +38,7 @@ public class DocumentAccessHandler(IUserService userService, IFileService fileSe
             if (jsonObject?.TryGetValue("fileId", out var value) is true)
             {
                 fileIdFromBody = value;
+
             }
         }
         catch (Exception ex)

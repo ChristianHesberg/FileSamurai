@@ -33,6 +33,7 @@ public class KeyPairPostHandler(IUserService userService, IHttpContextAccessor c
             if (jsonObject?.TryGetValue("userId", out var value) is true)
             {
                 userIdFromBody = value;
+
             }
         }
         catch (Exception ex)
