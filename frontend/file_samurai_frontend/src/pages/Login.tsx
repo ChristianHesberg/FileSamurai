@@ -10,17 +10,16 @@ import {ValidatePasswordUseCaseFactory} from "../use-cases/factories/validate-pa
 
 export function Login() {
     const navigate = useNavigate()
-    const {login} = useAuth();
+    const {login, logout,initSecret,secret} = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [password, setPassword] = useState<string>("")
     const [error, setError] = useState<string>("")
     const validatePasswordUseCase = ValidatePasswordUseCaseFactory.create()
+
+    const [password,setPassword] = useState<string>("")
     const handleSuccess = async (credentialResponse: CredentialResponse) => {
         login(credentialResponse)
-            .then((user) => {
-                console.log("existing user")
+            .then(() => {
                 setIsModalOpen(true)
-                //navigate("/files")
             }).catch((error) => {
             if (error instanceof NotFoundError) {
                 navigate("/register")
@@ -29,6 +28,7 @@ export function Login() {
     }
 
     const closeModal = () => {
+        logout()
         setIsModalOpen(false)
     };
 
@@ -36,8 +36,11 @@ export function Login() {
         event.preventDefault();
         if (password.length == 0) return
         validatePasswordUseCase.execute(password)
-            .then((res) => navigate("/files"))
-            .catch(e => setError("Incorrect password"))
+            .then(() => {
+                initSecret(password)
+                navigate("/files")
+            })
+            .catch(() => setError("Incorrect password"))
     }
 
     function handlePasswordChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -49,7 +52,7 @@ export function Login() {
             <label className="block mb-2 ">Password
                 <form className="flex" onSubmit={handlePasswordSubmit}>
                     <input id={"passwordInput"}
-                           type="text"
+                           type="password"
                            className="border-input border-neutral-700 bg-neutral-800 ring-offset-background placeholder:text-muted-foreground
            focus-visible:ring-ring flex h-10 w-full rounded-l-md border px-3 py-2  focus-visible:outline-none
             focus-visible:ring-2 focus-visible:ring-offset-2"

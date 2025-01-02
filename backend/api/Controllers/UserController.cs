@@ -53,6 +53,7 @@ public class UserController(IUserService userService) : ControllerBase
     [HttpPost("createUser")]
     public ActionResult<UserDto> CreateUser(UserCreationDto creationDto)
     {
+        if (userService.GetUserByEmail(creationDto.Email) != null) return Conflict("User already exists");
         var userDto = userService.AddUser(creationDto);
         return Ok(userDto);
     }

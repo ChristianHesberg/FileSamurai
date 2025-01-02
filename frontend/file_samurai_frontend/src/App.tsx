@@ -5,18 +5,24 @@ import {Route, Routes} from "react-router";
 import {Files} from "./pages/Files";
 import ProtectedRoute from "./providers/ProtectedRoute";
 import {Groups} from "./pages/Groups";
-import {Navigate} from "react-router-dom";
+import {Navigate, useLocation} from "react-router-dom";
 import Header from "./components/Header";
 import {useAuth} from "./providers/AuthProvider";
 import {Register} from "./pages/Register";
 
 function App() {
     const {user} = useAuth()
+    const location = useLocation();
+
+    const hideHeaderOnRoutes = ["/login","/","/register"]
+    const hideHeader = !hideHeaderOnRoutes.includes(location.pathname);
+
+
     return (
         <div className={"bg-neutral-950 text-gray-300 flex h-screen"}>
 
             <div className={"container mx-auto"}>
-                {user && <Header/>}
+                {user && hideHeader && <Header />}
                 <Routes>
                     <Route path="/" element={
                         !user ?
@@ -38,9 +44,6 @@ function App() {
                             <Register/>
                         </ProtectedRoute>
                     }/>
-
-
-
                 </Routes>
             </div>
         </div>

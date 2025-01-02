@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useState, ReactNode, useEffect} from 'react';
+import React, {createContext, useContext, useState, ReactNode, useEffect, Dispatch, SetStateAction} from 'react';
 import {CredentialResponse, googleLogout} from '@react-oauth/google';
 import {jwtDecode} from "jwt-decode";
 import {
@@ -23,6 +23,8 @@ interface AuthContextType {
     isInitializing: boolean;
     login: (credentialResponse: CredentialResponse) => Promise<User>;
     logout: () => void;
+    secret: string;
+    initSecret: (string:string)=> void;
 }
 
 // Create the context
@@ -37,29 +39,27 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
     const [user, setUser] = useState<GoogleUser | null>(null);
     const [isInitializing, setIsInitializing] = useState<boolean>(true);
+    const [secret, setSecret] = useState<string>("");
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
-        if (storedUser) setUser(JSON.parse(storedUser));
+        const storedPassword = localStorage.getItem('password')
+        if (storedUser && storedPassword) {
+            setUser(JSON.parse(storedUser));
+            setSecret(storedPassword)
+        }
         setIsInitializing(false)
     }, []);
 
     const login = async (credentialResponse: CredentialResponse): Promise<User> => {
         const credentials = credentialResponse.credential!
         const decoded: GoogleUser = jwtDecode(credentials);
-        //get user
         const useCase = GetUserByEmailUseCaseFactory.create();
-        //if exists -> return
-        // if not exists -> return null
-
-        // const useCase = GetUserByEmailOrRegisterUseCaseFactory.create();
         localStorage.setItem('user', JSON.stringify(decoded));
         localStorage.setItem("jwtToken", credentials)
         setUser(decoded);
         const user = await useCase.execute(decoded.email);
-
         decoded.userId = user.id;
-
         return user
     };
 
@@ -68,10 +68,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
         setUser(null);
         localStorage.removeItem('user');
         localStorage.removeItem('jwtToken');
+        localStorage.removeItem('password');
     };
 
+    const initSecret = (pass:string) => {
+        setSecret(pass)
+        localStorage.setItem("password",pass)
+    }
     return (
-        <AuthContext.Provider value={{user, login, logout, isInitializing}}>
+        <AuthContext.Provider value={{user, login, logout, isInitializing, secret, initSecret}}>
             {children}
         </AuthContext.Provider>
     );
