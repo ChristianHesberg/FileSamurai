@@ -10,5 +10,6 @@ public class User
     
     public UserRsaKeyPair UserRsaKeyPair { get; set; }
     public List<UserFileAccess>? UserFileAccesses { get; set; }
+
     public List<Group>? Groups { get; set; }
 }

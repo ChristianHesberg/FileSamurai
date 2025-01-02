@@ -10,8 +10,8 @@ using infrastructure;
 namespace infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20241212111204_add properties to group and user")]
-    partial class addpropertiestogroupanduser
+    [Migration("20250102170610_change creatorid to creatoremail")]
+    partial class changecreatoridtocreatoremail
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,6 +47,14 @@ namespace infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Nonce")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Tag")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -63,11 +71,11 @@ namespace infrastructure.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("CreatorEmail")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("SharingId")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

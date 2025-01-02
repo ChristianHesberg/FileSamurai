@@ -20,6 +20,7 @@ public class Context : DbContext
         modelBuilder.Entity<User>()  
             .HasIndex(user => user.Email)  
             .IsUnique();  
+
     }  
 
     public DbSet<User> Users { get; set; }
