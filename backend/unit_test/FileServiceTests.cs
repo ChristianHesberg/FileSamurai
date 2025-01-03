@@ -29,6 +29,7 @@ public class FileServiceTests
         fileDtoValidator = new Mock<IValidator<FileDto>>();
         fileDtoValidator.Setup(v => v.Validate(It.IsAny<FileDto>())).Returns(validationResult);  
         addOrGetUserFileAccessDtoValidator = new Mock<IValidator<AddOrGetUserFileAccessDto>>();
+        addOrGetUserFileAccessDtoValidator.Setup(v => v.Validate(It.IsAny<AddOrGetUserFileAccessDto>())).Returns(validationResult); 
         fileService = new FileService(
             fileRepo.Object,
             addFileValidator.Object,
@@ -434,6 +435,165 @@ public class FileServiceTests
                  && f.Nonce == convertedFile.Nonce
                  && f.Tag == convertedFile.Tag
             )), Times.Once);  
+    }
+
+    #endregion
+
+    #region AddUserFileAccess
+    
+    [Fact]
+     public void AddUserFileAccess_ThrowsValidationException()
+    {
+        //Arrange
+        var dto = new AddOrGetUserFileAccessDto()
+        {
+            UserId = "userId"
+        };
+        var validationFailures = new List<ValidationFailure>  
+        {  
+            new ValidationFailure(dto.UserId, "UserId is required.")  
+        };  
+        var validationResult = new ValidationResult(validationFailures);  
+  
+        addOrGetUserFileAccessDtoValidator.Setup(v => v.Validate(It.IsAny<AddOrGetUserFileAccessDto>())).Returns(validationResult);  
+        
+        // Act
+        Action act = () => fileService.AddUserFileAccess(dto);
+
+        // Assert
+        Assert.Throws<CustomValidationException>(act);
+        addOrGetUserFileAccessDtoValidator.Verify(v => v.Validate(dto), Times.Once);
+    }
+    
+    [Fact]
+    public void AddUserFileAccess_CallsRepoWithCorrectParameters()
+    {
+        //Arrange
+        var inputDto = new AddOrGetUserFileAccessDto()
+        {
+            UserId = "userId",
+            FileId = "fileId",
+            EncryptedFileKey = "FAK",
+            Role = "Editor"
+        };
+        
+        fileRepo.Setup(repo => repo.AddUserFileAccess(It.IsAny<UserFileAccess>()));
+        
+        //Act
+        fileService.AddUserFileAccess(inputDto);
+        
+        //Assert
+        fileRepo.Verify(repo => repo.AddUserFileAccess(It.Is<UserFileAccess>(
+            f => f.UserId == inputDto.UserId 
+                 && f.FileId == inputDto.FileId
+                 && f.EncryptedFileKey == inputDto.EncryptedFileKey
+                 && f.Role == inputDto.Role
+        )), Times.Once);  
+    }
+
+    #endregion
+    
+    #region GetUserFileAccess
+    
+    [Fact]
+    public void GetUserFileAccess_ThrowsValidationException()
+    {
+        //Arrange
+        var dto = new GetFileOrAccessInputDto()
+        {
+            UserId = "userId"
+        };
+        var validationFailures = new List<ValidationFailure>  
+        {  
+            new ValidationFailure(dto.UserId, "UserId is required.")  
+        };  
+        var validationResult = new ValidationResult(validationFailures);  
+  
+        getFileOrAccessInputDtoValidator.Setup(v => v.Validate(It.IsAny<GetFileOrAccessInputDto>())).Returns(validationResult);  
+        
+        // Act
+        Action act = () => fileService.GetUserFileAccess(dto);
+
+        // Assert
+        Assert.Throws<CustomValidationException>(act);
+        getFileOrAccessInputDtoValidator.Verify(v => v.Validate(dto), Times.Once);
+    }
+    
+    [Fact]
+    public void GetUserFileAccess_CallsRepoWithCorrectParameters()
+    {
+        //Arrange
+        var inputDto = new GetFileOrAccessInputDto()
+        {
+            UserId = "userId",
+            FileId = "fileId",
+        };
+        
+        fileRepo.Setup(repo => repo.GetUserFileAccess(It.IsAny<string>(), It.IsAny<string>()));
+        
+        //Act
+        fileService.GetUserFileAccess(inputDto);
+        
+        //Assert
+        fileRepo.Verify(repo => repo.GetUserFileAccess(
+            It.Is<string>(
+            f => f == inputDto.UserId 
+        ),
+        It.Is<string>(
+            f => f == inputDto.FileId 
+        )
+            ), Times.Once);  
+    }
+    
+    [Fact]
+    public void GetUserFileAccess_ReturnsAddOrGetUserFileAccessDto_IfFoundInDb()
+    {
+        //Arrange
+        var inputDto = new GetFileOrAccessInputDto()
+        {
+            UserId = "userId",
+            FileId = "fileId",
+        };
+        var repoOutput = new UserFileAccess()
+        {
+            UserId = "userId",
+            FileId = "fileId",
+            EncryptedFileKey = "FAK",
+            Role = "Editor"
+        };
+        
+        fileRepo.Setup(repo => repo.GetUserFileAccess(It.IsAny<string>(), It.IsAny<string>())).Returns(repoOutput);
+        
+        //Act
+        var res = fileService.GetUserFileAccess(inputDto);
+        
+        //Assert
+        Assert.Equivalent(res, new AddOrGetUserFileAccessDto()
+        {
+            UserId = repoOutput.UserId,
+            FileId = repoOutput.FileId,
+            EncryptedFileKey = repoOutput.EncryptedFileKey,
+            Role = repoOutput.Role
+        });
+    }
+    
+    [Fact]
+    public void GetUserFileAccess_ReturnsNull_IfNotFoundInDb()
+    {
+        //Arrange
+        var inputDto = new GetFileOrAccessInputDto()
+        {
+            UserId = "userId",
+            FileId = "fileId",
+        };
+        
+        fileRepo.Setup(repo => repo.GetUserFileAccess(It.IsAny<string>(), It.IsAny<string>())).Returns((UserFileAccess?)null);
+        
+        //Act
+        var res = fileService.GetUserFileAccess(inputDto);
+        
+        //Assert
+        Assert.Equivalent(res, null);
     }
 
     #endregion
