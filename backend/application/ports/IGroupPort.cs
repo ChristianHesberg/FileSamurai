@@ -8,4 +8,5 @@ public interface IGroupPort
     public Group? GetGroup(string id);
     public bool AddUserToGroup(string userEmail, string groupId);
     public List<Group> GetGroupsForEmail(string email);
+    public List<User> GetUsersInGroup(string groupId);
 }

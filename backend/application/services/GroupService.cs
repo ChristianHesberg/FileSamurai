@@ -44,4 +44,10 @@ public class GroupService(IGroupPort groupPort) : IGroupService
         var groups = groupPort.GetGroupsForEmail(email);
         return groups.Select(g => new GroupDto() { Name = g.Name, GroupEmail = g.CreatorEmail, Id = g.Id }).ToList();
     }
+
+    public List<UserDto> GetUsersInGroup(string groupId)
+    {
+        var users = groupPort.GetUsersInGroup(groupId);
+        return users.Select(u => new UserDto() { Id = u.Id, Email = u.Email }).ToList();
+    }
 }

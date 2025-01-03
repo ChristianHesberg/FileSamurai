@@ -51,4 +51,12 @@ public class GroupController(IGroupService groupService) : ControllerBase
 
         return Ok(groupService.GetGroupsForEmail(email));
     }
+
+    //todo missing auth
+    [HttpGet("usersInGroup")]
+    public ActionResult<List<UserDto>> GetUsersInGroup(string groupId)
+    {
+        var users = groupService.GetUsersInGroup(groupId);
+        return Ok(users);
+    }
 }

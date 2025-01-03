@@ -8,7 +8,7 @@ public class GroupAdapter(Context context) : IGroupPort
 {
     public Group AddGroup(Group group)
     {
-        var added =context.Groups.Add(group);
+        var added = context.Groups.Add(group);
         context.SaveChanges();
         return added.Entity;
     }
@@ -32,5 +32,11 @@ public class GroupAdapter(Context context) : IGroupPort
     public List<Group> GetGroupsForEmail(string email)
     {
         return context.Groups.Where(x => x.CreatorEmail == email).ToList();
+    }
+
+    public List<User> GetUsersInGroup(string groupId)
+    {
+        var group = context.Groups.Include(x => x.Users).FirstOrDefault(x => x.Id == groupId);
+        return group == null ? [] : group.Users.ToList();
     }
 }

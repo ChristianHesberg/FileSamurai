@@ -13,7 +13,7 @@ export function Groups() {
     const getGroupsForEmailUseCase = GetGroupsForEmailUseCaseFactory.create()
 
     useEffect(() => {
-        getGroupsForEmailUseCase.execute().then(g => setGroups(g)).catch(e => console.log("eeee"))
+        getGroupsForEmailUseCase.execute().then(g => setGroups(g)).catch(e => console.log(e))
 
     }, [])
 

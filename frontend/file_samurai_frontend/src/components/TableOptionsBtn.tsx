@@ -33,7 +33,6 @@ const TableOptionsBtn: React.FC<TableOptionsBtnParams> = ({children}) => {
                                 {button}
                             </div>
                         ))}
-
                     </div>
                 </div>
             )}
