@@ -35,7 +35,7 @@ export class CryptographyService implements CryptographyServiceInterface{
         const { cipherText, nonce, tag } = encryptedData;
         try{
             const decipher = createDecipheriv('aes-256-gcm', key, Buffer.from(nonce, 'base64'));
-            decipher.setAuthTag(Buffer.from(tag, 'base64'));
+            decipher.setAuthTag(Buffer.from(tag!, 'base64'));
 
             return Buffer.concat([
                 decipher.update(Buffer.from(cipherText, 'base64')),
@@ -76,7 +76,7 @@ export class CryptographyService implements CryptographyServiceInterface{
             privateKey: cipherText,
             publicKey: public_key,
             nonce: nonce,
-            tag: tag,
+            tag: tag!,
             salt: salt.toString('base64')
         }
     }

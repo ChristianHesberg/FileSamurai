@@ -34,7 +34,7 @@ export class CreateFileUseCase {
         return {
             fileContents: encryptedFile.cipherText,
             nonce: encryptedFile.nonce,
-            tag: encryptedFile.tag,
+            tag: encryptedFile.tag!,
             title: title,
             groupId: groupId
         }
