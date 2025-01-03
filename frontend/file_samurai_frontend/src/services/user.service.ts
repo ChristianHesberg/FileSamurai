@@ -1,7 +1,8 @@
 import axiosInstance from "../api/axios-instance";
 import {User} from "../models/user.model";
+import {UserServiceInterface} from "./user.service.interface";
 
-export class UserService {
+export class UserService implements UserServiceInterface{
     async getUserByEmail(email: string): Promise<User> {
         const response = await axiosInstance.get<User>(`user/email/${email}`);
         return response.data;
