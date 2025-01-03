@@ -5,10 +5,11 @@ import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
 import {EDITOR_ROLE} from "../constants";
 import {AddFileDto} from "../models/addFileDto";
 import {CryptographyService} from "../services/cryptography.service";
+import {FileServiceInterface} from "../services/file.service.interface";
 
 export class CreateFileUseCase {
     constructor(
-        private readonly fileService: FileService,
+        private readonly fileService: FileServiceInterface,
         private readonly keyService: KeyService,
         private readonly cryptoService: CryptographyService,
     ) {}

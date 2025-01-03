@@ -11,8 +11,9 @@ import {RsaKeyPairModel} from "../models/rsaKeyPair.model";
 import {EncryptedRsaKeyPairModel} from "../models/encryptedRsaKeyPair.model";
 import {UserPrivateKeyDto} from "../models/userPrivateKeyDto";
 import {DecryptionError} from "../errors/decryption.error";
+import {CryptographyServiceInterface} from "./cryptography.service.interface";
 
-export class CryptographyService {
+export class CryptographyService implements CryptographyServiceInterface{
     encryptAes256Gcm(plaintext: Buffer, key: Buffer): AesGcmEncryptionOutput {
         const nonce = randomBytes(12);
         const cipher = createCipheriv('aes-256-gcm', key, nonce);
