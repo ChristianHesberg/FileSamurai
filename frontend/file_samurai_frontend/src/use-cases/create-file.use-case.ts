@@ -5,12 +5,15 @@ import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
 import {EDITOR_ROLE} from "../constants";
 import {AddFileDto} from "../models/addFileDto";
 import {CryptographyService} from "../services/cryptography.service";
+import {FileServiceInterface} from "../services/file.service.interface";
+import {KeyServiceInterface} from "../services/key.service.interface";
+import {CryptographyServiceInterface} from "../services/cryptography.service.interface";
 
 export class CreateFileUseCase {
     constructor(
-        private readonly fileService: FileService,
-        private readonly keyService: KeyService,
-        private readonly cryptoService: CryptographyService,
+        private readonly fileService: FileServiceInterface,
+        private readonly keyService: KeyServiceInterface,
+        private readonly cryptoService: CryptographyServiceInterface,
     ) {}
 
     async execute(userId: string, groupId: string, file: Buffer, title: string): Promise<AddFileResponseDto>{

@@ -3,8 +3,9 @@ import axiosInstance from "../api/axios-instance";
 import {AddFileDto} from "../models/addFileDto";
 import {AddFileResponseDto} from "../models/addFileResponseDto";
 import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
+import {FileServiceInterface} from "./file.service.interface";
 
-export class FileService {
+export class FileService implements FileServiceInterface{
      async getFileInfo(userId: string, fileId: string): Promise<FileResponseDto> {
         const response = await axiosInstance.get<FileResponseDto>(`file`, {
             params: { userId, fileId }
