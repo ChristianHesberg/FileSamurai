@@ -14,7 +14,6 @@ public class AddFileDtoValidator : AbstractValidator<AddFileDto>
         RuleFor(x => x.Tag).MaximumLength(50);
         RuleFor(x => x.Title).NotEmpty();
         RuleFor(x => x.Title).MaximumLength(50);
-        RuleFor(x => x.GroupId).NotEmpty();
-        RuleFor(x => x.GroupId).MaximumLength(36);
+        RuleFor(x => x.GroupId).MustBeValidGuid();
     }
 }
