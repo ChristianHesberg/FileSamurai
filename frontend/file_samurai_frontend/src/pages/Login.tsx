@@ -7,6 +7,9 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUnlock} from "@fortawesome/free-solid-svg-icons";
 import {NotFoundError} from "../errors/not-found.error";
 import {ValidatePasswordUseCaseFactory} from "../use-cases/factories/validate-password.use-case.factory";
+import {ClientSideCryptographyService} from "../services/client-side-cryptography.service";
+import {AesGcmEncryptionOutput} from "../models/aesGcmEncryptionOutput.model";
+import {Buffer} from "buffer";
 
 export function Login() {
     const navigate = useNavigate()
@@ -17,6 +20,15 @@ export function Login() {
 
     const [password, setPassword] = useState<string>("")
     const handleSuccess = async (credentialResponse: CredentialResponse) => {
+        const service = new ClientSideCryptographyService();
+        const salt = Buffer.from(window.crypto.getRandomValues(new Uint8Array(12)));
+        const key = await service.deriveKeyFromPassword("secret_key", salt)
+        const encrypted = service.encryptAes256Gcm(Buffer.from("my plaintext"), key).then((value: AesGcmEncryptionOutput) => {
+            console.log("encrypted: ", value);
+            const decrypted = service.decryptAes256Gcm(value, key).then((value: Buffer) => {
+                console.log("decrypted: ", value.toString("utf8"));
+            })
+        });
         login(credentialResponse)
             .then(() => {
                 setIsModalOpen(true)

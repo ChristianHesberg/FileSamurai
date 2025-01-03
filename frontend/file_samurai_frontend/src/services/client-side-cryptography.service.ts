@@ -1,16 +1,13 @@
 import {AesGcmEncryptionOutput} from "../models/aesGcmEncryptionOutput.model";
 import {DecryptionError} from "../errors/decryption.error";
+import {Buffer} from "buffer";
 import {CryptographyServiceInterface} from "./cryptography.service.interface";
 
 export class ClientSideCryptographyService {
-    async encryptAes256Gcm(plaintext: string, key: string): Promise<AesGcmEncryptionOutput> {
-        const encoder = new TextEncoder();
-        const encodedPlaintext = encoder.encode(plaintext);
-        const encodedKey = encoder.encode(key);
-
+    async encryptAes256Gcm(plaintext: Buffer, key: Buffer): Promise<AesGcmEncryptionOutput> {
         const cryptoKey = await window.crypto.subtle.importKey(
             'raw',
-            encodedKey,
+            key,
             { name: 'AES-GCM' },
             false,
             ['encrypt']
@@ -25,30 +22,22 @@ export class ClientSideCryptographyService {
                 tagLength: 128,
             },
             cryptoKey,
-            encodedPlaintext
+            plaintext
         );
 
-        const cipherTextBuffer = new Uint8Array(encryptedData);
-
-        const decoder = new TextDecoder();
         return {
-            cipherText: decoder.decode(cipherTextBuffer),
-            nonce: decoder.decode(nonce),
+            cipherText: Buffer.from(encryptedData).toString('base64'),
+            nonce: Buffer.from(nonce).toString('base64')
         };
     }
 
-    async decryptAes256Gcm(encryptedData: AesGcmEncryptionOutput, key: string): Promise<string> {
+    async decryptAes256Gcm(encryptedData: AesGcmEncryptionOutput, key: Buffer): Promise<Buffer> {
         try {
             const { cipherText, nonce } = encryptedData;
 
-            const decoder = new TextDecoder();
-            const encoder = new TextEncoder()
-            const encodedKey = encoder.encode(key);
-            const cipherTextArray = encoder.encode(cipherText);
-            const nonceArray = encoder.encode(nonce);
             const cryptoKey = await window.crypto.subtle.importKey(
                 'raw',
-                encodedKey,
+                key,
                 { name: 'AES-GCM' },
                 false,
                 ['decrypt']
@@ -58,16 +47,48 @@ export class ClientSideCryptographyService {
             const decryptedData = await window.crypto.subtle.decrypt(
                 {
                     name: 'AES-GCM',
-                    iv: nonceArray,
+                    iv: Buffer.from(nonce, 'base64'),
                     tagLength: 128,
                 },
                 cryptoKey,
-                cipherTextArray
+                Buffer.from(cipherText, "base64")
             );
 
-            return decoder.decode(decryptedData);
+            return Buffer.from(decryptedData);
         } catch (error) {
             throw new DecryptionError('Decryption failed');
         }
+    }
+
+    async deriveKeyFromPassword(password: string, salt: Buffer, keyLength: number = 32): Promise<Buffer> {
+        const encodedPassword = Buffer.from(password, "base64");
+
+        const passwordKey = await window.crypto.subtle.importKey(
+            'raw',
+            encodedPassword,
+            'PBKDF2',
+            false,
+            ['deriveKey']
+        );
+
+        const derivedKey = await window.crypto.subtle.deriveKey(
+            {
+                name: 'PBKDF2',
+                salt: salt,
+                iterations: 100000,
+                hash: 'SHA-512'
+            },
+            passwordKey,
+            {
+                name: 'AES-GCM',
+                length: keyLength * 8
+            },
+            true,
+            ['encrypt', 'decrypt']
+        );
+
+        const derivedKeyBuffer = await window.crypto.subtle.exportKey('raw', derivedKey);
+        console.log(derivedKeyBuffer.byteLength);
+        return Buffer.from(derivedKeyBuffer);
     }
 }

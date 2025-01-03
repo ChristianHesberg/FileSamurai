@@ -4,7 +4,6 @@ import Modal from "./Modal";
 import React, {useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPaperPlane} from "@fortawesome/free-solid-svg-icons";
-import {ClientSideCryptographyService} from "../services/client-side-cryptography.service";
 
 export function GroupsTable() {
     const [isModalOpen, setModalOpen] = useState(false);
@@ -43,13 +42,6 @@ export function GroupsTable() {
     }
 
     const addMemberBtn = () => {
-        const service = new ClientSideCryptographyService();
-        const encrypted = service.encryptAes256Gcm("my plaintext", "secret_key").then(value => {
-            console.log("encrypted: ", value);
-            const decrypted = service.decryptAes256Gcm(value, "secret_key").then(value => {
-                console.log("decrypted: ", value);
-            })
-        })
         return (
             <div>
                 <button

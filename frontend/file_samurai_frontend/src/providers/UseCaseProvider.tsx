@@ -4,8 +4,7 @@ import {DecryptFileUseCase} from "../use-cases/decrypt-file.use-case";
 import {ShareFileUseCase} from "../use-cases/share-file.use-case";
 import {FileService} from "../services/file.service";
 import {KeyService} from "../services/key.service";
-import {CryptographyService} from "../services/cryptography.service";
-import {ClientSideCryptographyService} from "../services/client-side-cryptography.service";
+
 
 interface UseCaseProviderProps {
     children: ReactNode
@@ -24,7 +23,7 @@ const UseCaseContext = createContext<UseCaseContextType | undefined>(undefined)
 export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     const fileService = new FileService()
     const keyService = new KeyService()
-    const cryptoService = new ClientSideCryptographyService()
+    //const cryptoService = new ClientSideCryptographyService()
 
     //const createFileUseCase = new CreateFileUseCase(fileService, keyService, cryptoService)
 
