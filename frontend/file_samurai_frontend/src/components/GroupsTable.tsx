@@ -22,9 +22,9 @@ export const GroupsTable: React.FC<GroupsTableProps> = ({groups}) => {
 
     }
 
-    const addMemberBtn = (key: string) => {
+    const addMemberBtn = (groupId: string) => {
         return (
-            <div  key={key}>
+            <div  key={groupId}>
                 <button
                     className="block px-4 py-2 text-sm bg-lime-900 hover:bg-lime-700 w-full rounded"
                     role="menuitem"
@@ -32,7 +32,7 @@ export const GroupsTable: React.FC<GroupsTableProps> = ({groups}) => {
                 >
                     Add member
                 </button>
-                <Modal isOpen={isModalOpen} onClose={closeModal} child={<AddMembersModal/>}/>
+                <Modal isOpen={isModalOpen} onClose={closeModal} child={<AddMembersModal groupId={groupId}/>}/>
             </div>
         )
     }

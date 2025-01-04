@@ -2,18 +2,16 @@ import React, {useEffect, useState} from "react";
 import {GroupsTable} from "../components/GroupsTable";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPeopleGroup} from "@fortawesome/free-solid-svg-icons";
-import {CreateGroupUseCaseFactory} from "../use-cases/factories/create-group.use-case.factory";
-import {GetGroupsForEmailUseCaseFactory} from "../use-cases/factories/get-groups-for-email.use-case.factory";
 import {Group} from "../models/Group";
+import {useUseCases} from "../providers/UseCaseProvider";
 
 export function Groups() {
     const [newGroup, setNewGroup] = useState<string>("")
     const [groups, setGroups] = useState<Group[]>([])
-    const createGroupUseCase = CreateGroupUseCaseFactory.create()
-    const getGroupsForEmailUseCase = GetGroupsForEmailUseCaseFactory.create()
 
+    const {createGroupUseCase, getGroupsFromEmailUseCase} = useUseCases()
     useEffect(() => {
-        getGroupsForEmailUseCase.execute().then(g => setGroups(g)).catch(e => console.log(e))
+        getGroupsFromEmailUseCase.execute().then(g => setGroups(g)).catch(e => console.log(e))
 
     }, [])
 

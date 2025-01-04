@@ -1,6 +1,6 @@
 import {GroupService} from "../services/groupService";
 
-export class createGroupUseCase {
+export class CreateGroupUseCase {
 
 
     constructor(private readonly groupService: GroupService) {

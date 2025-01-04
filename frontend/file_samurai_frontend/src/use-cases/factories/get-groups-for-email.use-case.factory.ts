@@ -1,4 +1,4 @@
-import {createGroupUseCase} from "../create-group.use-case";
+import {CreateGroupUseCase} from "../create-group-use.case";
 import {GroupService} from "../../services/groupService";
 import {GetGroupsForEmailUseCase} from "../get-groups-for-email.use-case";
 
