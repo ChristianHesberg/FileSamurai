@@ -10,6 +10,7 @@ import {ValidatePasswordUseCaseFactory} from "../use-cases/factories/validate-pa
 import {ClientSideCryptographyService} from "../services/client-side-cryptography.service";
 import {AesGcmEncryptionOutput} from "../models/aesGcmEncryptionOutput.model";
 import {Buffer} from "buffer";
+import fs from "node:fs";
 
 export function Login() {
     const navigate = useNavigate()
@@ -21,12 +22,16 @@ export function Login() {
     const [password, setPassword] = useState<string>("")
     const handleSuccess = async (credentialResponse: CredentialResponse) => {
         const service = new ClientSideCryptographyService();
-        const salt = Buffer.from(window.crypto.getRandomValues(new Uint8Array(12)));
-        const key = await service.deriveKeyFromPassword("secret_key", salt)
-        const encrypted = service.encryptAes256Gcm(Buffer.from("my plaintext"), key).then((value: AesGcmEncryptionOutput) => {
-            console.log("encrypted: ", value);
-            const decrypted = service.decryptAes256Gcm(value, key).then((value: Buffer) => {
-                console.log("decrypted: ", value.toString("utf8"));
+        const password = "secret"
+
+        const { privateKey, publicKey, nonce, salt } = await service.generateRsaKeyPairWithEncryption(password);
+        const key = await service.decryptPrivateKey({privateKey, nonce, salt }, password);
+        console.log(privateKey);
+
+        const encrypted = service.encryptWithPublicKey(Buffer.from("my plaintext"), publicKey).then((value: Buffer) => {
+            console.log("encrypted: ", value.toString('base64'));
+            const decrypted = service.decryptWithPrivateKey(value, key).then((value: Buffer) => {
+                console.log("decrypted: ", value.toString("base64"));
             })
         });
         login(credentialResponse)
@@ -105,5 +110,4 @@ export function Login() {
         </div>
 
     )
-
 }

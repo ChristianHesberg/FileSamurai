@@ -3,6 +3,5 @@ export interface AddUserKeyPairDto {
     publicKey: string;
     privateKey: string;
     nonce: string;
-    tag: string;
     salt: string;
 }

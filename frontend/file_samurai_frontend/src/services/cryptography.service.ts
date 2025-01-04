@@ -13,8 +13,8 @@ import {UserPrivateKeyDto} from "../models/userPrivateKeyDto";
 import {DecryptionError} from "../errors/decryption.error";
 import {CryptographyServiceInterface} from "./cryptography.service.interface";
 
-export class CryptographyService implements CryptographyServiceInterface{
-    encryptAes256Gcm(plaintext: Buffer, key: Buffer): AesGcmEncryptionOutput {
+export class CryptographyService {
+    /*encryptAes256Gcm(plaintext: Buffer, key: Buffer): AesGcmEncryptionOutput {
         const nonce = randomBytes(12);
         const cipher = createCipheriv('aes-256-gcm', key, nonce);
 
@@ -76,7 +76,6 @@ export class CryptographyService implements CryptographyServiceInterface{
             privateKey: cipherText,
             publicKey: public_key,
             nonce: nonce,
-            tag: tag!,
             salt: salt.toString('base64')
         }
     }
@@ -107,5 +106,5 @@ export class CryptographyService implements CryptographyServiceInterface{
             aesInput,
             this.deriveKeyFromPassword(password, Buffer.from(privateKey.salt, 'base64'))
         );
-    }
+    }*/
 }
