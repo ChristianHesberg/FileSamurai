@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import {CreateFileUseCase} from "../use-cases/create-file.use-case";
-import {CreateUserKeyPair} from "../use-cases/create-user-key-pair.use-case";
+import {CreateUserKeyPairUseCase} from "../use-cases/create-user-key-pair.use-case";
 import {VIEWER_ROLE} from "../constants";
 import {FileService} from "../services/file.service";
 import {KeyService} from "../services/key.service";

@@ -27,7 +27,6 @@ public class FileService(
             Title = file.Title,
             FileContents = file.FileContents,
             Nonce = file.Nonce,
-            Tag = file.Tag,
             GroupId = file.GroupId
         };
         var result = filePort.AddFile(converted);
@@ -54,8 +53,7 @@ public class FileService(
             Id = file.Id,
             Title = file.Title,
             FileContents = file.FileContents,
-            Nonce = file.Nonce,
-            Tag = file.Tag,
+            Nonce = file.Nonce
         };
         var convertedAccessObject = new AddOrGetUserFileAccessDto()
         {
@@ -82,8 +80,7 @@ public class FileService(
             Id = file.Id,
             Title = file.Title,
             FileContents = file.FileContents,
-            Nonce = file.Nonce,
-            Tag = file.Tag,
+            Nonce = file.Nonce
         };
         return filePort.UpdateFile(converted);
     }

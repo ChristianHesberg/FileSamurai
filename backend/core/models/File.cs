@@ -10,9 +10,7 @@ public class File
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public string FileContents { get; set; }
     public string Nonce { get; set; }
-    public string Tag { get; set; }
     public string Title { get; set; }
-    
     public Group Group { get; set; }
     [ForeignKey("Group")]
     public string GroupId { get; set; }

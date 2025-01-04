@@ -7,10 +7,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUnlock} from "@fortawesome/free-solid-svg-icons";
 import {NotFoundError} from "../errors/not-found.error";
 import {ValidatePasswordUseCaseFactory} from "../use-cases/factories/validate-password.use-case.factory";
-import {CryptographyService} from "../services/cryptography.service";
-import {AesGcmEncryptionOutput} from "../models/aesGcmEncryptionOutput.model";
-import {Buffer} from "buffer";
-import fs from "node:fs";
+
+import {useUseCases} from "../providers/UseCaseProvider";
 
 export function Login() {
     const navigate = useNavigate()
@@ -21,15 +19,15 @@ export function Login() {
 
     const [password, setPassword] = useState<string>("")
     const handleSuccess = async (credentialResponse: CredentialResponse) => {
-        const service = new CryptographyService();
+        /*const service = new CryptographyService();
         const password = "secret"
-        /*const text = "text";
+        const text = "text";
         const salt = await service.generateKey();
 
         const key = await service.deriveKeyFromPassword(password, salt)
         const encrypted = await service.encryptAes256Gcm(Buffer.from(text), key);
         const decrypted = await service.decryptAes256Gcm(encrypted, key);
-        console.log(decrypted.toString('utf8'));*/
+        console.log(decrypted.toString('utf8'));
 
 
         const { privateKey, publicKey, nonce, salt } = await service.generateRsaKeyPairWithEncryption(password);
@@ -42,7 +40,7 @@ export function Login() {
         console.log("decrypted private key: ", key.toString('base64'));
 
         const encrypted = await service.encryptWithPublicKey(Buffer.from("my plaintext"), publicKey)
-        const decrypted = await service.decryptWithPrivateKey(encrypted, key)
+        const decrypted = await service.decryptWithPrivateKey(encrypted, key)*/
 
         login(credentialResponse)
             .then(() => {
