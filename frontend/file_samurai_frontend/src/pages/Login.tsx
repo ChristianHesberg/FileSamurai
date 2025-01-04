@@ -23,17 +23,29 @@ export function Login() {
     const handleSuccess = async (credentialResponse: CredentialResponse) => {
         const service = new ClientSideCryptographyService();
         const password = "secret"
+        /*const text = "text";
+        const salt = await service.generateKey();
+
+        const key = await service.deriveKeyFromPassword(password, salt)
+        const encrypted = await service.encryptAes256Gcm(Buffer.from(text), key);
+        const decrypted = await service.decryptAes256Gcm(encrypted, key);
+        console.log(decrypted.toString('utf8'));*/
+
 
         const { privateKey, publicKey, nonce, salt } = await service.generateRsaKeyPairWithEncryption(password);
-        const key = await service.decryptPrivateKey({privateKey, nonce, salt }, password);
-        console.log(privateKey);
+        console.log("generated private key: ", privateKey);
+        console.log("generated publicKey key: ", publicKey);
+        console.log("generated nonce key: ", nonce);
+        console.log("generated salt key: ", salt);
 
-        const encrypted = service.encryptWithPublicKey(Buffer.from("my plaintext"), publicKey).then((value: Buffer) => {
-            console.log("encrypted: ", value.toString('base64'));
-            const decrypted = service.decryptWithPrivateKey(value, key).then((value: Buffer) => {
-                console.log("decrypted: ", value.toString("base64"));
-            })
-        });
+        const key = await service.decryptPrivateKey({privateKey, nonce, salt }, password);
+        console.log("decrypted private key: ", key.toString('base64'));
+
+        const encrypted = await service.encryptWithPublicKey(Buffer.from("my plaintext"), publicKey)
+        console.log("encrypted: ", encrypted.toString('base64'));
+        const decrypted = await service.decryptWithPrivateKey(encrypted, key)
+        console.log("decrypted: ", decrypted.toString("utf8"));
+
         login(credentialResponse)
             .then(() => {
                 setIsModalOpen(true)

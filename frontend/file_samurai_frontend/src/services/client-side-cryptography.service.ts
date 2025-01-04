@@ -65,7 +65,7 @@ export class ClientSideCryptographyService implements CryptographyServiceInterfa
     }
 
     async deriveKeyFromPassword(password: string, salt: Buffer, keyLength: number = 32): Promise<Buffer> {
-        const encodedPassword = Buffer.from(password, "base64");
+        const encodedPassword = Buffer.from(password, 'utf8');
 
         const passwordKey = await window.crypto.subtle.importKey(
             'raw',
@@ -114,10 +114,15 @@ export class ClientSideCryptographyService implements CryptographyServiceInterfa
     }
 
     async generateRsaKeyPairWithEncryption(password: string): Promise<EncryptedRsaKeyPairModel> {
-        const salt = Buffer.from(window.crypto.getRandomValues(new Uint8Array(16)));
+        const salt = await this.generateKey();
         const key = await this.deriveKeyFromPassword(password, salt);
+        console.log("derived key in service: ", key.toString('base64'));
         const { private_key, public_key } = await this.generateRsaKeyPair();
-        const { cipherText, nonce } = await this.encryptAes256Gcm(Buffer.from(private_key), key);
+        console.log("generated private key in service: ", private_key);
+        console.log("generated public_key key in service: ", public_key);
+        const { cipherText, nonce } = await this.encryptAes256Gcm(Buffer.from(private_key, 'base64'), key);
+        console.log("encrypted private key in service: ", cipherText);
+        console.log("encrypted nonce in service: ", nonce);
 
         return {
             privateKey: cipherText,
@@ -152,13 +157,19 @@ export class ClientSideCryptographyService implements CryptographyServiceInterfa
     }
 
     async decryptPrivateKey(privateKey: UserPrivateKeyDto, password: string): Promise<Buffer>{
+        console.log("private key in decryptPrivatKey: ", privateKey.privateKey);
+        console.log("nonce in decryptPrivatKey: ", privateKey.nonce);
+        console.log("privateKey.salt in decryptPrivatKey: ", privateKey.salt);
+
+        const derivedKey = await this.deriveKeyFromPassword(password, Buffer.from(privateKey.salt, 'base64'));
+        console.log("derived key in decryptPrivateKey: ", derivedKey.toString('base64'));
         const aesInput = {
             cipherText: privateKey.privateKey,
             nonce: privateKey.nonce,
         }
-        return this.decryptAes256Gcm(
+        return await this.decryptAes256Gcm(
             aesInput,
-            await this.deriveKeyFromPassword(password, Buffer.from(privateKey.salt, 'base64'))
+            derivedKey
         );
     }
 
