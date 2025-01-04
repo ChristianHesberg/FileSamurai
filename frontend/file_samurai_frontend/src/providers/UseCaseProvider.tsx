@@ -5,6 +5,7 @@ import {GroupService} from "../services/groupService";
 import {UserService} from "../services/user.service";
 import {GetUsersInGroupUseCase} from "../use-cases/get-users-in-group.use-case";
 import {AddUserToGroupUseCase} from "../use-cases/add-user-to-group.use-case";
+import {RemoveUserFromGroupUseCase} from "../use-cases/remove-user-from-group.use-case";
 
 interface UseCaseProviderProps {
     children: ReactNode
@@ -21,6 +22,7 @@ interface UseCaseContextType {
     getGroupsFromEmailUseCase: GetGroupsForEmailUseCase,
     getUsersInGroup: GetUsersInGroupUseCase
     addUserToGroupUseCase: AddUserToGroupUseCase
+    removeUserFromGroup: RemoveUserFromGroupUseCase
 }
 
 const UseCaseContext = createContext<UseCaseContextType | undefined>(undefined)
@@ -37,10 +39,11 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     const getGroupsFromEmailUseCase = new GetGroupsForEmailUseCase(groupService);
     const getUsersInGroup = new GetUsersInGroupUseCase(groupService);
     const addUserToGroupUseCase = new AddUserToGroupUseCase(groupService);
+    const removeUserFromGroup = new RemoveUserFromGroupUseCase(groupService);
 
     return (
         <UseCaseContext.Provider
-            value={{getGroupsFromEmailUseCase, createGroupUseCase, getUsersInGroup, addUserToGroupUseCase}}>
+            value={{getGroupsFromEmailUseCase, createGroupUseCase, getUsersInGroup, addUserToGroupUseCase, removeUserFromGroup}}>
             {children}
         </UseCaseContext.Provider>
 

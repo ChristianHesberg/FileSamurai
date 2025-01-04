@@ -27,10 +27,8 @@ public class GroupAddUserHandler(IUserService userService,IGroupService groupSer
             request.Body.Seek(0, SeekOrigin.Begin);
             var reader = new StreamReader(request.Body);
             var body = await reader.ReadToEndAsync();
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true 
-            };
+            var options = new JsonSerializerOptions();
+            options.PropertyNameCaseInsensitive = true;
             var dto = JsonSerializer.Deserialize<AddUserToGroupDto>(body,options);
             if (dto == null)return;
             var group = groupService.GetGroup(dto.GroupId);

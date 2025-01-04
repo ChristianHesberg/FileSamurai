@@ -11,7 +11,7 @@ interface AddMembersModalProps {
 
 export const AddMembersModal: React.FC<AddMembersModalProps> = ({groupId}) => {
     const [users, setUsers] = useState<User[]>([])
-    const {getUsersInGroup, addUserToGroupUseCase,} = useUseCases()
+    const {getUsersInGroup, addUserToGroupUseCase, removeUserFromGroup} = useUseCases()
     const [email, setEmail] = useState<string>("")
 
     useEffect(() => {
@@ -25,6 +25,14 @@ export const AddMembersModal: React.FC<AddMembersModalProps> = ({groupId}) => {
         addUserToGroupUseCase.execute(email, groupId)
             .then((r) => setUsers((prevState) => [...prevState, r]))
             .catch(e => console.log(e))
+    }
+
+
+    function handleKickButton(userId: string) {
+        removeUserFromGroup.execute(groupId, userId)
+            .then(() => setUsers((prevItems) => prevItems.filter((user) => user.id !== userId)))
+            .catch(e => console.error("failed to delete"))
+        return undefined;
     }
 
     return <div>
@@ -46,7 +54,12 @@ export const AddMembersModal: React.FC<AddMembersModalProps> = ({groupId}) => {
         </label>
 
         {users.map((user, index) => (
-            <p key={index}>{user.email}</p>
+            <div className={"flex flex-row space-x-2 justify-center items-center"}>
+                <p key={index}>{user.email}</p>
+                <button className={"bg-red-700 hover:bg-red-600 p-2 rounded-md"}
+                        onClick={() => handleKickButton(user.id)}>X
+                </button>
+            </div>
         ))}
     </div>
 }

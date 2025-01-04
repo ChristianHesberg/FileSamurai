@@ -22,7 +22,12 @@ export class GroupService {
             userEmail: email,
             groupId: groupId
         }
-        const response = await axiosInstance.post('group/addUser',body)
+        const response = await axiosInstance.post('group/addUser', body)
+        return response.data
+    }
+
+    async removeUserFromGroup(userId: string, groupId: string) {
+        const response = await axiosInstance.delete(`group/removeUserFromGroup?groupId=${groupId}&userId=${userId}`)
         return response.data
     }
 

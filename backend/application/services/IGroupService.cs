@@ -10,4 +10,5 @@ public interface IGroupService
     public bool AddUserToGroup(AddUserToGroupDto toGroupDto);
     public List<GroupDto> GetGroupsForEmail(string email);
     public List<UserDto> GetUsersInGroup(string groupId);
+    public void RemoveUserFromGroup(string groupId, string userId);
 }

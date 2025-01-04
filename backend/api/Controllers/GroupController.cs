@@ -59,4 +59,18 @@ public class GroupController(IGroupService groupService) : ControllerBase
         var users = groupService.GetUsersInGroup(groupId);
         return Ok(users);
     }
+
+    [HttpDelete("removeUserFromGroup")]
+    public ActionResult RemoveUserFromGroup(string groupId, string userId)
+    {
+        try
+        {
+            groupService.RemoveUserFromGroup(groupId,userId);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
+        }
+    }
 }

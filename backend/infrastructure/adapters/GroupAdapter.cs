@@ -39,4 +39,13 @@ public class GroupAdapter(Context context) : IGroupPort
         var group = context.Groups.Include(x => x.Users).FirstOrDefault(x => x.Id == groupId);
         return group == null ? [] : group.Users.ToList();
     }
+
+    public void RemoveUserFromGroup(string groupId, string userId)
+    {
+        var group = context.Groups.Include(u => u.Users).FirstOrDefault(g => g.Id == groupId);
+        var user = group?.Users.FirstOrDefault(u => u.Id == userId);
+        if (user == null) return;
+        group?.Users.Remove(user);
+        context.SaveChanges();
+    }
 }

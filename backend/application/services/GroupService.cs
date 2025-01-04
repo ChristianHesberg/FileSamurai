@@ -50,4 +50,9 @@ public class GroupService(IGroupPort groupPort) : IGroupService
         var users = groupPort.GetUsersInGroup(groupId);
         return users.Select(u => new UserDto() { Id = u.Id, Email = u.Email }).ToList();
     }
+
+    public void RemoveUserFromGroup(string groupId, string userId)
+    {
+        groupPort.RemoveUserFromGroup(groupId,userId);
+    }
 }

@@ -9,4 +9,5 @@ public interface IGroupPort
     public bool AddUserToGroup(string userEmail, string groupId);
     public List<Group> GetGroupsForEmail(string email);
     public List<User> GetUsersInGroup(string groupId);
+    void RemoveUserFromGroup(string groupId, string userId);
 }

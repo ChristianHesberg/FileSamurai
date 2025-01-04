@@ -10,7 +10,7 @@ namespace api.Controllers;
 public class FileController(IFileService fileService): ControllerBase
 {
     [HttpGet]
-    [Authorize(Policy = "DocumentGet")]
+   [Authorize(Policy = "DocumentGet")]
     public ActionResult<GetFileDto> GetFile([FromQuery] string fileId, [FromQuery] string userId)
 
     {
