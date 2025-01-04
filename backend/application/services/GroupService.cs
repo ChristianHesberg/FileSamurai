@@ -34,9 +34,14 @@ public class GroupService(IGroupPort groupPort) : IGroupService
             };
     }
 
-    public bool AddUserToGroup(AddUserToGroupDto toGroupDto)
+    public UserDto AddUserToGroup(AddUserToGroupDto toGroupDto)
     {
-        return groupPort.AddUserToGroup(toGroupDto.UserEmail, toGroupDto.GroupId);
+        var user = groupPort.AddUserToGroup(toGroupDto.UserEmail, toGroupDto.GroupId);
+        return new UserDto()
+        {
+            Email = user.Email,
+            Id = user.Id
+        };
     }
 
     public List<GroupDto> GetGroupsForEmail(string email)
@@ -53,6 +58,6 @@ public class GroupService(IGroupPort groupPort) : IGroupService
 
     public void RemoveUserFromGroup(string groupId, string userId)
     {
-        groupPort.RemoveUserFromGroup(groupId,userId);
+        groupPort.RemoveUserFromGroup(groupId, userId);
     }
 }

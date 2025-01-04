@@ -7,7 +7,7 @@ public interface IGroupService
 {
     public GroupDto AddGroup(GroupCreationDto group, string email);
     public GroupDto? GetGroup(string id);
-    public bool AddUserToGroup(AddUserToGroupDto toGroupDto);
+    public UserDto AddUserToGroup(AddUserToGroupDto toGroupDto);
     public List<GroupDto> GetGroupsForEmail(string email);
     public List<UserDto> GetUsersInGroup(string groupId);
     public void RemoveUserFromGroup(string groupId, string userId);

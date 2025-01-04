@@ -1,4 +1,5 @@
-﻿using application.dtos;
+﻿using System.Data;
+using application.dtos;
 using application.services;
 using application.transformers;
 using Microsoft.AspNetCore.Authorization;
@@ -36,10 +37,26 @@ public class GroupController(IGroupService groupService) : ControllerBase
 
     [HttpPost("addUser")]
     [Authorize(Policy = "GroupAddUser")]
-    public ActionResult<bool> AddUserToGroup(AddUserToGroupDto dto)
+    public ActionResult<UserDto> AddUserToGroup(AddUserToGroupDto dto)
     {
-        var res = groupService.AddUserToGroup(dto);
-        return Ok(res);
+        try
+        {
+            var res = groupService.AddUserToGroup(dto);
+            return Ok(res);
+        }
+        catch (DuplicateNameException de)
+        {
+            return Conflict();
+        }
+        catch (KeyNotFoundException ke)
+        {
+            return NotFound();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     //todo missing auth
@@ -65,7 +82,7 @@ public class GroupController(IGroupService groupService) : ControllerBase
     {
         try
         {
-            groupService.RemoveUserFromGroup(groupId,userId);
+            groupService.RemoveUserFromGroup(groupId, userId);
             return Ok();
         }
         catch (Exception e)
