@@ -1,14 +1,13 @@
 import {FileService} from "../services/file.service";
 import {KeyService} from "../services/key.service";
 import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
-import {CryptographyService} from "../services/cryptography.service";
-import {CryptographyServiceInterface} from "../services/cryptography.service.interface";
+import {ICryptographyService} from "../services/cryptography.service.interface";
 
 export class ShareFileUseCase{
     constructor(
         private readonly fileService: FileService,
         private readonly keyService: KeyService,
-        private readonly cryptoService: CryptographyServiceInterface,
+        private readonly cryptoService: ICryptographyService,
     ) {}
 
     async execute(ownerId: string, recipientId: string, fileId: string, ownerPassword: string, role: string): Promise<void>{

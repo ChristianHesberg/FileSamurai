@@ -3,7 +3,7 @@ import {RsaKeyPairModel} from "../models/rsaKeyPair.model";
 import {EncryptedRsaKeyPairModel} from "../models/encryptedRsaKeyPair.model";
 import {UserPrivateKeyDto} from "../models/userPrivateKeyDto";
 
-export interface CryptographyServiceInterface {
+export interface ICryptographyService {
     encryptAes256Gcm(plaintext: Buffer, key: Buffer): Promise<AesGcmEncryptionOutput>;
     decryptAes256Gcm(encryptedData: AesGcmEncryptionOutput, key: Buffer): Promise<Buffer>;
     generateRsaKeyPair(): Promise<RsaKeyPairModel>;

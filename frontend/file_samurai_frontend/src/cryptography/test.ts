@@ -7,11 +7,10 @@ import {KeyService} from "../services/key.service";
 import {DecryptFileUseCase} from "../use-cases/decrypt-file.use-case";
 import {ShareFileUseCase} from "../use-cases/share-file.use-case";
 import {CryptographyService} from "../services/cryptography.service";
-import {ClientSideCryptographyService} from "../services/client-side-cryptography.service";
 
 const fileService = new FileService();
 const keyService = new KeyService();
-const cryptographyService = new ClientSideCryptographyService();
+const cryptographyService = new CryptographyService();
 const createFileUseCase = new CreateFileUseCase(
     fileService,
     keyService,

@@ -23,7 +23,7 @@ const UseCaseContext = createContext<UseCaseContextType | undefined>(undefined)
 export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     const fileService = new FileService()
     const keyService = new KeyService()
-    //const cryptoService = new ClientSideCryptographyService()
+    //const cryptoService = new CryptographyService()
 
     //const createFileUseCase = new CreateFileUseCase(fileService, keyService, cryptoService)
 
