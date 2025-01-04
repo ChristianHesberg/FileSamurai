@@ -3,6 +3,7 @@ import {FileResponseDto} from "../models/fileResponseDto";
 import {UserPrivateKeyDto} from "../models/userPrivateKeyDto";
 import type {KeyService} from "../services/key.service";
 import {ICryptographyService} from "../services/cryptography.service.interface";
+import { Buffer } from "buffer";
 
 export class DecryptFileUseCase{
     constructor(

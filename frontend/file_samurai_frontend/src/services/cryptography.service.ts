@@ -37,6 +37,8 @@ export class CryptographyService implements ICryptographyService {
     async decryptAes256Gcm(encryptedData: AesGcmEncryptionOutput, key: Buffer): Promise<Buffer> {
         try {
             const { cipherText, nonce } = encryptedData;
+            console.log("cipher text: ", cipherText);
+            console.log("nonce: ", nonce);
 
             const cryptoKey = await window.crypto.subtle.importKey(
                 'raw',

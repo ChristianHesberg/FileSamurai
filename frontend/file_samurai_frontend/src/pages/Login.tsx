@@ -19,29 +19,6 @@ export function Login() {
 
     const [password, setPassword] = useState<string>("")
     const handleSuccess = async (credentialResponse: CredentialResponse) => {
-        /*const service = new CryptographyService();
-        const password = "secret"
-        const text = "text";
-        const salt = await service.generateKey();
-
-        const key = await service.deriveKeyFromPassword(password, salt)
-        const encrypted = await service.encryptAes256Gcm(Buffer.from(text), key);
-        const decrypted = await service.decryptAes256Gcm(encrypted, key);
-        console.log(decrypted.toString('utf8'));
-
-
-        const { privateKey, publicKey, nonce, salt } = await service.generateRsaKeyPairWithEncryption(password);
-        console.log("generated private key: ", privateKey);
-        console.log("generated publicKey key: ", publicKey);
-        console.log("generated nonce key: ", nonce);
-        console.log("generated salt key: ", salt);
-
-        const key = await service.decryptPrivateKey({privateKey, nonce, salt }, password);
-        console.log("decrypted private key: ", key.toString('base64'));
-
-        const encrypted = await service.encryptWithPublicKey(Buffer.from("my plaintext"), publicKey)
-        const decrypted = await service.decryptWithPrivateKey(encrypted, key)*/
-
         login(credentialResponse)
             .then(() => {
                 setIsModalOpen(true)

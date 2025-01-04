@@ -2,6 +2,7 @@ import {FileService} from "../services/file.service";
 import {KeyService} from "../services/key.service";
 import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
 import {ICryptographyService} from "../services/cryptography.service.interface";
+import {Buffer} from 'buffer';
 
 export class ShareFileUseCase{
     constructor(
