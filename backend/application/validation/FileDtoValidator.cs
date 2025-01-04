@@ -10,8 +10,6 @@ public class FileDtoValidator : AbstractValidator<FileDto>
         RuleFor(x => x.Id).MustBeValidGuid();
         RuleFor(x => x.Nonce).NotEmpty();
         RuleFor(x => x.Nonce).MaximumLength(30);
-        RuleFor(x => x.Tag).NotEmpty();
-        RuleFor(x => x.Tag).MaximumLength(50);
         RuleFor(x => x.Title).NotEmpty();
         RuleFor(x => x.Title).MaximumLength(50);
     }

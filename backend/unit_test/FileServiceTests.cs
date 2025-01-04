@@ -73,8 +73,7 @@ public class FileServiceTests
             FileContents = "FileContents",
             GroupId = new Guid().ToString(),
             Nonce = "Nonce",
-            Title = "Title",
-            Tag = "Tag"
+            Title = "Title"
         };
         var fileReturnedFromMock = new File()
         {
@@ -82,8 +81,7 @@ public class FileServiceTests
             FileContents = "FileContents",
             GroupId = new Guid().ToString(),
             Nonce = "Nonce",
-            Title = "Title",
-            Tag = "Tag"
+            Title = "Title"
         };
         var expectedResult = new PostFileResultDto()
         {
@@ -109,24 +107,21 @@ public class FileServiceTests
             FileContents = "FileContents",
             GroupId = new Guid().ToString(),
             Nonce = "Nonce",
-            Title = "Title",
-            Tag = "Tag"
+            Title = "Title"
         };
         var convertedFile = new File()
         {
             FileContents = "FileContents",
             GroupId = new Guid().ToString(),
             Nonce = "Nonce",
-            Title = "Title",
-            Tag = "Tag"
+            Title = "Title"
         };
         var fileReturnedFromMock = new File()
         {
             FileContents = "FileContents",
             GroupId = new Guid().ToString(),
             Nonce = "Nonce",
-            Title = "Title",
-            Tag = "Tag"
+            Title = "Title"
         };
 
         fileRepo.Setup(repo => repo.AddFile(It.IsAny<File>())).Returns(fileReturnedFromMock);
@@ -140,7 +135,6 @@ public class FileServiceTests
                  && f.Title == convertedFile.Title
                  && f.GroupId == convertedFile.GroupId
                  && f.Nonce == convertedFile.Nonce
-                 && f.Tag == convertedFile.Tag
             )), Times.Once);  
     }
     #endregion
@@ -184,8 +178,7 @@ public class FileServiceTests
             Id = "Id",
             FileContents = "FileContents",
             Nonce = "Nonce",
-            Title = "Title",
-            Tag = "Tag"
+            Title = "Title"
         };
         var fileAccessFromMock = new UserFileAccess()
         {
@@ -201,7 +194,6 @@ public class FileServiceTests
                 FileContents = fileReturnedFromMock.FileContents,
                 Id = fileReturnedFromMock.Id,
                 Nonce = fileReturnedFromMock.Nonce,
-                Tag = fileReturnedFromMock.Tag,
                 Title = fileReturnedFromMock.Title
             },
             UserFileAccess = new AddOrGetUserFileAccessDto()
@@ -263,7 +255,6 @@ public class FileServiceTests
             FileContents = "FileContents",
             Nonce = "Nonce",
             Title = "Title",
-            Tag = "Tag"
         };
 
         fileRepo.Setup(repo => repo.GetFile(It.IsAny<string>())).Returns(fileReturnedFromMock);
@@ -291,7 +282,6 @@ public class FileServiceTests
             FileContents = "FileContents",
             Nonce = "Nonce",
             Title = "Title",
-            Tag = "Tag"
         };
         var fileAccessFromMock = new UserFileAccess()
         {
@@ -328,7 +318,6 @@ public class FileServiceTests
             FileContents = "FileContents",
             Nonce = "Nonce",
             Title = "Title",
-            Tag = "Tag"
         };
         var fileAccessFromMock = new UserFileAccess()
         {
@@ -389,7 +378,6 @@ public class FileServiceTests
             FileContents = "FileContents",
             Nonce = "Nonce",
             Title = "Title",
-            Tag = "Tag"
         };
         
         fileRepo.Setup(repo => repo.UpdateFile(It.IsAny<File>())).Returns(true);
@@ -411,7 +399,6 @@ public class FileServiceTests
             FileContents = "FileContents",
             Nonce = "Nonce",
             Title = "Title",
-            Tag = "Tag"
         };
         var convertedFile = new File()
         {
@@ -419,7 +406,6 @@ public class FileServiceTests
             FileContents = "FileContents",
             Nonce = "Nonce",
             Title = "Title",
-            Tag = "Tag"
         };
 
         fileRepo.Setup(repo => repo.UpdateFile(It.IsAny<File>())).Returns(true);
@@ -433,7 +419,6 @@ public class FileServiceTests
                  && f.Title == convertedFile.Title
                  && f.Id == convertedFile.Id
                  && f.Nonce == convertedFile.Nonce
-                 && f.Tag == convertedFile.Tag
             )), Times.Once);  
     }
 

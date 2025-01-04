@@ -28,8 +28,8 @@ public class FileController(IFileService fileService): ControllerBase
     [Authorize(Policy = "DocumentAdd")]
     public ActionResult<PostFileResultDto> PostFile(AddFileDto file)
     {
-        fileService.AddFile(file);
-        return Ok();
+        var res = fileService.AddFile(file);
+        return Ok(res);
     }
 
     [HttpPut]

@@ -19,7 +19,6 @@ public class UserKeyPairKeyPairService(IUserKeyPairPort userKeyPairPort) : IUser
         {
             PrivateKey = keyPair.PrivateKey,
             Nonce = keyPair.Nonce,
-            Tag = keyPair.Tag,
             Salt = keyPair.Salt
         };
     }
@@ -32,7 +31,6 @@ public class UserKeyPairKeyPairService(IUserKeyPairPort userKeyPairPort) : IUser
             PublicKey = keyPair.PublicKey,
             PrivateKey = keyPair.PrivateKey,
             Nonce = keyPair.Nonce,
-            Tag = keyPair.Tag,
             Salt = keyPair.Salt
         };
         userKeyPairPort.AddUserKeyPair(converted);

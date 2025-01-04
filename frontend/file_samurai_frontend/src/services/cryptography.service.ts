@@ -1,111 +1,208 @@
 import {AesGcmEncryptionOutput} from "../models/aesGcmEncryptionOutput.model";
-import {
-    createCipheriv,
-    createDecipheriv,
-    generateKeyPairSync, pbkdf2Sync,
-    privateDecrypt,
-    publicEncrypt,
-    randomBytes
-} from "node:crypto";
+import {DecryptionError} from "../errors/decryption.error";
+import {Buffer} from "buffer";
+import {ICryptographyService} from "./cryptography.service.interface";
 import {RsaKeyPairModel} from "../models/rsaKeyPair.model";
 import {EncryptedRsaKeyPairModel} from "../models/encryptedRsaKeyPair.model";
 import {UserPrivateKeyDto} from "../models/userPrivateKeyDto";
-import {DecryptionError} from "../errors/decryption.error";
-import {CryptographyServiceInterface} from "./cryptography.service.interface";
 
-export class CryptographyService implements CryptographyServiceInterface{
-    encryptAes256Gcm(plaintext: Buffer, key: Buffer): AesGcmEncryptionOutput {
-        const nonce = randomBytes(12);
-        const cipher = createCipheriv('aes-256-gcm', key, nonce);
+export class CryptographyService implements ICryptographyService {
+    async encryptAes256Gcm(plaintext: Buffer, key: Buffer): Promise<AesGcmEncryptionOutput> {
+        const cryptoKey = await window.crypto.subtle.importKey(
+            'raw',
+            key,
+            { name: 'AES-GCM' },
+            false,
+            ['encrypt']
+        );
 
-        const cipherTextBuffer = Buffer.concat([
-            cipher.update(plaintext),
-            cipher.final()
-        ]);
-        const tag = cipher.getAuthTag();
+        const nonce = window.crypto.getRandomValues(new Uint8Array(12));
+
+        const encryptedData = await window.crypto.subtle.encrypt(
+            {
+                name: 'AES-GCM',
+                iv: nonce,
+                tagLength: 128,
+            },
+            cryptoKey,
+            plaintext
+        );
 
         return {
-            cipherText: cipherTextBuffer.toString('base64'),
-            nonce: nonce.toString('base64'),
-            tag: tag.toString('base64')
+            cipherText: Buffer.from(encryptedData).toString('base64'),
+            nonce: Buffer.from(nonce).toString('base64')
         };
     }
 
-    decryptAes256Gcm(encryptedData: AesGcmEncryptionOutput, key: Buffer): Buffer {
-        const { cipherText, nonce, tag } = encryptedData;
-        try{
-            const decipher = createDecipheriv('aes-256-gcm', key, Buffer.from(nonce, 'base64'));
-            decipher.setAuthTag(Buffer.from(tag, 'base64'));
+    async decryptAes256Gcm(encryptedData: AesGcmEncryptionOutput, key: Buffer): Promise<Buffer> {
+        try {
+            const { cipherText, nonce } = encryptedData;
+            console.log("cipher text: ", cipherText);
+            console.log("nonce: ", nonce);
 
-            return Buffer.concat([
-                decipher.update(Buffer.from(cipherText, 'base64')),
-                decipher.final()
-            ]);
+            const cryptoKey = await window.crypto.subtle.importKey(
+                'raw',
+                key,
+                { name: 'AES-GCM' },
+                false,
+                ['decrypt']
+            );
+
+            // Decrypt the data
+            const decryptedData = await window.crypto.subtle.decrypt(
+                {
+                    name: 'AES-GCM',
+                    iv: Buffer.from(nonce, 'base64'),
+                    tagLength: 128,
+                },
+                cryptoKey,
+                Buffer.from(cipherText, "base64")
+            );
+
+            return Buffer.from(decryptedData);
         } catch (error) {
-            throw new DecryptionError();
+            throw new DecryptionError('Decryption failed');
         }
     }
 
-    generateRsaKeyPair(): RsaKeyPairModel {
-        const { publicKey, privateKey } = generateKeyPairSync('rsa', {
-            modulusLength: 2048,
-            publicKeyEncoding: {
-                type: 'spki',
-                format: 'pem'
-            },
-            privateKeyEncoding: {
-                type: 'pkcs8',
-                format: 'pem'
-            }
-        });
+    async deriveKeyFromPassword(password: string, salt: Buffer, keyLength: number = 32): Promise<Buffer> {
+        const encodedPassword = Buffer.from(password, 'utf8');
 
-        console.log(publicKey);
+        const passwordKey = await window.crypto.subtle.importKey(
+            'raw',
+            encodedPassword,
+            'PBKDF2',
+            false,
+            ['deriveKey']
+        );
+
+        const derivedKey = await window.crypto.subtle.deriveKey(
+            {
+                name: 'PBKDF2',
+                salt: salt,
+                iterations: 100000,
+                hash: 'SHA-512'
+            },
+            passwordKey,
+            {
+                name: 'AES-GCM',
+                length: keyLength * 8
+            },
+            true,
+            ['encrypt', 'decrypt']
+        );
+
+        const derivedKeyBuffer = await window.crypto.subtle.exportKey('raw', derivedKey);
+        return Buffer.from(derivedKeyBuffer);
+    }
+
+    async generateRsaKeyPair(): Promise<RsaKeyPairModel> {
+        const keyPair = await crypto.subtle.generateKey(
+            {
+                name: 'RSA-OAEP',
+                modulusLength: 2048,
+                publicExponent: new Uint8Array([0x01, 0x00, 0x01]), // 65537
+                hash: 'SHA-256'
+            },
+            true,
+            ['encrypt', 'decrypt']
+        );
 
         return {
-            private_key: privateKey,
-            public_key: publicKey
+            public_key: await this.exportKeyToBase64(keyPair.publicKey),
+            private_key: await this.exportKeyToBase64(keyPair.privateKey)
         };
     }
 
-    generateRsaKeyPairWithEncryption(password: string, saltSize: number = 16): EncryptedRsaKeyPairModel {
-        const salt = randomBytes(saltSize);
-        const key = this.deriveKeyFromPassword(password, salt);
-        const { private_key, public_key } = this.generateRsaKeyPair();
-        const { cipherText, nonce, tag } = this.encryptAes256Gcm(Buffer.from(private_key), key);
+    async generateRsaKeyPairWithEncryption(password: string): Promise<EncryptedRsaKeyPairModel> {
+        const salt = await this.generateKey();
+        const key = await this.deriveKeyFromPassword(password, salt);
+
+        const { private_key, public_key } = await this.generateRsaKeyPair();
+        const { cipherText, nonce } = await this.encryptAes256Gcm(Buffer.from(private_key, 'base64'), key);
+
         return {
             privateKey: cipherText,
             publicKey: public_key,
             nonce: nonce,
-            tag: tag,
             salt: salt.toString('base64')
         }
     }
 
-    encryptWithPublicKey(data: Buffer, publicKey: string): Buffer {
-        return publicEncrypt(publicKey, data);
+    async encryptWithPublicKey(data: Buffer, publicKey: string): Promise<Buffer> {
+        const converted = await this.importKeyFromBase64(publicKey, 'public');
+        const encryptedMessage = await crypto.subtle.encrypt(
+            {
+                name: 'RSA-OAEP'
+            },
+            converted,
+            data
+        );
+        return Buffer.from(encryptedMessage);
     }
 
-    decryptWithPrivateKey(encryptedData: Buffer, privateKey: Buffer): Buffer {
-        return privateDecrypt(privateKey, encryptedData);
+    async decryptWithPrivateKey(encryptedData: Buffer, privateKey: Buffer): Promise<Buffer> {
+        const converted = await this.importKeyFromBuffer(privateKey, 'private');
+        const decryptedMessage = await crypto.subtle.decrypt(
+            {
+                name: 'RSA-OAEP'
+            },
+            converted,
+            encryptedData
+        );
+        return Buffer.from(decryptedMessage);
     }
 
-    deriveKeyFromPassword(password: string, salt: Buffer, keyLength: number = 32): Buffer {
-        return pbkdf2Sync(password, salt, 100000, keyLength, 'sha512');
-    }
-
-    generateKey(size: number = 12): Buffer {
-        return randomBytes(size);
-    }
-
-    decryptPrivateKey(privateKey: UserPrivateKeyDto, password: string): Buffer{
+    async decryptPrivateKey(privateKey: UserPrivateKeyDto, password: string): Promise<Buffer>{
+        const derivedKey = await this.deriveKeyFromPassword(password, Buffer.from(privateKey.salt, 'base64'));
         const aesInput = {
             cipherText: privateKey.privateKey,
             nonce: privateKey.nonce,
-            tag: privateKey.tag
         }
-        return this.decryptAes256Gcm(
+        return await this.decryptAes256Gcm(
             aesInput,
-            this.deriveKeyFromPassword(password, Buffer.from(privateKey.salt, 'base64'))
+            derivedKey
+        );
+    }
+
+    async generateKey(size: number = 12): Promise<Buffer> {
+        return Buffer.from(window.crypto.getRandomValues(new Uint8Array(size)));
+    }
+
+    private async exportKeyToBase64(key: CryptoKey): Promise<string> {
+        const exported = await crypto.subtle.exportKey(
+            key.type === 'private' ? 'pkcs8' : 'spki',
+            key
+        );
+        return Buffer.from(exported).toString('base64');
+    }
+
+    private async importKeyFromBase64(base64Key: string, type: 'public' | 'private'): Promise<CryptoKey> {
+        const binaryKey = Buffer.from(base64Key, 'base64');
+        const format = type === 'private' ? 'pkcs8' : 'spki';
+        return crypto.subtle.importKey(
+            format,
+            binaryKey,
+            {
+                name: 'RSA-OAEP',
+                hash: 'SHA-256'
+            },
+            true,
+            type === 'private' ? ['decrypt'] : ['encrypt']
+        );
+    }
+
+    private async importKeyFromBuffer(key: Buffer, type: 'public' | 'private'): Promise<CryptoKey> {
+        const format = type === 'private' ? 'pkcs8' : 'spki';
+        return crypto.subtle.importKey(
+            format,
+            key,
+            {
+                name: 'RSA-OAEP',
+                hash: 'SHA-256'
+            },
+            true,
+            type === 'private' ? ['decrypt'] : ['encrypt']
         );
     }
 }
