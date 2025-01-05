@@ -1,4 +1,6 @@
-﻿using application.errors;
+﻿using api.Models;
+using application.errors;
+using core.errors;
 
 namespace api.Middleware;
 
@@ -45,12 +47,17 @@ public class ExceptionHandlingMiddleware
             statusCode = HttpStatusCode.BadRequest;  
             message = validationException.Message;
             validationFailures = validationException.ValidationErrors;
-        }  
+        }
         else if (exception is UnauthorizedAccessException)  
         {  
             statusCode = HttpStatusCode.Unauthorized;  
             message = "Unauthorized access.";  
-        }  
+        }
+        else if (exception is EntityAlreadyExistsException)
+        {
+            statusCode = HttpStatusCode.Conflict;
+            message = exception.Message;
+        }
         else  
         {  
             statusCode = HttpStatusCode.InternalServerError;  
@@ -63,10 +70,10 @@ public class ExceptionHandlingMiddleware
         return context.Response.WriteAsync(JsonConvert.SerializeObject(validationFailures.Count == 0 ? new  
         {  
             Message = message,
-        } : new
+        } : new 
         {
             Message = message,
             Errors = validationFailures
-        }));  
+        })); 
     }  
 }  
