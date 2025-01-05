@@ -60,16 +60,14 @@ public class ExceptionHandlingMiddleware
   
         context.Response.StatusCode = (int)statusCode;  
         context.Response.ContentType = "application/json"; 
-        
-        var response = validationFailures.Count == 0 ? new ErrorResponse() 
+
+        return context.Response.WriteAsync(JsonConvert.SerializeObject(validationFailures.Count == 0 ? new  
         {  
             Message = message,
-        } : new ErrorResponse()
+        } : new 
         {
             Message = message,
             Errors = validationFailures
-        };
-
-        return context.Response.WriteAsync(JsonConvert.SerializeObject(response)); 
+        })); 
     }  
 }  
