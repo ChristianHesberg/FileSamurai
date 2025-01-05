@@ -1,6 +1,4 @@
-﻿using System.Net;
-using api.Models;
-using api.SchemaFilters;
+﻿using api.SchemaFilters;
 using application.dtos;
 using application.services;
 using Microsoft.AspNetCore.Authorization;
