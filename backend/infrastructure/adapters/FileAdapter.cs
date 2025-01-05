@@ -1,4 +1,5 @@
 ﻿using application.ports;
+using core.errors;
 using core.models;
 using Microsoft.EntityFrameworkCore;
 using File = core.models.File;
@@ -32,6 +33,9 @@ public class FileAdapter(Context context) : IFilePort
 
     public void AddUserFileAccess(UserFileAccess userFileAccess)
     {
+        var alreadyExists =
+            context.UserFileAccesses.Any(x => x.FileId == userFileAccess.FileId && x.UserId == userFileAccess.UserId);
+        if (alreadyExists) throw new EntityAlreadyExistsException("User already has access to this file!");
         context.UserFileAccesses.Add(userFileAccess);
         context.SaveChanges();
     }

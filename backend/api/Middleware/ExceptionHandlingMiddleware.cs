@@ -1,5 +1,6 @@
 ﻿using api.Models;
 using application.errors;
+using core.errors;
 
 namespace api.Middleware;
 
@@ -51,7 +52,12 @@ public class ExceptionHandlingMiddleware
         {  
             statusCode = HttpStatusCode.Unauthorized;  
             message = "Unauthorized access.";  
-        }  
+        }
+        else if (exception is EntityAlreadyExistsException)
+        {
+            statusCode = HttpStatusCode.Conflict;
+            message = exception.Message;
+        }
         else  
         {  
             statusCode = HttpStatusCode.InternalServerError;  

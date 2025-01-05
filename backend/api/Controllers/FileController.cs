@@ -1,4 +1,6 @@
-﻿using api.SchemaFilters;
+﻿using System.Net;
+using api.Models;
+using api.SchemaFilters;
 using application.dtos;
 using application.services;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +14,7 @@ public class FileController(IFileService fileService): ControllerBase
 {
     [HttpGet]
     [Authorize(Policy = "DocumentGet")]
+    [ProducesResponseType(typeof(void), (int)HttpStatusCode.NotFound)]
     public ActionResult<GetFileDto> GetFile(
         [FromQuery, CustomDescription("Must be a valid GUID")] string fileId, 
         [FromQuery, CustomDescription("Must be a valid GUID")] string userId
@@ -36,6 +39,7 @@ public class FileController(IFileService fileService): ControllerBase
 
     [HttpPut]
     [Authorize(Policy = "DocumentChange")]
+    [ProducesResponseType(typeof(void), (int)HttpStatusCode.NotFound)]
     public ActionResult PutFile(FileDto file)
     {
         var result = fileService.UpdateFile(file);
@@ -44,6 +48,7 @@ public class FileController(IFileService fileService): ControllerBase
 
     [HttpGet("access")]
     [Authorize(Policy = "DocumentGetUserFileAccess")]
+    [ProducesResponseType(typeof(void), (int)HttpStatusCode.NotFound)]
     public ActionResult<AddOrGetUserFileAccessDto> GetUserFileAccess(
         [FromQuery, CustomDescription("Must be a valid GUID")] string fileId, 
         [FromQuery, CustomDescription("Must be a valid GUID")] string userId
@@ -60,6 +65,7 @@ public class FileController(IFileService fileService): ControllerBase
 
     [HttpPost("access")]
     [Authorize(Policy = "FileAccess")]
+    [ProducesResponseType(typeof(ErrorMessageResponse), (int)HttpStatusCode.Conflict)]
     public ActionResult PostUserFileAccess(AddOrGetUserFileAccessDto userFileAccess)
     {
         fileService.AddUserFileAccess(userFileAccess);

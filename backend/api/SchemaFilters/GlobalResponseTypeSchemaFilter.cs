@@ -1,4 +1,5 @@
 ﻿using api.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace api.SchemaFilters;
 
@@ -28,9 +29,26 @@ public class GlobalResponseTypeSchemaFilter : IOperationFilter
         {  
             GenerateSchema<ErrorResponse>(operation, context, statusCode);
         }  
+        // Add 200 OK response  
+        var returnType = context.MethodInfo.ReturnType;  
+        if (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(ActionResult<>))  
+        {  
+            returnType = returnType.GetGenericArguments()[0]; 
+        }  
+        else if (returnType == typeof(ActionResult))  
+        {  
+            returnType = typeof(void); 
+        }
+        
+        GenerateSchema(operation, context, HttpStatusCode.OK, returnType); 
     }
+    
+    private void GenerateSchema<T>(OpenApiOperation operation, OperationFilterContext context, HttpStatusCode statusCode)  
+    {  
+        GenerateSchema(operation, context, statusCode, typeof(T));  
+    }  
 
-    private void GenerateSchema<T>(OpenApiOperation operation, OperationFilterContext context, HttpStatusCode statusCode)
+    private void GenerateSchema(OpenApiOperation operation, OperationFilterContext context, HttpStatusCode statusCode, Type type)
     {
         if (!operation.Responses.ContainsKey(((int)statusCode).ToString()))  
         {  
@@ -41,7 +59,11 @@ public class GlobalResponseTypeSchemaFilter : IOperationFilter
                 {  
                     ["application/json"] = new OpenApiMediaType  
                     {  
-                        Schema = context.SchemaGenerator.GenerateSchema(typeof(T), context.SchemaRepository)  
+                        Schema = context.SchemaGenerator.GenerateSchema(type, context.SchemaRepository)  
+                    },
+                    ["text/plain"] = new OpenApiMediaType  
+                    {  
+                        Schema = context.SchemaGenerator.GenerateSchema(type, context.SchemaRepository)  
                     }  
                 }  
             });  
