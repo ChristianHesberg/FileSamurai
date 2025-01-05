@@ -1,4 +1,5 @@
-﻿using application.errors;
+﻿using api.Models;
+using application.errors;
 
 namespace api.Middleware;
 
@@ -59,14 +60,16 @@ public class ExceptionHandlingMiddleware
   
         context.Response.StatusCode = (int)statusCode;  
         context.Response.ContentType = "application/json"; 
-
-        return context.Response.WriteAsync(JsonConvert.SerializeObject(validationFailures.Count == 0 ? new  
+        
+        var response = validationFailures.Count == 0 ? new ErrorResponse() 
         {  
             Message = message,
-        } : new
+        } : new ErrorResponse()
         {
             Message = message,
             Errors = validationFailures
-        }));  
+        };
+
+        return context.Response.WriteAsync(JsonConvert.SerializeObject(response)); 
     }  
 }  
