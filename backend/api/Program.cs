@@ -11,6 +11,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using infrastructure;
 using infrastructure.adapters;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -58,6 +59,7 @@ builder.Services.AddSwaggerGen(options =>
         Type = SecuritySchemeType.Http,
         Scheme = "Bearer"
     });
+    
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
@@ -74,6 +76,7 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+builder.Services.AddFluentValidationRulesToSwagger();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
