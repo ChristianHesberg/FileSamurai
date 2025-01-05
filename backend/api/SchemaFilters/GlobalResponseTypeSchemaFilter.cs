@@ -6,13 +6,13 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;  
 using System.Net;  
 
-public class ResponseTypeSchemaFilter : IOperationFilter  
+public class GlobalResponseTypeSchemaFilter : IOperationFilter  
 {  
     public void Apply(OpenApiOperation operation, OperationFilterContext context)  
     {  
         var statusCodes = new[] {  
             HttpStatusCode.Unauthorized,  
-            HttpStatusCode.InternalServerError  
+            HttpStatusCode.InternalServerError,
         };
 
         var statusCodesWithErrors = new[]

@@ -1,4 +1,6 @@
-﻿using api.SchemaFilters;
+﻿using System.Net;
+using api.Models;
+using api.SchemaFilters;
 using application.dtos;
 using application.services;
 using Microsoft.AspNetCore.Authorization;
@@ -26,7 +28,6 @@ public class FileController(IFileService fileService): ControllerBase
         return result == null ? NotFound() : Ok(result);
     }
     
-
     [HttpPost]
     [Authorize(Policy = "DocumentAdd")]
     public ActionResult<PostFileResultDto> PostFile(AddFileDto file)
@@ -45,7 +46,6 @@ public class FileController(IFileService fileService): ControllerBase
 
     [HttpGet("access")]
     [Authorize(Policy = "DocumentGetUserFileAccess")]
-
     public ActionResult<AddOrGetUserFileAccessDto> GetUserFileAccess(
         [FromQuery, CustomDescription("Must be a valid GUID")] string fileId, 
         [FromQuery, CustomDescription("Must be a valid GUID")] string userId

@@ -46,7 +46,7 @@ public class ExceptionHandlingMiddleware
             statusCode = HttpStatusCode.BadRequest;  
             message = validationException.Message;
             validationFailures = validationException.ValidationErrors;
-        }  
+        }
         else if (exception is UnauthorizedAccessException)  
         {  
             statusCode = HttpStatusCode.Unauthorized;  

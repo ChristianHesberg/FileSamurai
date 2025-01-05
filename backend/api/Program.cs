@@ -50,7 +50,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.OperationFilter<AddQueryParameterDescription>();
-    options.OperationFilter<ResponseTypeSchemaFilter>();  
+    options.OperationFilter<GlobalResponseTypeSchemaFilter>();  
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
     {
         Name = "Authorization",
