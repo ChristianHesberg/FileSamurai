@@ -37,9 +37,7 @@ builder.Services.AddScoped<IValidator<GetFileOrAccessInputDto>, GetFileOrAccessI
 builder.Services.AddScoped<IValidator<FileDto>, FileDtoValidator>();
 builder.Services.AddScoped<IValidator<AddOrGetUserFileAccessDto>, AddOrGetUserFileAccessDtoValidator>();
 
-builder.Services.AddFluentValidationAutoValidation().AddFluentValidationAutoValidation();
 //builder.Services.AddSwaggerGen(opt => opt.SchemaFilter<FluentValidationSchemaFilter>());
-
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -138,7 +136,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-//app.UseMiddleware<ExceptionHandlingMiddleware>(); 
+app.UseMiddleware<ExceptionHandlingMiddleware>(); 
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

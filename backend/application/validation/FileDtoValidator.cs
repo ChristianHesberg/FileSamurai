@@ -7,7 +7,7 @@ public class FileDtoValidator : AbstractValidator<FileDto>
 {
     public FileDtoValidator()
     {
-        RuleFor(x => x.Id).MustBeValidGuid();
+        RuleFor(x => x.Id).MustBeValidGuid("Id");
         RuleFor(x => x.Nonce).NotEmpty();
         RuleFor(x => x.Nonce).MaximumLength(30);
         RuleFor(x => x.Title).NotEmpty();

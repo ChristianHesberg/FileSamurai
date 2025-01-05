@@ -26,7 +26,6 @@ public class DocumentGetHandler(IUserService userService,IFileService fileServic
         var fileId = request.Query["fileId"].ToString();
         if (string.IsNullOrEmpty(fileId))return;
         
-        
         //CHECK IF USER IS IN TABLE FOR DOCUMENT ACCESS
         GetFileOrAccessInputDto retrieveFile = new GetFileOrAccessInputDto()
         {
@@ -37,7 +36,6 @@ public class DocumentGetHandler(IUserService userService,IFileService fileServic
         //if file is meaning either file or fileaccess was null and therefor no allowed to view file
         var file =  fileService.GetFile(retrieveFile);
         if (file == null) return;
-        
         
         // GET User Groups and File group
         var userGroup = userService.GetGroupsForUser(user.Id);
