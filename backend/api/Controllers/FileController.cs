@@ -1,4 +1,5 @@
-﻿using application.dtos;
+﻿using api.SchemaFilters;
+using application.dtos;
 using application.services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +12,10 @@ public class FileController(IFileService fileService): ControllerBase
 {
     [HttpGet]
     [Authorize(Policy = "DocumentGet")]
-    public ActionResult<GetFileDto> GetFile([FromQuery] string fileId, [FromQuery] string userId)
-
+    public ActionResult<GetFileDto> GetFile(
+        [FromQuery, CustomDescription("Must be a valid GUID")] string fileId, 
+        [FromQuery, CustomDescription("Must be a valid GUID")] string userId
+        )
     {
         var dto = new GetFileOrAccessInputDto()
         {
@@ -43,7 +46,10 @@ public class FileController(IFileService fileService): ControllerBase
     [HttpGet("access")]
     [Authorize(Policy = "DocumentGetUserFileAccess")]
 
-    public ActionResult<AddOrGetUserFileAccessDto> GetUserFileAccess([FromQuery] string userId, [FromQuery] string fileId)
+    public ActionResult<AddOrGetUserFileAccessDto> GetUserFileAccess(
+        [FromQuery, CustomDescription("Must be a valid GUID")] string fileId, 
+        [FromQuery, CustomDescription("Must be a valid GUID")] string userId
+        )
     {
         var dto = new GetFileOrAccessInputDto()
         {
