@@ -25,7 +25,6 @@ public class DocumentAccessHandler(
         if (accessor == null) throw new Exception("Http context is somehow null");
         
         var request = accessor.Request;
-        request.EnableBuffering();
 
         var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
 

@@ -13,9 +13,11 @@ public class GroupAdapter(Context context) : IGroupPort
         return added.Entity;
     }
 
-    public Group? GetGroup(string id)
+    public Group GetGroup(string id)
     {
-        return context.Groups.Find(id);
+        var res = context.Groups.Find(id);
+        if (res == null) throw new KeyNotFoundException($"Could not find group with id: {id}");
+        return res;
     }
 
     public bool AddUserToGroup(string userEmail, string groupId)

@@ -10,6 +10,7 @@ public static class BodyToDto
     {
         try
         {
+            request.EnableBuffering();
             request.Body.Seek(0, SeekOrigin.Begin);
             var reader = new StreamReader(request.Body);
             var body =  await reader.ReadToEndAsync();
