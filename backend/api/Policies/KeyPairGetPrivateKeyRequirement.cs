@@ -2,7 +2,7 @@
 
 namespace api.Policies;
 
-public class KeyPairGetPKRequirement : IAuthorizationRequirement
+public class KeyPairGetPrivateKeyRequirement : IAuthorizationRequirement
 {
     
 }

@@ -10,8 +10,7 @@ public class AddOrGetUserFileAccessDtoValidator : AbstractValidator<AddOrGetUser
     {
         RuleFor(x => x.EncryptedFileKey).NotEmpty();
         RuleFor(x => x.EncryptedFileKey).MaximumLength(500);
-        RuleFor(x => x.Role).NotEmpty();
-        RuleFor(x => x.Role).MaximumLength(30);
+        RuleFor(x => x.Role).IsInEnum();
         RuleFor(x => x.UserId).MustBeValidGuid("UserId");
         RuleFor(x => x.FileId).MustBeValidGuid("FileId");
     }

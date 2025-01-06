@@ -10,8 +10,8 @@ using infrastructure;
 namespace infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250104124820_remove tag")]
-    partial class removetag
+    [Migration("20250106134337_role to enum")]
+    partial class roletoenum
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -118,9 +118,8 @@ namespace infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Role")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("UserId")
                         .IsRequired()

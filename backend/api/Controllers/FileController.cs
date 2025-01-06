@@ -59,6 +59,7 @@ public class FileController(IFileService fileService): ControllerBase
             UserId = userId,
             FileId = fileId
         };
+        
         var result = fileService.GetUserFileAccess(dto);
         return result == null ? NotFound() : Ok(result);
     }
@@ -69,6 +70,23 @@ public class FileController(IFileService fileService): ControllerBase
     public ActionResult PostUserFileAccess(AddOrGetUserFileAccessDto userFileAccess)
     {
         fileService.AddUserFileAccess(userFileAccess);
+        return Ok();
+    }
+    
+    [HttpDelete("access")]
+    //todo auth
+    public ActionResult DeleteUserFileAccess(
+        [FromQuery, CustomDescription("Must be a valid GUID")] string fileId, 
+        [FromQuery, CustomDescription("Must be a valid GUID")] string userId
+        )
+    {
+        var dto = new GetFileOrAccessInputDto()
+        {
+            UserId = userId,
+            FileId = fileId
+        };
+        
+        fileService.DeleteUserFileAccess(dto);
         return Ok();
     }
 }

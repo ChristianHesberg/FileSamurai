@@ -178,14 +178,15 @@ public class FileServiceTests
             Id = "Id",
             FileContents = "FileContents",
             Nonce = "Nonce",
-            Title = "Title"
+            Title = "Title",
+            GroupId = "GroupId"
         };
         var fileAccessFromMock = new UserFileAccess()
         {
             FileId = "fileId",
             UserId = "userId",
             EncryptedFileKey = "FAK",
-            Role = "Editor"
+            Role = Roles.Editor
         };
         var expectedResult = new GetFileDto()
         {
@@ -194,7 +195,8 @@ public class FileServiceTests
                 FileContents = fileReturnedFromMock.FileContents,
                 Id = fileReturnedFromMock.Id,
                 Nonce = fileReturnedFromMock.Nonce,
-                Title = fileReturnedFromMock.Title
+                Title = fileReturnedFromMock.Title,
+                GroupId = fileReturnedFromMock.GroupId
             },
             UserFileAccess = new AddOrGetUserFileAccessDto()
             {
@@ -228,7 +230,7 @@ public class FileServiceTests
             FileId = "fileId",
             UserId = "userId",
             EncryptedFileKey = "FAK",
-            Role = "Editor"
+            Role = Roles.Editor
         };
 
         fileRepo.Setup(repo => repo.GetFile(It.IsAny<string>())).Returns((File?)null);
@@ -288,7 +290,7 @@ public class FileServiceTests
             FileId = "fileId",
             UserId = "userId",
             EncryptedFileKey = "FAK",
-            Role = "Editor"
+            Role = Roles.Editor
         };
 
         fileRepo.Setup(repo => repo.GetFile(It.IsAny<string>())).Returns(fileReturnedFromMock);
@@ -324,7 +326,7 @@ public class FileServiceTests
             FileId = "fileId",
             UserId = "userId",
             EncryptedFileKey = "FAK",
-            Role = "Editor"
+            Role = Roles.Editor
         };
 
         fileRepo.Setup(repo => repo.GetFile(It.IsAny<string>())).Returns(fileReturnedFromMock);
@@ -459,7 +461,7 @@ public class FileServiceTests
             UserId = "userId",
             FileId = "fileId",
             EncryptedFileKey = "FAK",
-            Role = "Editor"
+            Role = Roles.Editor
         };
         
         fileRepo.Setup(repo => repo.AddUserFileAccess(It.IsAny<UserFileAccess>()));
@@ -544,7 +546,7 @@ public class FileServiceTests
             UserId = "userId",
             FileId = "fileId",
             EncryptedFileKey = "FAK",
-            Role = "Editor"
+            Role = Roles.Editor
         };
         
         fileRepo.Setup(repo => repo.GetUserFileAccess(It.IsAny<string>(), It.IsAny<string>())).Returns(repoOutput);

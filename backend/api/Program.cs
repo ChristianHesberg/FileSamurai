@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using api.Policies;
 using api.Middleware;
 using api.SchemaFilters;
@@ -23,8 +24,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<Context>(opt => opt.UseSqlite("Data Source=../database/database.db"));
 
-builder.Services.AddScoped<IUserKeyPairPort, UserKeyPairKeyPairAdapter>();
-builder.Services.AddScoped<IUserKeyPairService, UserKeyPairKeyPairService>();
+builder.Services.AddScoped<IUserKeyPairPort, UserKeyPairAdapter>();
+builder.Services.AddScoped<IUserKeyPairService, UserKeyPairService>();
 builder.Services.AddScoped<IUserPort, UserAdapter>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFilePort, FileAdapter>();
@@ -42,6 +43,7 @@ builder.Services.AddScoped<IValidator<AddOrGetUserFileAccessDto>, AddOrGetUserFi
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); 
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -102,7 +104,7 @@ builder.Services.AddScoped<IAuthorizationHandler, DocumentChangeHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, DocumentGetHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, DocumentAddHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, KeyPairPostHandler>();
-builder.Services.AddScoped<IAuthorizationHandler, KeyPairGetPKHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, KeyPairGetPrivateKeyHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, GroupAddUserHandler>();
 
 
@@ -120,7 +122,7 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("PostRSAKeyPair", policy =>
         policy.Requirements.Add(new KeyPairPostRequirement()))
     .AddPolicy("GetUserPK", policy =>
-        policy.Requirements.Add(new KeyPairGetPKRequirement()))
+        policy.Requirements.Add(new KeyPairGetPrivateKeyRequirement()))
     .AddPolicy("GroupAddUser", policy =>
         policy.Requirements.Add(new GroupAddUserRequirement()));
 
@@ -147,7 +149,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 
 app.UseCors("cors");
 

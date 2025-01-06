@@ -11,10 +11,10 @@ namespace api.Controllers;
 public class UserController(IUserService userService) : ControllerBase
 {
     [HttpPost]
-    public ActionResult<string> PostUser(UserCreationDto user)
+    public ActionResult<UserDto> PostUser(UserCreationDto user)
     {
         var res = userService.AddUser(user);
-        return Ok();
+        return Ok(res);
     }
 
     [HttpGet("{id}")]
@@ -66,5 +66,12 @@ public class UserController(IUserService userService) : ControllerBase
         var result = userService.ValidatePassword(password, email);
         if (result) return Ok(result);
         return Unauthorized();
+    }
+
+    [HttpDelete("{id}")]
+    public ActionResult DeleteUser( string id)
+    {
+        userService.DeleteUser(id);
+        return Ok();
     }
 }

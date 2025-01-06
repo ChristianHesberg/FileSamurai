@@ -14,19 +14,32 @@ public class UserAdapter(Context context) : IUserPort
         return added.Entity;
     }
 
-    public User? GetUser(string id)
+    public User GetUser(string id)
     {
-        return context.Users.Find(id);
+        var res = context.Users.Find(id);
+        if (res == null) throw new KeyNotFoundException($"Could not find user with id: {id}");
+        return res;
     }
 
-    public User? GetUserByEmail(string email)
+    public User GetUserByEmail(string email)
     {
-        return context.Users.FirstOrDefault(user => user.Email == email);
+        var res = context.Users.FirstOrDefault(user => user.Email == email);
+        if (res == null) throw new KeyNotFoundException($"Could not find user with email: {email}");
+        return res;
     }
 
-    public List<Group>? GetGroupsForUser(string id)
+    public List<Group> GetGroupsForUser(string id)
     {
         var user = context.Users.Include(user => user.Groups).FirstOrDefault(e => e.Id == id);
-        return user?.Groups;
+        if (user == null) throw new KeyNotFoundException($"Could not find user with id: {id}");
+        return user.Groups ?? [];
+    }
+
+    public void DeleteUser(string id)
+    {
+        var user = context.Users.Find(id);
+        if (user == null) throw new KeyNotFoundException("User not found");
+        context.Users.Remove(user);
+        context.SaveChanges();
     }
 }

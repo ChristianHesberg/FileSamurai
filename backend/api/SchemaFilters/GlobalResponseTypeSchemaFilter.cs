@@ -9,11 +9,11 @@ using System.Net;
 
 public class GlobalResponseTypeSchemaFilter : IOperationFilter  
 {  
-    public void Apply(OpenApiOperation operation, OperationFilterContext context)  
-    {  
+    public void Apply(OpenApiOperation operation, OperationFilterContext context)
+    {
         var statusCodes = new[] {  
-            HttpStatusCode.Unauthorized,  
             HttpStatusCode.InternalServerError,
+            HttpStatusCode.Conflict
         };
 
         var statusCodesWithErrors = new[]

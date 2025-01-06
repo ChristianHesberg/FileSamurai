@@ -1,7 +1,7 @@
 ﻿namespace core.models;
 
-public enum Roles  
-{  
-    Editor,  
-    Viewer  
-}  
+public enum Roles
+{
+    Viewer,  
+    Editor  
+}

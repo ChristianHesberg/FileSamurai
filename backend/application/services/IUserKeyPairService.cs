@@ -5,7 +5,7 @@ namespace application.services;
 
 public interface IUserKeyPairService
 {
-    public string? GetUserPublicKey(string userId);
-    public UserRsaPrivateKeyDto? GetUserPrivateKey(string userId);
+    public string GetUserPublicKey(string userId);
+    public UserRsaPrivateKeyDto GetUserPrivateKey(string userId);
     public void AddUserRsaKeyPair(UserRsaKeyPairDto keyPair);
 }

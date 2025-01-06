@@ -1,8 +1,4 @@
-﻿using api.Models;
-using application.errors;
-using core.errors;
-
-namespace api.Middleware;
+﻿namespace api.Middleware;
 
 using Microsoft.AspNetCore.Http;  
 using Microsoft.Extensions.Logging;  
@@ -10,6 +6,8 @@ using System;
 using System.Net;  
 using System.Threading.Tasks;  
 using Newtonsoft.Json;  
+using application.errors;
+using core.errors;
   
 public class ExceptionHandlingMiddleware  
 {  
@@ -40,29 +38,40 @@ public class ExceptionHandlingMiddleware
         HttpStatusCode statusCode;  
         string message;
         IList<string> validationFailures = [];
+
+        switch (exception)
+        {
+            case CustomValidationException validationException:
+                statusCode = HttpStatusCode.BadRequest;  
+                message = validationException.Message;
+                validationFailures = validationException.Errors;
+                break;
+            
+            case BadHttpRequestException:
+                statusCode = HttpStatusCode.BadRequest;
+                message = exception.Message; 
+                break;  
+            
+            case UnauthorizedAccessException:  
+                statusCode = HttpStatusCode.Unauthorized;  
+                message = "Unauthorized access.";  
+                break;  
   
-        // Customize your response based on the exception type  
-        if (exception is CustomValidationException validationException)
-        {
-            statusCode = HttpStatusCode.BadRequest;  
-            message = validationException.Message;
-            validationFailures = validationException.ValidationErrors;
+            case EntityAlreadyExistsException:  
+                statusCode = HttpStatusCode.Conflict;  
+                message = exception.Message;  
+                break;  
+            
+            case KeyNotFoundException:  
+                statusCode = HttpStatusCode.NotFound;  
+                message = exception.Message;  
+                break;  
+  
+            default:  
+                statusCode = HttpStatusCode.InternalServerError;  
+                message = "Internal server error.";  
+                break; 
         }
-        else if (exception is UnauthorizedAccessException)  
-        {  
-            statusCode = HttpStatusCode.Unauthorized;  
-            message = "Unauthorized access.";  
-        }
-        else if (exception is EntityAlreadyExistsException)
-        {
-            statusCode = HttpStatusCode.Conflict;
-            message = exception.Message;
-        }
-        else  
-        {  
-            statusCode = HttpStatusCode.InternalServerError;  
-            message = "Internal server error.";  
-        }  
   
         context.Response.StatusCode = (int)statusCode;  
         context.Response.ContentType = "application/json"; 

@@ -8,14 +8,16 @@ public class GroupAdapter(Context context) : IGroupPort
 {
     public Group AddGroup(Group group)
     {
-        var added =context.Groups.Add(group);
+        var added = context.Groups.Add(group);
         context.SaveChanges();
         return added.Entity;
     }
 
-    public Group? GetGroup(string id)
+    public Group GetGroup(string id)
     {
-        return context.Groups.Find(id);
+        var res = context.Groups.Find(id);
+        if (res == null) throw new KeyNotFoundException($"Could not find group with id: {id}");
+        return res;
     }
 
     public bool AddUserToGroup(string userEmail, string groupId)
@@ -27,5 +29,13 @@ public class GroupAdapter(Context context) : IGroupPort
         group.Users.Add(user);
         context.SaveChanges();
         return true;
+    }
+
+    public void DeleteGroup(string id)
+    {
+        var group = context.Groups.Find(id);
+        if (group == null) throw new KeyNotFoundException();
+        context.Groups.Remove(group);
+        context.SaveChanges();
     }
 }
