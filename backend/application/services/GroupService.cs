@@ -14,10 +14,12 @@ public class GroupService(IGroupPort groupPort) : IGroupService
             CreatorEmail = email
         };
         var res = groupPort.AddGroup(converted);
+
         return new GroupDto()
         {
             Id = res.Id,
-            Name = res.Name
+            Name = res.Name,
+            GroupEmail = res.CreatorEmail
         };
     }
 
@@ -37,5 +39,10 @@ public class GroupService(IGroupPort groupPort) : IGroupService
     public bool AddUserToGroup(AddUserToGroupDto toGroupDto)
     {
         return groupPort.AddUserToGroup(toGroupDto.UserEmail, toGroupDto.GroupId);
+    }
+
+    public void DeleteGroup(string id)
+    {
+        groupPort.DeleteGroup(id);
     }
 }

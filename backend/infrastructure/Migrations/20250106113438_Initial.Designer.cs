@@ -10,7 +10,7 @@ using infrastructure;
 namespace infrastructure.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250103172512_Initial")]
+    [Migration("20250106113438_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -48,10 +48,6 @@ namespace infrastructure.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Nonce")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Tag")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -157,10 +153,6 @@ namespace infrastructure.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Salt")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Tag")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

@@ -74,4 +74,9 @@ public class UserService(IUserPort userPort) : IUserService
         var user = userPort.GetUserByEmail(email);
         return user != null && PasswordHasher.VerifyPassword(password, user.HashedPassword, user.Salt);
     }
+    
+    public void DeleteUser(string id)
+    {
+       userPort.DeleteUser(id);
+    }
 }

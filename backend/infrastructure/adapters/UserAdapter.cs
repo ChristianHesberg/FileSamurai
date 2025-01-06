@@ -29,4 +29,12 @@ public class UserAdapter(Context context) : IUserPort
         var user = context.Users.Include(user => user.Groups).FirstOrDefault(e => e.Id == id);
         return user?.Groups;
     }
+
+    public void DeleteUser(string id)
+    {
+        var user = context.Users.Find(id);
+        if (user == null) throw new KeyNotFoundException("User not found");
+        context.Users.Remove(user);
+        context.SaveChanges();
+    }
 }

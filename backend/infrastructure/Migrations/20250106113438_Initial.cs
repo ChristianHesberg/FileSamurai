@@ -44,7 +44,6 @@ namespace infrastructure.Migrations
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     FileContents = table.Column<string>(type: "TEXT", nullable: false),
                     Nonce = table.Column<string>(type: "TEXT", nullable: false),
-                    Tag = table.Column<string>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     GroupId = table.Column<string>(type: "TEXT", nullable: false)
                 },
@@ -91,7 +90,6 @@ namespace infrastructure.Migrations
                     PublicKey = table.Column<string>(type: "TEXT", nullable: false),
                     PrivateKey = table.Column<string>(type: "TEXT", nullable: false),
                     Nonce = table.Column<string>(type: "TEXT", nullable: false),
-                    Tag = table.Column<string>(type: "TEXT", nullable: false),
                     Salt = table.Column<string>(type: "TEXT", nullable: false),
                     UserId = table.Column<string>(type: "TEXT", nullable: false)
                 },
