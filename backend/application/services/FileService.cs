@@ -136,4 +136,9 @@ public class FileService(
     {
         return filePort.GetAllUserFileAccess(fileId);
     }
+
+    public void DeleteUserFileAccess(GetFileOrAccessInputDto dto)
+    {
+        filePort.DeleteUserFileAccess(dto.UserId, dto.FileId);
+    }
 }
