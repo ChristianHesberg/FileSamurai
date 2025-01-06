@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using api.Policies;
 using api.Middleware;
 using api.SchemaFilters;
@@ -42,6 +43,7 @@ builder.Services.AddScoped<IValidator<AddOrGetUserFileAccessDto>, AddOrGetUserFi
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); 
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

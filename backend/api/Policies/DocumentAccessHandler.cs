@@ -3,6 +3,7 @@ using System.Text.Json;
 using application.dtos;
 using application.ports;
 using application.services;
+using core.models;
 using Microsoft.AspNetCore.Authorization;
 
 
@@ -75,7 +76,7 @@ public class DocumentAccessHandler(
                 var access = fileService.GetUserFileAccess(new GetFileOrAccessInputDto()
                     { UserId = userId, FileId = file.Id });
                 if (access == null) return;
-                if (access.Role == "Editor")
+                if (access.Role == Roles.Editor)
                 {
                     //CHECK USERS IS IN the same GROUP AS THE DOCUMENT && is an editor
                     authorizationHandlerContext.Succeed(requirement);

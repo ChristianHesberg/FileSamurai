@@ -2,6 +2,7 @@
 using System.Text.Json;
 using application.dtos;
 using application.services;
+using core.models;
 using infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -60,7 +61,7 @@ public class DocumentChangeHandler(IUserService userService,IFileService fileSer
         
         
         //TODO REMOVE HARDCODED editor
-        if (file?.UserFileAccess.Role == "editor")
+        if (file?.UserFileAccess.Role == Roles.Editor)
         {
             authorizationHandlerContext.Succeed(requirement); 
             request.Body.Position = 0;
