@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using application.dtos;
 using application.ports;
 using application.services;
@@ -41,7 +42,8 @@ public class DocumentAccessHandler(
             var body = await reader.ReadToEndAsync();
             var dto = JsonSerializer.Deserialize<AddOrGetUserFileAccessDto>(body, new JsonSerializerOptions()
             {
-                PropertyNameCaseInsensitive = true
+                PropertyNameCaseInsensitive = true,
+                Converters = { new JsonStringEnumConverter() }
             });
             if (dto == null) return;
 
