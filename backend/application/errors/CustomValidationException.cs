@@ -4,23 +4,23 @@ using System.Collections.Generic;
   
 public class CustomValidationException : Exception  
 {  
-    public IList<string> ValidationErrors { get; private set; }  
+    public IList<string> Errors { get; private set; }  
   
     public CustomValidationException()  
     {  
-        ValidationErrors = new List<string>();  
+        Errors = new List<string>();  
     }  
   
     public CustomValidationException(string message)  
         : base(message)  
     {  
-        ValidationErrors = new List<string>();  
+        Errors = new List<string>();  
     }  
   
-    public CustomValidationException(IList<string> validationErrors)  
+    public CustomValidationException(IList<string> errors)  
         : base("Validation failed with errors: ")
     {
-        ValidationErrors = validationErrors;
+        Errors = errors;
     }  
  
 }  

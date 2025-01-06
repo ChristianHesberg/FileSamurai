@@ -1,8 +1,4 @@
-﻿using api.Models;
-using application.errors;
-using core.errors;
-
-namespace api.Middleware;
+﻿namespace api.Middleware;
 
 using Microsoft.AspNetCore.Http;  
 using Microsoft.Extensions.Logging;  
@@ -10,6 +6,8 @@ using System;
 using System.Net;  
 using System.Threading.Tasks;  
 using Newtonsoft.Json;  
+using application.errors;
+using core.errors;
   
 public class ExceptionHandlingMiddleware  
 {  
@@ -46,7 +44,7 @@ public class ExceptionHandlingMiddleware
             case CustomValidationException validationException:
                 statusCode = HttpStatusCode.BadRequest;  
                 message = validationException.Message;
-                validationFailures = validationException.ValidationErrors;
+                validationFailures = validationException.Errors;
                 break;
             
             case BadHttpRequestException:

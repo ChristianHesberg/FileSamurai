@@ -25,6 +25,7 @@ public static class BodyToDto
         }
         catch (Exception ex)
         {
+            Console.WriteLine(ex.Message);
             request.Body.Position = 0;
             throw new BadHttpRequestException("Request could not be serialized.");
         }
