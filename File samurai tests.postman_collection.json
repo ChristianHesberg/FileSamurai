@@ -1,0 +1,914 @@
+{
+	"info": {
+		"_postman_id": "324889c2-ed03-48c2-9ff7-6950faf93f58",
+		"name": "File samurai tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40813984",
+		"_collection_link": "https://sq-exam.postman.co/workspace/Team-Workspace~e277eb2b-760c-4ce5-89f7-4ff7cde22cc6/collection/23009419-324889c2-ed03-48c2-9ff7-6950faf93f58?action=share&source=collection_link&creator=40813984"
+	},
+	"item": [
+		{
+			"name": "PostUserFileAccess",
+			"item": [
+				{
+					"name": "CreateUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var id = pm.response.json().id\r",
+									"if(id) pm.environment.set(\"userId\", id)\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"cchesberg@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5099/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5099",
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create Group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var id = pm.response.json().id\r",
+									"if(id) pm.environment.set(\"groupId\", id)\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"postman test group\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5099/group",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5099",
+							"path": [
+								"group"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create File",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var id = pm.response.json().id\r",
+									"if(id) pm.environment.set(\"fileId\", id)\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"fileContents\": \"contents\",\r\n  \"nonce\": \"cool nonce\",\r\n  \"title\": \"filler Title\",\r\n  \"groupId\": \"{{groupId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5099/file",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5099",
+							"path": [
+								"file"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post valid file access - min encrypted key length",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"eval(pm.environment.get(\"cleanupScript\"));\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var derivedValue = '*'.repeat(1);\r",
+									"pm.environment.set(\"encryptedKeyValue\", derivedValue);  \r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"encryptedFileKey\": \"{{encryptedKeyValue}}\",\r\n  \"role\": \"Editor\",\r\n  \"userId\": \"{{userId}}\",\r\n  \"fileId\": \"{{fileId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5099/file/access",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5099",
+							"path": [
+								"file",
+								"access"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post valid file access - max encrypted key length",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"eval(pm.environment.get(\"cleanupScript\"));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var derivedValue = '*'.repeat(500);\r",
+									"pm.environment.set(\"encryptedKeyValue\", derivedValue);  \r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"encryptedFileKey\": \"{{encryptedKeyValue}}\",\r\n  \"role\": \"Editor\",\r\n  \"userId\": \"{{userId}}\",\r\n  \"fileId\": \"{{fileId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5099/file/access",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5099",
+							"path": [
+								"file",
+								"access"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post valid file access - nominal encrypted key length",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"eval(pm.environment.get(\"cleanupScript\"));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var derivedValue = '*'.repeat(250);\r",
+									"pm.environment.set(\"encryptedKeyValue\", derivedValue);  \r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"encryptedFileKey\": \"{{encryptedKeyValue}}\",\r\n  \"role\": \"Editor\",\r\n  \"userId\": \"{{userId}}\",\r\n  \"fileId\": \"{{fileId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5099/file/access",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5099",
+							"path": [
+								"file",
+								"access"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post invalid file access - min encrypted file key",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message string\", function () {\r",
+									"    pm.expect(pm.response.json().Message).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains errors array\", function () {\r",
+									"    pm.expect(pm.response.json().Errors).to.be.a('array');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var derivedValue = ''\r",
+									"pm.environment.set(\"encryptedKeyValue\", derivedValue);  \r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"encryptedFileKey\": \"{{encryptedKeyValue}}\",\r\n  \"role\": \"Editor\",\r\n  \"userId\": \"{{userId}}\",\r\n  \"fileId\": \"{{fileId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5099/file/access",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5099",
+							"path": [
+								"file",
+								"access"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post invalid file access - max encrypted file key",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message string\", function () {\r",
+									"    pm.expect(pm.response.json().Message).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains errors array\", function () {\r",
+									"    pm.expect(pm.response.json().Errors).to.be.a('array');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var derivedValue = '*'.repeat(501);\r",
+									"pm.environment.set(\"encryptedKeyValue\", derivedValue); "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"encryptedFileKey\": \"{{encryptedKeyValue}}\",\r\n  \"role\": \"Editor\",\r\n  \"userId\": \"{{userId}}\",\r\n  \"fileId\": \"{{fileId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5099/file/access",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5099",
+							"path": [
+								"file",
+								"access"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post invalid file access - userId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message string\", function () {\r",
+									"    pm.expect(pm.response.json().Message).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains errors array\", function () {\r",
+									"    pm.expect(pm.response.json().Errors).to.be.a('array');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var derivedValue = '*'.repeat(1);\r",
+									"pm.environment.set(\"encryptedKeyValue\", derivedValue);  "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"encryptedFileKey\": \"key\",\r\n  \"role\": \"Editor\",\r\n  \"userId\": \"not a guid\",\r\n  \"fileId\": \"{{fileId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5099/file/access",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5099",
+							"path": [
+								"file",
+								"access"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post invalid file access - fileId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message string\", function () {\r",
+									"    pm.expect(pm.response.json().Message).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var derivedValue = '*'.repeat(1);\r",
+									"pm.environment.set(\"encryptedKeyValue\", derivedValue);  "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"encryptedFileKey\": \"key\",\r\n  \"role\": \"Editor\",\r\n  \"userId\": \"{{userId}}\",\r\n  \"fileId\": \"not a guid\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5099/file/access",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5099",
+							"path": [
+								"file",
+								"access"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post invalid file access - role",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message string\", function () {\r",
+									"    pm.expect(pm.response.json().Message).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var derivedValue = '*'.repeat(1);\r",
+									"pm.environment.set(\"encryptedKeyValue\", derivedValue);  "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"encryptedFileKey\": \"key\",\r\n  \"role\": \"not a role\",\r\n  \"userId\": \"{{userId}}\",\r\n  \"fileId\": \"{{fileId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5099/file/access",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5099",
+							"path": [
+								"file",
+								"access"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post invalid file access - unauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"encryptedFileKey\": \"key\",\r\n  \"role\": \"not a role\",\r\n  \"userId\": \"{{userId}}\",\r\n  \"fileId\": \"{{fileId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5099/file/access",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5099",
+							"path": [
+								"file",
+								"access"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post invalidfile access - file already exists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 409\", function () {\r",
+									"    pm.response.to.have.status(409);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains message string\", function () {\r",
+									"    pm.expect(pm.response.json().Message).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"eval(pm.environment.get(\"cleanupScript\"));\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.sendRequest({  \r",
+									"    url: pm.environment.get('url'), \r",
+									"    method: 'POST', \r",
+									"    header: {  \r",
+									"        'Content-Type': 'application/json',\r",
+									"        'Authorization': 'Bearer ' + pm.environment.get('authToken') \r",
+									"    },\r",
+									"    body: {  \r",
+									"        mode: 'raw',  \r",
+									"        raw: JSON.stringify(\r",
+									"            {\r",
+									"            \"encryptedFileKey\": pm.environment.get('encryptedKeyValue'),\r",
+									"            \"role\": \"Editor\",\r",
+									"            \"userId\": pm.environment.get('userId'),\r",
+									"            \"fileId\": pm.environment.get('fileId')\r",
+									"            }\r",
+									"        )  \r",
+									"    } \r",
+									"}, function (err, res) {  \r",
+									"    console.log(res);  \r",
+									"    if (err) {  \r",
+									"        console.error(err); \r",
+									"    }  \r",
+									"});  "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"encryptedFileKey\": \"key\",\r\n  \"role\": \"Editor\",\r\n  \"userId\": \"{{userId}}\",\r\n  \"fileId\": \"{{fileId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5099/file/access",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5099",
+							"path": [
+								"file",
+								"access"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete Group",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5099/group/{{groupId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5099",
+							"path": [
+								"group",
+								"{{groupId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5099/user/{{userId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5099",
+							"path": [
+								"user",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{authToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
