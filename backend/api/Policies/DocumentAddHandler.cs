@@ -39,12 +39,10 @@ public class DocumentAddHandler(IUserService userService, IHttpContextAccessor c
             {
                 PropertyNameCaseInsensitive = true
             });
-            Console.WriteLine("1:" + dto);
             if (dto == null) return;
 
             // GET User Groups and File group
             var userGroup = userService.GetGroupsForUser(userId);
-            Console.WriteLine("2:" + userGroup);
             if (userGroup == null) return;
 
             var res = userGroup.Any(group => group.Id == dto.GroupId);
@@ -53,10 +51,6 @@ public class DocumentAddHandler(IUserService userService, IHttpContextAccessor c
                 request.Body.Position = 0;
                 authorizationHandlerContext.Succeed(requirement);
             }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error reading body: " + ex.Message);
         }
     }
 }

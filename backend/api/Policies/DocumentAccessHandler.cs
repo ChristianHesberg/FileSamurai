@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using api.Policies.UtilMethods;
 using application.dtos;
 using application.ports;
 using application.services;
@@ -11,8 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 namespace api.Policies;
 
 public class DocumentAccessHandler(
-    IUserService userService,
-    IFileService fileService,
+    IUserPort userAdapter,
+    IFilePort fileAdapter,
     IHttpContextAccessor contextAccessor,
     IFilePort filePort) : AuthorizationHandler<DocumentAccessRequirement>
 {
@@ -20,75 +21,41 @@ public class DocumentAccessHandler(
         AuthorizationHandlerContext authorizationHandlerContext,
         DocumentAccessRequirement requirement)
     {
-        var request = contextAccessor.HttpContext.Request;
+        var accessor = contextAccessor.HttpContext;
+        if (accessor == null) throw new Exception("Http context is somehow null");
+        
+        var request = accessor.Request;
         request.EnableBuffering();
 
         var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
 
         if (email == null) return;
 
-        var user = userService.GetUserByEmail(email);
-
-        if (user == null) return;
+        var user = userAdapter.GetUserByEmail(email);
 
         var userId = user.Id;
+        
+        var dto = await BodyToDto.BodyToDtoConverter<AddOrGetUserFileAccessDto>(request);
+        
+        var userGroup = userAdapter.GetGroupsForUser(userId);
 
-        // Extract fileId from the body (JSON data)
-        try
+        var fileGroup = fileAdapter.GetFileGroup(dto.FileId);
+
+        var userIsInFileGroup = userGroup.Any(x => x.Id == fileGroup.Id);
+        if (!userIsInFileGroup) return;
+
+        //If no userFileAccess on file
+        if (fileAdapter.GetAllUserFileAccess(dto.FileId).Count == 0)
         {
-            // Read the body and deserialize it into a dictionary (or model)
-            request.Body.Seek(0, SeekOrigin.Begin);
-            var reader = new StreamReader(request.Body);
-            var body = await reader.ReadToEndAsync();
-            var dto = JsonSerializer.Deserialize<AddOrGetUserFileAccessDto>(body, new JsonSerializerOptions()
-            {
-                PropertyNameCaseInsensitive = true,
-                Converters = { new JsonStringEnumConverter() }
-            });
-            if (dto == null) return;
-
-            //Retrieve the file + fileaccess for the user, if file or fileaccess is null user dont have access!  
-            var retrieveFile = new GetFileOrAccessInputDto()
-            {
-                FileId = dto.FileId,
-                UserId = userId
-            };
-
-            var file = filePort.GetFile(retrieveFile.FileId);
-            if (file == null) return;
-
-            // GET User Groups and File group
-            var userGroup = userService.GetGroupsForUser(userId);
-            if (userGroup == null) return;
-
-            var fileGroup = fileService.GetFileGroup(file.Id);
-            if (fileGroup == null) return;
-
-
-            var userIsInFileGroup = userGroup.Any(x => x.Id == fileGroup.Id);
-            if (!userIsInFileGroup) return;
-
-            //If no userFileAccess
-            if (fileService.GetAllUserFileAccess(file.Id).Count == 0)
+            authorizationHandlerContext.Succeed(requirement);
+        }
+        else
+        {
+            var access = fileAdapter.GetUserFileAccess(userId, dto.FileId);
+            if (access.Role == Roles.Editor)
             {
                 authorizationHandlerContext.Succeed(requirement);
             }
-            else
-            {
-                var access = fileService.GetUserFileAccess(new GetFileOrAccessInputDto()
-                    { UserId = userId, FileId = file.Id });
-                if (access == null) return;
-                if (access.Role == Roles.Editor)
-                {
-                    //CHECK USERS IS IN the same GROUP AS THE DOCUMENT && is an editor
-                    authorizationHandlerContext.Succeed(requirement);
-                }
-            }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error reading body: " + ex.Message);
-        }
-        request.Body.Position = 0;
     }
 }
