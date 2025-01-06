@@ -12,4 +12,5 @@ public interface IFilePort
     public void AddUserFileAccess(UserFileAccess userFileAccess);
     public UserFileAccess? GetUserFileAccess(string userId, string fileId);
     public Group? GetFileGroup(string fileId);
+    public List<UserFileAccess> GetAllUserFileAccess(string fileId);
 }

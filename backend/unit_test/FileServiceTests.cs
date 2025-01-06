@@ -178,7 +178,8 @@ public class FileServiceTests
             Id = "Id",
             FileContents = "FileContents",
             Nonce = "Nonce",
-            Title = "Title"
+            Title = "Title",
+            GroupId = "GroupId"
         };
         var fileAccessFromMock = new UserFileAccess()
         {
@@ -194,7 +195,8 @@ public class FileServiceTests
                 FileContents = fileReturnedFromMock.FileContents,
                 Id = fileReturnedFromMock.Id,
                 Nonce = fileReturnedFromMock.Nonce,
-                Title = fileReturnedFromMock.Title
+                Title = fileReturnedFromMock.Title,
+                GroupId = fileReturnedFromMock.GroupId
             },
             UserFileAccess = new AddOrGetUserFileAccessDto()
             {

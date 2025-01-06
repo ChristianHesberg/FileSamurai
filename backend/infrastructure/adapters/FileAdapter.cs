@@ -23,7 +23,7 @@ public class FileAdapter(Context context) : IFilePort
 
     public bool UpdateFile(File file)
     {
-        var res= context.Files.Find(file.Id);
+        var res = context.Files.Find(file.Id);
         if (res == null) return false;
         res.Title = file.Title;
         res.FileContents = file.FileContents;
@@ -47,6 +47,11 @@ public class FileAdapter(Context context) : IFilePort
 
     public Group? GetFileGroup(string fileId)
     {
-        return context.Files.Include(e=> e.Group).FirstOrDefault(e => e.Id == fileId)?.Group;
+        return context.Files.Include(e => e.Group).FirstOrDefault(e => e.Id == fileId)?.Group;
+    }
+
+    public List<UserFileAccess> GetAllUserFileAccess(string fileId)
+    {
+        return context.UserFileAccesses.Where(x => x.FileId == fileId).ToList();
     }
 }

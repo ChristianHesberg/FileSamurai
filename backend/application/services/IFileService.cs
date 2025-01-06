@@ -12,4 +12,5 @@ public interface IFileService
     public void AddUserFileAccess(AddOrGetUserFileAccessDto orGetUserFileAccess);
     public AddOrGetUserFileAccessDto? GetUserFileAccess(GetFileOrAccessInputDto dto);
     public GroupDto? GetFileGroup(string fileId);
+    public List<UserFileAccess> GetAllUserFileAccess(string fileId);
 }
