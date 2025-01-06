@@ -39,15 +39,13 @@ public class FileService(
         return dto;
     }
 
-    public GetFileDto? GetFile(GetFileOrAccessInputDto dto)
+    public GetFileDto GetFile(GetFileOrAccessInputDto dto)
     {
-        ValidationResult validationResult = getFileOrAccessInputDtoValidator.Validate(dto);
+        var validationResult = getFileOrAccessInputDtoValidator.Validate(dto);
         ValidationUtilities.ThrowIfInvalid(validationResult);
 
         var file = filePort.GetFile(dto.FileId);
         var accessObject = filePort.GetUserFileAccess(dto.UserId, dto.FileId);
-
-        if (file == null || accessObject == null) return null;
 
         var convertedFile = new FileDto()
         {
@@ -57,6 +55,7 @@ public class FileService(
             Nonce = file.Nonce,
             GroupId = file.GroupId
         };
+        
         var convertedAccessObject = new AddOrGetUserFileAccessDto()
         {
             FileId = accessObject.FileId,
@@ -64,6 +63,7 @@ public class FileService(
             EncryptedFileKey = accessObject.EncryptedFileKey,
             Role = accessObject.Role
         };
+        
         return new GetFileDto()
         {
             File = convertedFile,
@@ -74,7 +74,7 @@ public class FileService(
 
     public bool UpdateFile(FileDto file)
     {
-        ValidationResult validationResult = fileDtoValidator.Validate(file);
+        var validationResult = fileDtoValidator.Validate(file);
         ValidationUtilities.ThrowIfInvalid(validationResult);
 
         var converted = new File()
@@ -84,12 +84,13 @@ public class FileService(
             FileContents = file.FileContents,
             Nonce = file.Nonce
         };
+        
         return filePort.UpdateFile(converted);
     }
 
     public void AddUserFileAccess(AddOrGetUserFileAccessDto userFileAccess)
     {
-        ValidationResult validationResult = addOrGetUserFileAccessDtoValidator.Validate(userFileAccess);
+        var validationResult = addOrGetUserFileAccessDtoValidator.Validate(userFileAccess);
         ValidationUtilities.ThrowIfInvalid(validationResult);
 
         var converted = new UserFileAccess()
@@ -99,42 +100,23 @@ public class FileService(
             EncryptedFileKey = userFileAccess.EncryptedFileKey,
             Role = userFileAccess.Role
         };
+        
         filePort.AddUserFileAccess(converted);
     }
 
-    public AddOrGetUserFileAccessDto? GetUserFileAccess(GetFileOrAccessInputDto dto)
+    public AddOrGetUserFileAccessDto GetUserFileAccess(GetFileOrAccessInputDto dto)
     {
-        ValidationResult validationResult = getFileOrAccessInputDtoValidator.Validate(dto);
+        var validationResult = getFileOrAccessInputDtoValidator.Validate(dto);
         ValidationUtilities.ThrowIfInvalid(validationResult);
 
         var res = filePort.GetUserFileAccess(dto.UserId, dto.FileId);
-        return res == null
-            ? null
-            : new AddOrGetUserFileAccessDto()
+        return new AddOrGetUserFileAccessDto()
             {
                 UserId = res.UserId,
                 FileId = res.FileId,
                 EncryptedFileKey = res.EncryptedFileKey,
                 Role = res.Role
             };
-    }
-
-    public GroupDto? GetFileGroup(string fileId)
-    {
-        var res = filePort.GetFileGroup(fileId);
-
-        return res == null
-            ? null
-            : new GroupDto()
-            {
-                Id = res.Id,
-                Name = res.Name
-            };
-    }
-
-    public List<UserFileAccess> GetAllUserFileAccess(string fileId)
-    {
-        return filePort.GetAllUserFileAccess(fileId);
     }
 
     public void DeleteUserFileAccess(GetFileOrAccessInputDto dto)

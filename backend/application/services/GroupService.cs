@@ -23,12 +23,10 @@ public class GroupService(IGroupPort groupPort) : IGroupService
         };
     }
 
-    public GroupDto? GetGroup(string id)
+    public GroupDto GetGroup(string id)
     {
         var group = groupPort.GetGroup(id);
-        return group == null
-            ? null
-            : new GroupDto()
+        return new GroupDto()
             {
                 Id = group.Id,
                 Name = group.Name,

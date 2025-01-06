@@ -7,11 +7,9 @@ namespace application.services;
 public interface IFileService
 {
     public PostFileResultDto AddFile(AddFileDto file);
-    public GetFileDto? GetFile(GetFileOrAccessInputDto dto);
+    public GetFileDto GetFile(GetFileOrAccessInputDto dto);
     public bool UpdateFile(FileDto orGetFile);
     public void AddUserFileAccess(AddOrGetUserFileAccessDto orGetUserFileAccess);
-    public AddOrGetUserFileAccessDto? GetUserFileAccess(GetFileOrAccessInputDto dto);
-    public GroupDto? GetFileGroup(string fileId);
-    public List<UserFileAccess> GetAllUserFileAccess(string fileId);
+    public AddOrGetUserFileAccessDto GetUserFileAccess(GetFileOrAccessInputDto dto);
     void DeleteUserFileAccess(GetFileOrAccessInputDto dto);
 }

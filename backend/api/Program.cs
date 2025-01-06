@@ -24,8 +24,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<Context>(opt => opt.UseSqlite("Data Source=../database/database.db"));
 
-builder.Services.AddScoped<IUserKeyPairPort, UserKeyPairKeyPairAdapter>();
-builder.Services.AddScoped<IUserKeyPairService, UserKeyPairKeyPairService>();
+builder.Services.AddScoped<IUserKeyPairPort, UserKeyPairAdapter>();
+builder.Services.AddScoped<IUserKeyPairService, UserKeyPairService>();
 builder.Services.AddScoped<IUserPort, UserAdapter>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFilePort, FileAdapter>();

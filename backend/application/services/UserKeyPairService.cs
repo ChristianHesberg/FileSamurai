@@ -4,17 +4,17 @@ using core.models;
 
 namespace application.services;
 
-public class UserKeyPairKeyPairService(IUserKeyPairPort userKeyPairPort) : IUserKeyPairService
+public class UserKeyPairService(IUserKeyPairPort userKeyPairPort) : IUserKeyPairService
 {
-    public string? GetUserPublicKey(string userId)
+    public string GetUserPublicKey(string userId)
     {
         return userKeyPairPort.GetUserPublicKey(userId);
     }
 
-    public UserRsaPrivateKeyDto? GetUserPrivateKey(string userId)
+    public UserRsaPrivateKeyDto GetUserPrivateKey(string userId)
     {
         var keyPair = userKeyPairPort.GetUserRsaKeyPair(userId);
-        if (keyPair == null) return null;
+
         return new UserRsaPrivateKeyDto()
         {
             PrivateKey = keyPair.PrivateKey,
