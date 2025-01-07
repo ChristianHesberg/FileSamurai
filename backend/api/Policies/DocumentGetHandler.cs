@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Policies;
 
-public class DocumentGetHandler(IUserPort userAdapter, IFilePort fileAdapter, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentGetRequirement>
+public class DocumentGetHandler(IUserService userService, IFileService fileService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentGetRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
@@ -21,27 +21,36 @@ public class DocumentGetHandler(IUserPort userAdapter, IFilePort fileAdapter, IH
         var request = accessor.Request;
         
         var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
-        if (email == null) return; 
-        
-        var user = userAdapter.GetUserByEmail(email);
+        if (email == null) return;
 
-        // Extract fileId from the Query
-        var fileId = request.Query["fileId"].ToString();
-        if (string.IsNullOrEmpty(fileId)) throw new BadHttpRequestException("fileId query parameter must be provided.");
-        
-        var file =  fileAdapter.GetFile(fileId);
-        
-        // GET User Groups and File group
-        var userGroup = userAdapter.GetGroupsForUser(user.Id);
-        
-        var fileGroup = fileAdapter.GetFileGroup(file.Id);
-
-        fileAdapter.GetUserFileAccess(user.Id, file.Id);
-        
-        //CHECK USERS IS IN the same GROUP AS THE DOCUMENT
-        if (userGroup.Any(x => x.Id == fileGroup.Id))
+        try
         {
-            authorizationHandlerContext.Succeed(requirement);
-        }            
+            var user = userService.GetUserByEmail(email);
+
+            // Extract fileId from the Query
+            var fileId = request.Query["fileId"].ToString();
+            if (string.IsNullOrEmpty(fileId)) throw new BadHttpRequestException("fileId query parameter must be provided.");
+        
+            var file =  fileService.GetFile(new GetFileOrAccessInputDto()
+            {
+                FileId = fileId,
+                UserId = user.Id
+            });
+        
+            // GET User Groups and File group
+            var userGroup = userService.GetGroupsForUser(user.Id);
+        
+            var fileGroup = fileService.GetFileGroup(file.File.Id);
+        
+            //CHECK USERS IS IN the same GROUP AS THE DOCUMENT
+            if (userGroup.Any(x => x.Id == fileGroup.Id))
+            {
+                authorizationHandlerContext.Succeed(requirement);
+            }            
+        }
+        catch (KeyNotFoundException)
+        {
+            authorizationHandlerContext.Fail();
+        }
     }
 }

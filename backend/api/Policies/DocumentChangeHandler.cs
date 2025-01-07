@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Policies;
 
-public class DocumentChangeHandler(IUserPort userAdapter, IFilePort fileAdapter, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentChangeRequirement>
+public class DocumentChangeHandler(IUserService userService, IFileService fileService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentChangeRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
@@ -23,19 +23,28 @@ public class DocumentChangeHandler(IUserPort userAdapter, IFilePort fileAdapter,
         var request = accessor.Request;
     
         var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
-        if (email == null) return; 
-        
-        var user = userAdapter.GetUserByEmail(email);
+        if (email == null) return;
 
-        var dto = await BodyToDto.BodyToDtoConverter<FileDto>(request);
-        
-        var file = fileAdapter.GetFile(dto.Id);
-
-        var userAccess = fileAdapter.GetUserFileAccess(user.Id, file.Id); 
-  
-        if (userAccess.Role == Roles.Editor)
+        try
         {
-            authorizationHandlerContext.Succeed(requirement); 
+            var user = userService.GetUserByEmail(email);
+
+            var dto = await BodyToDto.BodyToDtoConverter<FileDto>(request);
+        
+            var file = fileService.GetFile(new GetFileOrAccessInputDto()
+            {
+                UserId = user.Id,
+                FileId = dto.Id
+            });
+  
+            if (file.UserFileAccess.Role == Roles.Editor)
+            {
+                authorizationHandlerContext.Succeed(requirement); 
+            }
+        }
+        catch (KeyNotFoundException)
+        {
+            authorizationHandlerContext.Fail();
         }
     }
 }

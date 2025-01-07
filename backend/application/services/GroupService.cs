@@ -1,18 +1,29 @@
 ﻿using application.dtos;
 using application.ports;
+using application.validation;
 using core.models;
+using FluentValidation;
 
 namespace application.services;
 
-public class GroupService(IGroupPort groupPort) : IGroupService
+public class GroupService(
+    IGroupPort groupPort,
+    IValidator<GroupCreationDto> groupCreationValidator,
+    IValidator<AddUserToGroupDto> addUserToGroupValidator, 
+    IEnumerable<IValidator<string>> stringValidators 
+    ) : IGroupService
 {
     public GroupDto AddGroup(GroupCreationDto group, string email)
     {
+        var validationResult = groupCreationValidator.Validate(group);
+        ValidationUtilities.ThrowIfInvalid(validationResult);
+        
         var converted = new Group()
         {
             Name = group.Name,
             CreatorEmail = email
         };
+        
         var res = groupPort.AddGroup(converted);
 
         return new GroupDto()
@@ -25,6 +36,10 @@ public class GroupService(IGroupPort groupPort) : IGroupService
 
     public GroupDto GetGroup(string id)
     {
+        var guidValidator = ValidationUtilities.GetValidator<GuidValidator>(stringValidators);  
+        var validationResult = guidValidator.Validate(id);  
+        ValidationUtilities.ThrowIfInvalid(validationResult); 
+        
         var group = groupPort.GetGroup(id);
         return new GroupDto()
             {
@@ -34,13 +49,21 @@ public class GroupService(IGroupPort groupPort) : IGroupService
             };
     }
 
-    public bool AddUserToGroup(AddUserToGroupDto toGroupDto)
-    {
-        return groupPort.AddUserToGroup(toGroupDto.UserEmail, toGroupDto.GroupId);
+    public bool AddUserToGroup(AddUserToGroupDto dto)
+    {        
+        var validationResult = addUserToGroupValidator.Validate(dto);
+        ValidationUtilities.ThrowIfInvalid(validationResult);
+        
+        return groupPort.AddUserToGroup(dto.UserEmail, dto.GroupId);
     }
 
+    //todo add access control on this
     public void DeleteGroup(string id)
     {
+        var guidValidator = ValidationUtilities.GetValidator<GuidValidator>(stringValidators);  
+        var validationResult = guidValidator.Validate(id);  
+        ValidationUtilities.ThrowIfInvalid(validationResult); 
+        
         groupPort.DeleteGroup(id);
     }
 }

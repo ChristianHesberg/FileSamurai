@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace api.Policies;
 
-public class KeyPairPostHandler(IUserPort userAdapter, IHttpContextAccessor contextAccessor) : AuthorizationHandler<KeyPairPostRequirement>
+public class KeyPairPostHandler(IUserService userService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<KeyPairPostRequirement>
 {
     
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext authorizationHandlerContext, KeyPairPostRequirement requirement)
@@ -23,13 +23,21 @@ public class KeyPairPostHandler(IUserPort userAdapter, IHttpContextAccessor cont
         var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
         if (email == null) return;
 
-        var user = userAdapter.GetUserByEmail(email);
-
-        var dto = await BodyToDto.BodyToDtoConverter<UserRsaKeyPairDto>(request);
-
-        if (user.Id == dto.UserId)
+        try
         {
-            authorizationHandlerContext.Succeed(requirement); 
+            var user = userService.GetUserByEmail(email);
+
+            var dto = await BodyToDto.BodyToDtoConverter<UserRsaKeyPairDto>(request);
+
+            if (user.Id == dto.UserId)
+            {
+                authorizationHandlerContext.Succeed(requirement); 
+            }
         }
+        catch (KeyNotFoundException)
+        {
+            authorizationHandlerContext.Fail();
+        }
+
     }
 }
