@@ -2,7 +2,7 @@ import React, {createContext, ReactNode, useContext, useEffect, useState} from '
 import {CredentialResponse, googleLogout} from '@react-oauth/google';
 import {jwtDecode} from "jwt-decode";
 import {User} from "../models/user.model";
-import {GetUserByEmailUseCaseFactory} from "../use-cases/factories/get-user-by-email.use-case.factory";
+import {useUseCases} from "./UseCaseProvider";
 
 // Define the user type based on Google's JWT payload
 interface GoogleUser {
@@ -20,8 +20,9 @@ interface AuthContextType {
     isInitializing: boolean;
     login: (credentialResponse: CredentialResponse) => Promise<User>;
     logout: () => void;
+    register: (email: string, password: string) => Promise<User>
     secret: string;
-    initSecret: (string:string)=> void;
+    initSecret: (string: string) => void;
 }
 
 // Create the context
@@ -37,12 +38,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
     const [user, setUser] = useState<GoogleUser | null>(null);
     const [isInitializing, setIsInitializing] = useState<boolean>(true);
     const [secret, setSecret] = useState<string>("");
+    const {getUserByEmailUseCase, registerUserUseCase} = useUseCases()
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('user');
+        const googleUser = getLocalStorageUser()
         const storedPassword = localStorage.getItem('password')
-        if (storedUser && storedPassword) {
-            setUser(JSON.parse(storedUser));
+        if (googleUser && storedPassword) {
+            setUser(googleUser);
             setSecret(storedPassword)
         }
         setIsInitializing(false)
@@ -51,15 +53,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
     const login = async (credentialResponse: CredentialResponse): Promise<User> => {
         const credentials = credentialResponse.credential!
         const decoded: GoogleUser = jwtDecode(credentials);
-        const useCase = GetUserByEmailUseCaseFactory.create();
-        localStorage.setItem('user', JSON.stringify(decoded));
         localStorage.setItem("jwtToken", credentials)
+        localStorage.setItem('user', JSON.stringify(decoded));
         setUser(decoded);
-        const user = await useCase.execute(decoded.email);
-        decoded.userId = user.id;
-        return user
+        return await getUserByEmailUseCase.execute(decoded.email).then(user => {
+            decoded.userId = user.id;
+            return user
+        })
     };
 
+    const register = async (email: string, password: string) => {
+        return await registerUserUseCase.execute(email, password).then(user => {
+            let googleUser = getLocalStorageUser()
+            if (!googleUser) return Promise.reject()
+            googleUser.userId = user.id
+            setUser(googleUser)
+            localStorage.setItem("user", JSON.stringify(googleUser))
+            return user
+        })
+    }
+
+    const getLocalStorageUser = (): GoogleUser | null => {
+        const storedUser = localStorage.getItem('user');
+        if (!storedUser) return null
+        return JSON.parse(storedUser)
+
+    }
     const logout = () => {
         googleLogout();
         setUser(null);
@@ -68,12 +87,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
         localStorage.removeItem('password');
     };
 
-    const initSecret = (pass:string) => {
+    const initSecret = (pass: string) => {
         setSecret(pass)
-        localStorage.setItem("password",pass)
+        localStorage.setItem("password", pass)
     }
     return (
-        <AuthContext.Provider value={{user, login, logout, isInitializing, secret, initSecret}}>
+        <AuthContext.Provider value={{user, login, logout, isInitializing, secret, initSecret, register}}>
             {children}
         </AuthContext.Provider>
     );

@@ -2,8 +2,17 @@ import TableOptionsBtn from "./TableOptionsBtn";
 import React from "react";
 import {faCloudArrowDown} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {FileDto} from "../models/FileDto";
 
-const FileTable = () => {
+
+interface FileTableProps {
+    files: FileDto[]
+    setFiles: React.Dispatch<React.SetStateAction<FileDto[]>>
+}
+
+const FileTable: React.FC<FileTableProps> = ({files, setFiles}) => {
+
+
     const addMemberBtn = () => {
         return (
             <button
@@ -44,7 +53,7 @@ const FileTable = () => {
         )
     }
     const buttons = () => {
-        return [downloadBtn(),addMemberBtn(), deleteBtn()]
+        return [downloadBtn(), addMemberBtn(), deleteBtn()]
     }
     return (
         <div>
