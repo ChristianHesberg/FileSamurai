@@ -1,9 +1,7 @@
 ﻿using System.Security.Claims;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using api.Policies.UtilMethods;
 using application.dtos;
-using application.ports;
+using application.errors;
 using application.services;
 using core.models;
 using Microsoft.AspNetCore.Authorization;
@@ -12,10 +10,10 @@ using Microsoft.AspNetCore.Authorization;
 namespace api.Policies;
 
 public class DocumentAccessHandler(
-    IUserPort userAdapter,
-    IFilePort fileAdapter,
-    IHttpContextAccessor contextAccessor,
-    IFilePort filePort) : AuthorizationHandler<DocumentAccessRequirement>
+    IUserService userService,
+    IFileService fileService,
+    IHttpContextAccessor contextAccessor
+    ) : AuthorizationHandler<DocumentAccessRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
@@ -30,31 +28,42 @@ public class DocumentAccessHandler(
 
         if (email == null) return;
 
-        var user = userAdapter.GetUserByEmail(email);
-
-        var userId = user.Id;
-        
-        var dto = await BodyToDto.BodyToDtoConverter<AddOrGetUserFileAccessDto>(request);
-        
-        var userGroup = userAdapter.GetGroupsForUser(userId);
-
-        var fileGroup = fileAdapter.GetFileGroup(dto.FileId);
-
-        var userIsInFileGroup = userGroup.Any(x => x.Id == fileGroup.Id);
-        if (!userIsInFileGroup) return;
-
-        //If no userFileAccess on file
-        if (fileAdapter.GetAllUserFileAccess(dto.FileId).Count == 0)
+        try
         {
-            authorizationHandlerContext.Succeed(requirement);
-        }
-        else
-        {
-            var access = fileAdapter.GetUserFileAccess(userId, dto.FileId);
-            if (access.Role == Roles.Editor)
+            var user = userService.GetUserByEmail(email);
+
+            var userId = user.Id;
+
+            var dto = await BodyToDto.BodyToDtoConverter<AddOrGetUserFileAccessDto>(request);
+
+            var userGroup = userService.GetGroupsForUser(userId);
+
+            var fileGroup = fileService.GetFileGroup(dto.FileId);
+
+            var userIsInFileGroup = userGroup.Any(x => x.Id == fileGroup.Id);
+            if (!userIsInFileGroup) return;
+
+            //If no userFileAccess on file
+            if (fileService.GetAllUserFileAccess(dto.FileId).Count == 0)
             {
                 authorizationHandlerContext.Succeed(requirement);
             }
+            else
+            {
+                var access = fileService.GetUserFileAccess(new GetFileOrAccessInputDto()
+                {
+                    UserId = userId,
+                    FileId = dto.FileId
+                });
+                if (access.Role == Roles.Editor)
+                {
+                    authorizationHandlerContext.Succeed(requirement);
+                }
+            }
+        }
+        catch (KeyNotFoundException)
+        {
+            authorizationHandlerContext.Fail();
         }
     }
 }

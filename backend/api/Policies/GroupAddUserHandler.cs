@@ -1,9 +1,5 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
-
-
-using application.dtos;
-
 using api.Policies.UtilMethods;
 using application.dtos;
 using application.ports;
@@ -14,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace api.Policies;
 
-public class GroupAddUserHandler(IGroupPort groupAdapter, IHttpContextAccessor contextAccessor) : AuthorizationHandler<GroupAddUserRequirement>
+public class GroupAddUserHandler(IGroupService groupService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<GroupAddUserRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
@@ -26,18 +22,22 @@ public class GroupAddUserHandler(IGroupPort groupAdapter, IHttpContextAccessor c
         var request = accessor.Request;
         
         var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
-        Console.WriteLine("email:"+email);
-        if (email == null) return; 
-        
-        //Get the groupId from the body of the http request
+        if (email == null) return;
 
-        var dto = await BodyToDto.BodyToDtoConverter<AddUserToGroupDto>(request);
-        
-        var group = groupAdapter.GetGroup(dto.GroupId);
-        
-        if (group.CreatorEmail == email)
+        try
         {
-            authorizationHandlerContext.Succeed(requirement);
+            var dto = await BodyToDto.BodyToDtoConverter<AddUserToGroupDto>(request);
+        
+            var group = groupService.GetGroup(dto.GroupId);
+        
+            if (group.GroupEmail == email)
+            {
+                authorizationHandlerContext.Succeed(requirement);
+            }
+        }
+        catch (KeyNotFoundException)
+        {
+            authorizationHandlerContext.Fail();
         }
     }
 }
