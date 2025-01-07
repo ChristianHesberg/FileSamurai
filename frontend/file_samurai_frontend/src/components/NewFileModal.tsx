@@ -3,20 +3,37 @@ import UploadFileBtn from "./UploadFileBtn";
 import {Group} from "../models/Group";
 import {useUseCases} from "../providers/UseCaseProvider";
 import {useAuth} from "../providers/AuthProvider";
+import {GroupSelector} from "./GroupSelector";
+import {SelectionOption} from "../models/selectionOption";
+
 
 export const NewFileModal = () => {
     const [fileName, setFileName] = useState<string>("")
-    const [groups, setGroups] = useState<Group[]>([])
+    const [groupOptions, setGroupOptions] = useState<SelectionOption[]>([])
+    const [selectedGroup, setSelectedGroup] = useState<SelectionOption | null>(null)
+    const [searchValue, setSearchValue] = useState<string>("")
+
+
     const {getAllGroupsUserIsInUseCase} = useUseCases()
     const {user} = useAuth()
 
     useEffect(() => {
         const a = user?.userId!
-        console.log("userid: " + a)
         getAllGroupsUserIsInUseCase.execute(a)
-            .then(() => console.log("Yes"))
-            .catch(() => console.log("njopåe"))
+            .then(r => {
+                const formattedOptions = r.map((group: Group) => ({
+                    value: group.id,
+                    label: group.name,
+                }));
+
+                setGroupOptions(formattedOptions);
+            })
+            .catch(e => console.error(e))
+
+
     }, []);
+
+
     /*
     - get all groups i am in
     - create dropdown
@@ -34,6 +51,8 @@ export const NewFileModal = () => {
             focus-visible:ring-2 focus-visible:ring-offset-2"
                    placeholder="File Name"
             />
+            <GroupSelector searchValue={searchValue} options={groupOptions}  setSearchValue={setSearchValue} setSelectedGroup={setSelectedGroup} selectedValue={selectedGroup}/>
+
             <UploadFileBtn/>
 
         </div>

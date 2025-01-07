@@ -25,7 +25,7 @@ export class UserService implements IUserService {
         return response.data
     }
 
-    async getAllGroupsUserIsIn(userId: string): Promise<Group> {
+    async getAllGroupsUserIsIn(userId: string): Promise<Group[]> {
         const response = await axiosInstance.get(`user/groups/${userId}`)
         return response.data
     }
