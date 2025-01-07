@@ -14,7 +14,6 @@ public class FileController(IFileService fileService): ControllerBase
 {
     [HttpGet]
     [Authorize(Policy = "DocumentGet")]
-    [ProducesResponseType(typeof(void), (int)HttpStatusCode.NotFound)]
     public ActionResult<GetFileDto> GetFile(
         [FromQuery, CustomDescription("Must be a valid GUID")] string fileId, 
         [FromQuery, CustomDescription("Must be a valid GUID")] string userId
@@ -26,7 +25,7 @@ public class FileController(IFileService fileService): ControllerBase
             FileId = fileId
         };
         var result = fileService.GetFile(dto);
-        return result == null ? NotFound() : Ok(result);
+        return Ok(result);
     }
     
     [HttpPost]
@@ -39,7 +38,6 @@ public class FileController(IFileService fileService): ControllerBase
 
     [HttpPut]
     [Authorize(Policy = "DocumentChange")]
-    [ProducesResponseType(typeof(void), (int)HttpStatusCode.NotFound)]
     public ActionResult PutFile(FileDto file)
     {
         var result = fileService.UpdateFile(file);
@@ -48,7 +46,6 @@ public class FileController(IFileService fileService): ControllerBase
 
     [HttpGet("access")]
     [Authorize(Policy = "DocumentGetUserFileAccess")]
-    [ProducesResponseType(typeof(void), (int)HttpStatusCode.NotFound)]
     public ActionResult<AddOrGetUserFileAccessDto> GetUserFileAccess(
         [FromQuery, CustomDescription("Must be a valid GUID")] string fileId, 
         [FromQuery, CustomDescription("Must be a valid GUID")] string userId
@@ -61,7 +58,7 @@ public class FileController(IFileService fileService): ControllerBase
         };
         
         var result = fileService.GetUserFileAccess(dto);
-        return result == null ? NotFound() : Ok(result);
+        return Ok(result);
     }
 
     [HttpPost("access")]

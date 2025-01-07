@@ -24,19 +24,26 @@ public class DocumentAddHandler(IUserPort userAdapter, IHttpContextAccessor cont
 
         if (email == null) return;
 
-        var user = userAdapter.GetUserByEmail(email);
-
-        var userId = user.Id;
-        
-        var dto = await BodyToDto.BodyToDtoConverter<AddFileDto>(request);
-
-        // GET User Groups and File group
-        var userGroup = userAdapter.GetGroupsForUser(userId);
-
-        var res = userGroup.Any(group => group.Id == dto.GroupId);
-        if (res)
+        try
         {
-            authorizationHandlerContext.Succeed(requirement);
+            var user = userAdapter.GetUserByEmail(email);
+
+            var userId = user.Id;
+        
+            var dto = await BodyToDto.BodyToDtoConverter<AddFileDto>(request);
+
+            // GET User Groups and File group
+            var userGroup = userAdapter.GetGroupsForUser(userId);
+
+            var res = userGroup.Any(group => group.Id == dto.GroupId);
+            if (res)
+            {
+                authorizationHandlerContext.Succeed(requirement);
+            }
+        }
+        catch (KeyNotFoundException)
+        {
+            authorizationHandlerContext.Fail();
         }
     }
 }

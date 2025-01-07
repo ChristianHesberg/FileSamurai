@@ -21,16 +21,22 @@ public class GroupAddUserHandler(IGroupPort groupAdapter, IHttpContextAccessor c
         var request = accessor.Request;
         
         var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
-        if (email == null) return; 
-        
-        //Get the groupId from the body of the http request
-        var dto = await BodyToDto.BodyToDtoConverter<AddUserToGroupDto>(request);
-        
-        var group = groupAdapter.GetGroup(dto.GroupId);
-        
-        if (group.CreatorEmail == email)
+        if (email == null) return;
+
+        try
         {
-            authorizationHandlerContext.Succeed(requirement);
+            var dto = await BodyToDto.BodyToDtoConverter<AddUserToGroupDto>(request);
+        
+            var group = groupAdapter.GetGroup(dto.GroupId);
+        
+            if (group.CreatorEmail == email)
+            {
+                authorizationHandlerContext.Succeed(requirement);
+            }
+        }
+        catch (KeyNotFoundException)
+        {
+            authorizationHandlerContext.Fail();
         }
     }
 }

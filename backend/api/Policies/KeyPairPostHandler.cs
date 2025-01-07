@@ -23,13 +23,21 @@ public class KeyPairPostHandler(IUserPort userAdapter, IHttpContextAccessor cont
         var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
         if (email == null) return;
 
-        var user = userAdapter.GetUserByEmail(email);
-
-        var dto = await BodyToDto.BodyToDtoConverter<UserRsaKeyPairDto>(request);
-
-        if (user.Id == dto.UserId)
+        try
         {
-            authorizationHandlerContext.Succeed(requirement); 
+            var user = userAdapter.GetUserByEmail(email);
+
+            var dto = await BodyToDto.BodyToDtoConverter<UserRsaKeyPairDto>(request);
+
+            if (user.Id == dto.UserId)
+            {
+                authorizationHandlerContext.Succeed(requirement); 
+            }
         }
+        catch (KeyNotFoundException)
+        {
+            authorizationHandlerContext.Fail();
+        }
+
     }
 }

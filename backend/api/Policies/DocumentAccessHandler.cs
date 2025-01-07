@@ -30,31 +30,38 @@ public class DocumentAccessHandler(
 
         if (email == null) return;
 
-        var user = userAdapter.GetUserByEmail(email);
-
-        var userId = user.Id;
-        
-        var dto = await BodyToDto.BodyToDtoConverter<AddOrGetUserFileAccessDto>(request);
-        
-        var userGroup = userAdapter.GetGroupsForUser(userId);
-
-        var fileGroup = fileAdapter.GetFileGroup(dto.FileId);
-
-        var userIsInFileGroup = userGroup.Any(x => x.Id == fileGroup.Id);
-        if (!userIsInFileGroup) return;
-
-        //If no userFileAccess on file
-        if (fileAdapter.GetAllUserFileAccess(dto.FileId).Count == 0)
+        try
         {
-            authorizationHandlerContext.Succeed(requirement);
-        }
-        else
-        {
-            var access = fileAdapter.GetUserFileAccess(userId, dto.FileId);
-            if (access.Role == Roles.Editor)
+            var user = userAdapter.GetUserByEmail(email);
+
+            var userId = user.Id;
+
+            var dto = await BodyToDto.BodyToDtoConverter<AddOrGetUserFileAccessDto>(request);
+
+            var userGroup = userAdapter.GetGroupsForUser(userId);
+
+            var fileGroup = fileAdapter.GetFileGroup(dto.FileId);
+
+            var userIsInFileGroup = userGroup.Any(x => x.Id == fileGroup.Id);
+            if (!userIsInFileGroup) return;
+
+            //If no userFileAccess on file
+            if (fileAdapter.GetAllUserFileAccess(dto.FileId).Count == 0)
             {
                 authorizationHandlerContext.Succeed(requirement);
             }
+            else
+            {
+                var access = fileAdapter.GetUserFileAccess(userId, dto.FileId);
+                if (access.Role == Roles.Editor)
+                {
+                    authorizationHandlerContext.Succeed(requirement);
+                }
+            }
+        }
+        catch (KeyNotFoundException)
+        {
+            authorizationHandlerContext.Fail();
         }
     }
 }

@@ -23,19 +23,26 @@ public class DocumentChangeHandler(IUserPort userAdapter, IFilePort fileAdapter,
         var request = accessor.Request;
     
         var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
-        if (email == null) return; 
-        
-        var user = userAdapter.GetUserByEmail(email);
+        if (email == null) return;
 
-        var dto = await BodyToDto.BodyToDtoConverter<FileDto>(request);
-        
-        var file = fileAdapter.GetFile(dto.Id);
-
-        var userAccess = fileAdapter.GetUserFileAccess(user.Id, file.Id); 
-  
-        if (userAccess.Role == Roles.Editor)
+        try
         {
-            authorizationHandlerContext.Succeed(requirement); 
+            var user = userAdapter.GetUserByEmail(email);
+
+            var dto = await BodyToDto.BodyToDtoConverter<FileDto>(request);
+        
+            var file = fileAdapter.GetFile(dto.Id);
+
+            var userAccess = fileAdapter.GetUserFileAccess(user.Id, file.Id); 
+  
+            if (userAccess.Role == Roles.Editor)
+            {
+                authorizationHandlerContext.Succeed(requirement); 
+            }
+        }
+        catch (KeyNotFoundException)
+        {
+            authorizationHandlerContext.Fail();
         }
     }
 }

@@ -18,17 +18,24 @@ public class DocumentGetUserFileAccessHandler(IUserPort userAdapter, IHttpContex
         var request = accessor.Request;
         
         var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
-        if (email == null) return; 
-        
-        var user = userAdapter.GetUserByEmail(email);
+        if (email == null) return;
 
-        // Extract userId from the Query
-        var userId = request.Query["userId"].ToString();
-        if (string.IsNullOrEmpty(userId)) throw new BadHttpRequestException("userId query parameter required");
-
-        if (userId == user.Id)
+        try
         {
-            authorizationHandlerContext.Succeed(requirement);
-        }            
+            var user = userAdapter.GetUserByEmail(email);
+
+            // Extract userId from the Query
+            var userId = request.Query["userId"].ToString();
+            if (string.IsNullOrEmpty(userId)) throw new BadHttpRequestException("userId query parameter required");
+
+            if (userId == user.Id)
+            {
+                authorizationHandlerContext.Succeed(requirement);
+            }            
+        }
+        catch (KeyNotFoundException)
+        {
+            authorizationHandlerContext.Fail();
+        }
     }
 }
