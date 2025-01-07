@@ -44,7 +44,7 @@ interface UseCaseContextType {
     //group stuff
     createGroupUseCase: CreateGroupUseCase,
     getGroupsFromEmailUseCase: GetGroupsForEmailUseCase,
-    getUsersInGroup: GetUsersInGroupUseCase,
+    getUsersInGroupUseCase: GetUsersInGroupUseCase,
     addUserToGroupUseCase: AddUserToGroupUseCase,
     removeUserFromGroup: RemoveUserFromGroupUseCase,
     deleteGroupUseCase: DeleteGroupUseCase
@@ -63,7 +63,7 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     //Group
     const createGroupUseCase = new CreateGroupUseCase(groupService);
     const getGroupsFromEmailUseCase = new GetGroupsForEmailUseCase(groupService);
-    const getUsersInGroup = new GetUsersInGroupUseCase(groupService);
+    const getUsersInGroupUseCase = new GetUsersInGroupUseCase(groupService);
     const addUserToGroupUseCase = new AddUserToGroupUseCase(groupService);
     const removeUserFromGroup = new RemoveUserFromGroupUseCase(groupService);
     const deleteGroupUseCase = new DeleteGroupUseCase(groupService)
@@ -79,6 +79,7 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     const getUserByEmailUseCase = new GetUserByEmailUseCase(userService)
     const registerUserUseCase = new RegisterUserUseCase(userService)
     const validatePasswordUseCase= new ValidatePasswordUseCase(userService)
+
     return (
         <UseCaseContext.Provider value={{
             createFileUseCase,
@@ -87,14 +88,14 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
             createUserKeyPairUseCase,
             getGroupsFromEmailUseCase,
             createGroupUseCase,
-            getUsersInGroup,
+            getUsersInGroupUseCase,
             addUserToGroupUseCase,
             removeUserFromGroup,
             deleteGroupUseCase,
             getAllGroupsUserIsInUseCase,
             getUserByEmailUseCase,
             registerUserUseCase,
-            validatePasswordUseCase
+            validatePasswordUseCase,
         }}>
             {children}
         </UseCaseContext.Provider>

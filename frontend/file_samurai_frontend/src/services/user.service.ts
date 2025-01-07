@@ -29,5 +29,10 @@ export class UserService implements IUserService {
         const response = await axiosInstance.get(`user/groups/${userId}`)
         return response.data
     }
+
+    async getAllUsersInGroup(groupId: string) {
+        const response = await axiosInstance.get(`users/inGroup/${groupId}`)
+        return response.data
+    }
 }
 
