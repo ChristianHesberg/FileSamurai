@@ -8,7 +8,7 @@ public class UserFileAccess
     [Key]
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public string EncryptedFileKey { get; set; }
-    public string Role { get; set; }
+    public Roles Role { get; set; }
     
     public User User { get; set; }
     [ForeignKey("User")]

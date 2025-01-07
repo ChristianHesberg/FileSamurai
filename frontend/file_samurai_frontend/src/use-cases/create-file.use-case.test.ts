@@ -2,11 +2,11 @@ import {CreateFileUseCase} from './create-file.use-case';
 import {FileService} from "../services/file.service";
 import {KeyService} from "../services/key.service";
 import {mock, mockReset} from 'jest-mock-extended'
-import {CryptographyService} from "../services/cryptography.service";
 import {EDITOR_ROLE} from "../constants";
 import {AesGcmEncryptionOutput} from "../models/aesGcmEncryptionOutput.model";
 import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
 import {AddFileResponseDto} from "../models/addFileResponseDto";
+import {CryptographyService} from "../services/cryptography.service";
 
 describe('CreateFileUseCase', () => {
     const mockFileService = mock<FileService>();
@@ -32,9 +32,9 @@ describe('CreateFileUseCase', () => {
             mockCryptoService
         );
 
-        mockCryptoService.encryptAes256Gcm.mockReturnValue(getAesEncryptionOutput());
-        mockCryptoService.encryptWithPublicKey.mockReturnValue(getBuffer());
-        mockCryptoService.generateKey.mockReturnValue(getBuffer());
+        mockCryptoService.encryptAes256Gcm.mockResolvedValue(getAesEncryptionOutput());
+        mockCryptoService.encryptWithPublicKey.mockResolvedValue(getBuffer());
+        mockCryptoService.generateKey.mockResolvedValue(getBuffer());
 
         mockFileService.postFile.mockResolvedValue(GetAddFileResponseDto());
         mockFileService.convertToUserFileAccessDto.mockReturnValue(GetAddOrGetUserFileAccessDto());
@@ -60,7 +60,6 @@ describe('CreateFileUseCase', () => {
             const expectedCallValue = {
                 fileContents: encryptionReturnValue.cipherText,
                 nonce: encryptionReturnValue.nonce,
-                tag: encryptionReturnValue.tag,
                 title: title,
                 groupId: groupId
             }
@@ -123,7 +122,6 @@ describe('CreateFileUseCase', () => {
 const getAesEncryptionOutput = (): AesGcmEncryptionOutput => ({
     cipherText: 'cipher',
     nonce: 'nonce',
-    tag: 'tag',
 })
 
 const getBuffer = (): Buffer => Buffer.from('key');

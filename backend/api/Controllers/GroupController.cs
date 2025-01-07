@@ -24,6 +24,9 @@ public class GroupController(IGroupService groupService) : ControllerBase
         var email = JwtDecoder.DecodeJwtEmail(authHeader.ToString());
 
         var res = groupService.AddGroup(group, email);
+
+        groupService.AddUserToGroup(new AddUserToGroupDto() { GroupId = res.Id, UserEmail = email });
+
         return Ok(res);
     }
 
@@ -58,7 +61,7 @@ public class GroupController(IGroupService groupService) : ControllerBase
             throw;
         }
     }
-
+    
     //todo missing auth
     [HttpGet("groupsForEmail")]
     public ActionResult<List<GroupDto>> GetGroupsForEmail()
@@ -89,5 +92,12 @@ public class GroupController(IGroupService groupService) : ControllerBase
         {
             return BadRequest();
         }
+
+    //todo auth
+    [HttpDelete("{id}")]
+    public ActionResult DeleteGroup(string id)
+    {
+        groupService.DeleteGroup(id);
+        return Ok();
     }
 }

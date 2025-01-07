@@ -1,15 +1,18 @@
-
 using System.Text;
+using System.Text.Json.Serialization;
 using api.Policies;
 using api.Middleware;
+using api.SchemaFilters;
 using application.dtos;
 using application.ports;
 using application.services;
 using application.validation;
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using infrastructure;
 using infrastructure.adapters;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,8 +24,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<Context>(opt => opt.UseSqlite("Data Source=../database/database.db"));
 
-builder.Services.AddScoped<IUserKeyPairPort, UserKeyPairKeyPairAdapter>();
-builder.Services.AddScoped<IUserKeyPairService, UserKeyPairKeyPairService>();
+builder.Services.AddScoped<IUserKeyPairPort, UserKeyPairAdapter>();
+builder.Services.AddScoped<IUserKeyPairService, UserKeyPairService>();
 builder.Services.AddScoped<IUserPort, UserAdapter>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFilePort, FileAdapter>();
@@ -35,16 +38,21 @@ builder.Services.AddScoped<IValidator<GetFileOrAccessInputDto>, GetFileOrAccessI
 builder.Services.AddScoped<IValidator<FileDto>, FileDtoValidator>();
 builder.Services.AddScoped<IValidator<AddOrGetUserFileAccessDto>, AddOrGetUserFileAccessDtoValidator>();
 
-builder.Services.AddControllers().AddJsonOptions(options =>  
-{  
-    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;  
-}); 
+//builder.Services.AddSwaggerGen(opt => opt.SchemaFilter<FluentValidationSchemaFilter>());
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); 
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    options.OperationFilter<AddQueryParameterDescription>();
+    options.OperationFilter<GlobalResponseTypeSchemaFilter>();  
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
     {
         Name = "Authorization",
@@ -52,6 +60,7 @@ builder.Services.AddSwaggerGen(options =>
         Type = SecuritySchemeType.Http,
         Scheme = "Bearer"
     });
+    
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
@@ -68,17 +77,19 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+builder.Services.AddFluentValidationRulesToSwagger();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.Authority = "https://accounts.google.com";
-        options.Audience = "503035586312-ujnij8557gd7nga1lbjsvi56vi98iubb.apps.googleusercontent.com"; // Replace with your client ID
+        options.Audience =
+            "503035586312-ujnij8557gd7nga1lbjsvi56vi98iubb.apps.googleusercontent.com"; // Replace with your client ID
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            
             ValidIssuer = "https://accounts.google.com",
-            ValidAudience = "503035586312-ujnij8557gd7nga1lbjsvi56vi98iubb.apps.googleusercontent.com", // Replace with your client ID
+            ValidAudience =
+                "503035586312-ujnij8557gd7nga1lbjsvi56vi98iubb.apps.googleusercontent.com", // Replace with your client ID
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = false, //TODO SET TRUE ONLY FALSE FOR TESTING
@@ -93,7 +104,7 @@ builder.Services.AddScoped<IAuthorizationHandler, DocumentChangeHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, DocumentGetHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, DocumentAddHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, KeyPairPostHandler>();
-builder.Services.AddScoped<IAuthorizationHandler, KeyPairGetPKHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, KeyPairGetPrivateKeyHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, GroupAddUserHandler>();
 
 
@@ -101,7 +112,7 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("FileAccess", policy =>
         policy.Requirements.Add(new DocumentAccessRequirement()))
     .AddPolicy("DocumentChange", policy =>
-    policy.Requirements.Add(new DocumentChangeRequirement()))
+        policy.Requirements.Add(new DocumentChangeRequirement()))
     .AddPolicy("DocumentGet", policy =>
         policy.Requirements.Add(new DocumentGetRequirement()))
     .AddPolicy("DocumentAdd", policy =>
@@ -111,25 +122,24 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("PostRSAKeyPair", policy =>
         policy.Requirements.Add(new KeyPairPostRequirement()))
     .AddPolicy("GetUserPK", policy =>
-    policy.Requirements.Add(new KeyPairGetPKRequirement()))
+        policy.Requirements.Add(new KeyPairGetPrivateKeyRequirement()))
     .AddPolicy("GroupAddUser", policy =>
-    policy.Requirements.Add(new GroupAddUserRequirement()));
+        policy.Requirements.Add(new GroupAddUserRequirement()));
 
 
-
-builder.Services.AddCors(options =>  
-{  
-    options.AddPolicy("cors", builder =>  
-    {  
-        builder.WithOrigins("http://localhost:3000")  
-            .AllowAnyMethod()  
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("cors", builder =>
+    {
+        builder.WithOrigins("http://localhost:3000")
+            .AllowAnyMethod()
             .AllowAnyHeader();
-    });  
-});  
+    });
+});
 
 var app = builder.Build();
 
-//app.UseMiddleware<ExceptionHandlingMiddleware>(); 
+app.UseMiddleware<ExceptionHandlingMiddleware>(); 
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -140,8 +150,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
-app.UseCors("cors"); 
+app.UseCors("cors");
 
 app.UseAuthorization();
 

@@ -7,7 +7,6 @@ public class AddFileDto
 {
     public string FileContents { get; set; }
     public string Nonce { get; set; }
-    public string Tag { get; set; }
     private string _title;  
     public string Title  
     {  

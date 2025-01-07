@@ -73,8 +73,7 @@ public class FileServiceTests
             FileContents = "FileContents",
             GroupId = new Guid().ToString(),
             Nonce = "Nonce",
-            Title = "Title",
-            Tag = "Tag"
+            Title = "Title"
         };
         var fileReturnedFromMock = new File()
         {
@@ -82,8 +81,7 @@ public class FileServiceTests
             FileContents = "FileContents",
             GroupId = new Guid().ToString(),
             Nonce = "Nonce",
-            Title = "Title",
-            Tag = "Tag"
+            Title = "Title"
         };
         var expectedResult = new PostFileResultDto()
         {
@@ -109,24 +107,21 @@ public class FileServiceTests
             FileContents = "FileContents",
             GroupId = new Guid().ToString(),
             Nonce = "Nonce",
-            Title = "Title",
-            Tag = "Tag"
+            Title = "Title"
         };
         var convertedFile = new File()
         {
             FileContents = "FileContents",
             GroupId = new Guid().ToString(),
             Nonce = "Nonce",
-            Title = "Title",
-            Tag = "Tag"
+            Title = "Title"
         };
         var fileReturnedFromMock = new File()
         {
             FileContents = "FileContents",
             GroupId = new Guid().ToString(),
             Nonce = "Nonce",
-            Title = "Title",
-            Tag = "Tag"
+            Title = "Title"
         };
 
         fileRepo.Setup(repo => repo.AddFile(It.IsAny<File>())).Returns(fileReturnedFromMock);
@@ -140,7 +135,6 @@ public class FileServiceTests
                  && f.Title == convertedFile.Title
                  && f.GroupId == convertedFile.GroupId
                  && f.Nonce == convertedFile.Nonce
-                 && f.Tag == convertedFile.Tag
             )), Times.Once);  
     }
     #endregion
@@ -185,14 +179,14 @@ public class FileServiceTests
             FileContents = "FileContents",
             Nonce = "Nonce",
             Title = "Title",
-            Tag = "Tag"
+            GroupId = "GroupId"
         };
         var fileAccessFromMock = new UserFileAccess()
         {
             FileId = "fileId",
             UserId = "userId",
             EncryptedFileKey = "FAK",
-            Role = "Editor"
+            Role = Roles.Editor
         };
         var expectedResult = new GetFileDto()
         {
@@ -201,8 +195,8 @@ public class FileServiceTests
                 FileContents = fileReturnedFromMock.FileContents,
                 Id = fileReturnedFromMock.Id,
                 Nonce = fileReturnedFromMock.Nonce,
-                Tag = fileReturnedFromMock.Tag,
-                Title = fileReturnedFromMock.Title
+                Title = fileReturnedFromMock.Title,
+                GroupId = fileReturnedFromMock.GroupId
             },
             UserFileAccess = new AddOrGetUserFileAccessDto()
             {
@@ -222,59 +216,6 @@ public class FileServiceTests
         //Assert
         Assert.Equivalent(res, expectedResult);
     }
-    [Fact]
-    public void GetFile_ReturnsNullIfFilePortGetFileIsNull()
-    {
-        //Arrange
-        var inputDto = new GetFileOrAccessInputDto()
-        {
-            UserId = "userId",
-            FileId = "fileId"
-        };
-        var fileAccessFromMock = new UserFileAccess()
-        {
-            FileId = "fileId",
-            UserId = "userId",
-            EncryptedFileKey = "FAK",
-            Role = "Editor"
-        };
-
-        fileRepo.Setup(repo => repo.GetFile(It.IsAny<string>())).Returns((File?)null);
-        fileRepo.Setup(repo => repo.GetUserFileAccess(It.IsAny<string>(), It.IsAny<string>())).Returns(fileAccessFromMock);
-        
-        //Act
-        var res = fileService.GetFile(inputDto);
-        
-        //Assert
-        Assert.Equivalent(res, null);
-    }
-    [Fact]
-    public void GetFile_ReturnsNullIfFilePortGetUserFileAccessIsNull()
-    {
-        //Arrange
-        var inputDto = new GetFileOrAccessInputDto()
-        {
-            UserId = "userId",
-            FileId = "fileId"
-        };
-        var fileReturnedFromMock = new File()
-        {
-            Id = "Id",
-            FileContents = "FileContents",
-            Nonce = "Nonce",
-            Title = "Title",
-            Tag = "Tag"
-        };
-
-        fileRepo.Setup(repo => repo.GetFile(It.IsAny<string>())).Returns(fileReturnedFromMock);
-        fileRepo.Setup(repo => repo.GetUserFileAccess(It.IsAny<string>(), It.IsAny<string>())).Returns((UserFileAccess?)null);
-        
-        //Act
-        var res = fileService.GetFile(inputDto);
-        
-        //Assert
-        Assert.Equivalent(res, null);
-    }
     
     [Fact]
     public void GetFile_CallsFileRepoGetFileWithCorrectParameters()
@@ -291,14 +232,13 @@ public class FileServiceTests
             FileContents = "FileContents",
             Nonce = "Nonce",
             Title = "Title",
-            Tag = "Tag"
         };
         var fileAccessFromMock = new UserFileAccess()
         {
             FileId = "fileId",
             UserId = "userId",
             EncryptedFileKey = "FAK",
-            Role = "Editor"
+            Role = Roles.Editor
         };
 
         fileRepo.Setup(repo => repo.GetFile(It.IsAny<string>())).Returns(fileReturnedFromMock);
@@ -314,7 +254,7 @@ public class FileServiceTests
     }
     
     [Fact]
-    public void GetFile_CallsFileRepoGetUserFileAccessWithCorrectParameters()
+    public void GetFile_CallsFileRepoGetUserFileAccess_WithCorrectParameters()
     {
         //Arrange
         var inputDto = new GetFileOrAccessInputDto()
@@ -328,14 +268,13 @@ public class FileServiceTests
             FileContents = "FileContents",
             Nonce = "Nonce",
             Title = "Title",
-            Tag = "Tag"
         };
         var fileAccessFromMock = new UserFileAccess()
         {
             FileId = "fileId",
             UserId = "userId",
             EncryptedFileKey = "FAK",
-            Role = "Editor"
+            Role = Roles.Editor
         };
 
         fileRepo.Setup(repo => repo.GetFile(It.IsAny<string>())).Returns(fileReturnedFromMock);
@@ -389,7 +328,6 @@ public class FileServiceTests
             FileContents = "FileContents",
             Nonce = "Nonce",
             Title = "Title",
-            Tag = "Tag"
         };
         
         fileRepo.Setup(repo => repo.UpdateFile(It.IsAny<File>())).Returns(true);
@@ -402,7 +340,7 @@ public class FileServiceTests
     }
     
     [Fact]
-    public void UpdateFile_CallsRepoWithCorrectParameters()
+    public void UpdateFile_CallsRepo_WithCorrectParameters()
     {
         //Arrange
         var inputDto = new FileDto()
@@ -411,7 +349,6 @@ public class FileServiceTests
             FileContents = "FileContents",
             Nonce = "Nonce",
             Title = "Title",
-            Tag = "Tag"
         };
         var convertedFile = new File()
         {
@@ -419,7 +356,6 @@ public class FileServiceTests
             FileContents = "FileContents",
             Nonce = "Nonce",
             Title = "Title",
-            Tag = "Tag"
         };
 
         fileRepo.Setup(repo => repo.UpdateFile(It.IsAny<File>())).Returns(true);
@@ -433,7 +369,6 @@ public class FileServiceTests
                  && f.Title == convertedFile.Title
                  && f.Id == convertedFile.Id
                  && f.Nonce == convertedFile.Nonce
-                 && f.Tag == convertedFile.Tag
             )), Times.Once);  
     }
 
@@ -466,7 +401,7 @@ public class FileServiceTests
     }
     
     [Fact]
-    public void AddUserFileAccess_CallsRepoWithCorrectParameters()
+    public void AddUserFileAccess_CallsRepo_WithCorrectParameters()
     {
         //Arrange
         var inputDto = new AddOrGetUserFileAccessDto()
@@ -474,7 +409,7 @@ public class FileServiceTests
             UserId = "userId",
             FileId = "fileId",
             EncryptedFileKey = "FAK",
-            Role = "Editor"
+            Role = Roles.Editor
         };
         
         fileRepo.Setup(repo => repo.AddUserFileAccess(It.IsAny<UserFileAccess>()));
@@ -520,7 +455,7 @@ public class FileServiceTests
     }
     
     [Fact]
-    public void GetUserFileAccess_CallsRepoWithCorrectParameters()
+    public void GetUserFileAccess_CallsRepo_WithCorrectParameters()
     {
         //Arrange
         var inputDto = new GetFileOrAccessInputDto()
@@ -528,8 +463,15 @@ public class FileServiceTests
             UserId = "userId",
             FileId = "fileId",
         };
+        var repoReturn = new UserFileAccess()
+        {
+            UserId = inputDto.UserId,
+            FileId = inputDto.FileId,
+            EncryptedFileKey = "EncryptedFileKey",
+            Role = Roles.Editor
+        };
         
-        fileRepo.Setup(repo => repo.GetUserFileAccess(It.IsAny<string>(), It.IsAny<string>()));
+        fileRepo.Setup(repo => repo.GetUserFileAccess(It.IsAny<string>(), It.IsAny<string>())).Returns(repoReturn);
         
         //Act
         fileService.GetUserFileAccess(inputDto);
@@ -559,7 +501,7 @@ public class FileServiceTests
             UserId = "userId",
             FileId = "fileId",
             EncryptedFileKey = "FAK",
-            Role = "Editor"
+            Role = Roles.Editor
         };
         
         fileRepo.Setup(repo => repo.GetUserFileAccess(It.IsAny<string>(), It.IsAny<string>())).Returns(repoOutput);
@@ -575,25 +517,6 @@ public class FileServiceTests
             EncryptedFileKey = repoOutput.EncryptedFileKey,
             Role = repoOutput.Role
         });
-    }
-    
-    [Fact]
-    public void GetUserFileAccess_ReturnsNull_IfNotFoundInDb()
-    {
-        //Arrange
-        var inputDto = new GetFileOrAccessInputDto()
-        {
-            UserId = "userId",
-            FileId = "fileId",
-        };
-        
-        fileRepo.Setup(repo => repo.GetUserFileAccess(It.IsAny<string>(), It.IsAny<string>())).Returns((UserFileAccess?)null);
-        
-        //Act
-        var res = fileService.GetUserFileAccess(inputDto);
-        
-        //Assert
-        Assert.Equivalent(res, null);
     }
 
     #endregion

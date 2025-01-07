@@ -1,75 +1,60 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using api.Policies.UtilMethods;
 using application.dtos;
+using application.ports;
 using application.services;
+using core.models;
 using Microsoft.AspNetCore.Authorization;
 
 
 namespace api.Policies;
 
-public class DocumentAccessHandler(IUserService userService, IFileService fileService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentAccessRequirement>
+public class DocumentAccessHandler(
+    IUserPort userAdapter,
+    IFilePort fileAdapter,
+    IHttpContextAccessor contextAccessor,
+    IFilePort filePort) : AuthorizationHandler<DocumentAccessRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
         DocumentAccessRequirement requirement)
     {
-        var request = contextAccessor.HttpContext.Request;
-        request.EnableBuffering();
+        var accessor = contextAccessor.HttpContext;
+        if (accessor == null) throw new Exception("Http context is somehow null");
         
-        var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
-        
-        if (email == null) return; 
-        
-        var user = userService.GetUserByEmail(email);
+        var request = accessor.Request;
 
-        if (user == null) return;
-        
+        var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
+
+        if (email == null) return;
+
+        var user = userAdapter.GetUserByEmail(email);
+
         var userId = user.Id;
         
-        // Extract fileId from the body (JSON data)
-        string fileIdFromBody = null;
-        try
-        {
-            // Read the body and deserialize it into a dictionary (or model)
-            request.Body.Seek(0, SeekOrigin.Begin);
-            var reader = new StreamReader(request.Body);
-            var body = await reader.ReadToEndAsync();
-            var jsonObject = JsonSerializer.Deserialize<Dictionary<string, string>>(body);
-            if (jsonObject?.TryGetValue("fileId", out var value) is true)
-            {
-                fileIdFromBody = value;
-
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error reading body: " + ex.Message);
-        }
-        Console.WriteLine("FileId from body: " + fileIdFromBody);
-
-        //Retrieve the file + fileaccess for the user, if file or fileaccess is null user dont have access!  
-        GetFileOrAccessInputDto retrieveFile = new GetFileOrAccessInputDto()
-        {
-            FileId = fileIdFromBody,
-            UserId = userId
-        }; 
+        var dto = await BodyToDto.BodyToDtoConverter<AddOrGetUserFileAccessDto>(request);
         
-        var file =  fileService.GetFile(retrieveFile);
-        if (file == null) return;
+        var userGroup = userAdapter.GetGroupsForUser(userId);
 
-        // GET User Groups and File group
-        var userGroup = userService.GetGroupsForUser(userId);
-        if (userGroup == null) return;
-        
-        var fileGroup = fileService.GetFileGroup(file.File.Id);
-        if (fileGroup == null)return;
-        
-        //CHECK USERS IS IN the same GROUP AS THE DOCUMENT && is an editor
-        if (userGroup.Contains(fileGroup) && file.UserFileAccess.Role == "Editor")
+        var fileGroup = fileAdapter.GetFileGroup(dto.FileId);
+
+        var userIsInFileGroup = userGroup.Any(x => x.Id == fileGroup.Id);
+        if (!userIsInFileGroup) return;
+
+        //If no userFileAccess on file
+        if (fileAdapter.GetAllUserFileAccess(dto.FileId).Count == 0)
         {
             authorizationHandlerContext.Succeed(requirement);
-            request.Body.Position = 0;
-        }            
-    
+        }
+        else
+        {
+            var access = fileAdapter.GetUserFileAccess(userId, dto.FileId);
+            if (access.Role == Roles.Editor)
+            {
+                authorizationHandlerContext.Succeed(requirement);
+            }
+        }
     }
 }

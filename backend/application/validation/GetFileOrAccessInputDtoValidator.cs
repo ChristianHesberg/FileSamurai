@@ -7,7 +7,7 @@ public class GetFileOrAccessInputDtoValidator : AbstractValidator<GetFileOrAcces
 {
     public GetFileOrAccessInputDtoValidator()
     {
-        RuleFor(x => x.UserId).MustBeValidGuid();
-        RuleFor(x => x.FileId).MustBeValidGuid();
+        RuleFor(x => x.UserId).MustBeValidGuid("UserId");
+        RuleFor(x => x.FileId).MustBeValidGuid("FileId");
     }
 }

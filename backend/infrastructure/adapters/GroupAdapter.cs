@@ -15,9 +15,11 @@ public class GroupAdapter(Context context) : IGroupPort
         return added.Entity;
     }
 
-    public Group? GetGroup(string id)
+    public Group GetGroup(string id)
     {
-        return context.Groups.Find(id);
+        var res = context.Groups.Find(id);
+        if (res == null) throw new KeyNotFoundException($"Could not find group with id: {id}");
+        return res;
     }
 
     public User AddUserToGroup(string userEmail, string groupId)
@@ -49,6 +51,14 @@ public class GroupAdapter(Context context) : IGroupPort
         var user = group?.Users.FirstOrDefault(u => u.Id == userId);
         if (user == null) return;
         group?.Users.Remove(user);
+        context.SaveChanges();
+    }
+
+    public void DeleteGroup(string id)
+    {
+        var group = context.Groups.Find(id);
+        if (group == null) throw new KeyNotFoundException();
+        context.Groups.Remove(group);
         context.SaveChanges();
     }
 }

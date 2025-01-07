@@ -8,8 +8,7 @@ export interface FileResponseDto {
     file: {
         id: string;
         fileContents: string;
-        nonce: string;
-        tag: string;
+        nonce: string; 
         title: string;
     };
 }

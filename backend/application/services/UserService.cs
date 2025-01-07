@@ -12,12 +12,12 @@ public class UserService(IUserPort userPort) : IUserService
     {
         var salt = PasswordHasher.GenerateSalt();
         Console.WriteLine(JsonSerializer.Serialize(user));
-        var hashedPW = PasswordHasher.HashPassword(user.Password, salt);
+        var hashedPw = PasswordHasher.HashPassword(user.Password, salt);
 
         var converted = new User()
         {
             Email = user.Email,
-            HashedPassword = hashedPW,
+            HashedPassword = hashedPw,
             Salt = salt
         };
         var res = userPort.AddUser(converted);
@@ -28,34 +28,30 @@ public class UserService(IUserPort userPort) : IUserService
         };
     }
 
-    public UserDto? GetUser(string id)
+    public UserDto GetUser(string id)
     {
         var user = userPort.GetUser(id);
-        return user == null
-            ? null
-            : new UserDto()
+        return new UserDto()
             {
                 Id = user.Id,
                 Email = user.Email
             };
     }
 
-    public UserDto? GetUserByEmail(string email)
+    public UserDto GetUserByEmail(string email)
     {
         var user = userPort.GetUserByEmail(email);
-        return user == null
-            ? null
-            : new UserDto()
+        return new UserDto()
             {
                 Id = user.Id,
                 Email = user.Email
             };
     }
 
-    public List<GroupDto>? GetGroupsForUser(string id)
+    public List<GroupDto> GetGroupsForUser(string id)
     {
         var groups = userPort.GetGroupsForUser(id);
-        if (groups == null) return null;
+
         var list = new List<GroupDto>();
         foreach (var group in groups)
         {
@@ -72,6 +68,11 @@ public class UserService(IUserPort userPort) : IUserService
     public bool ValidatePassword(string password, string email)
     {
         var user = userPort.GetUserByEmail(email);
-        return user != null && PasswordHasher.VerifyPassword(password, user.HashedPassword, user.Salt);
+        return PasswordHasher.VerifyPassword(password, user.HashedPassword, user.Salt);
+    }
+    
+    public void DeleteUser(string id)
+    {
+       userPort.DeleteUser(id);
     }
 }

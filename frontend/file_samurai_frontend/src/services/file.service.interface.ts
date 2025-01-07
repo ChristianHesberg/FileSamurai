@@ -3,7 +3,7 @@ import {AddFileDto} from "../models/addFileDto";
 import {AddFileResponseDto} from "../models/addFileResponseDto";
 import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
 
-export interface FileServiceInterface {
+export interface IFileService {
     getFileInfo(userId: string, fileId: string): Promise<FileResponseDto>;
     postFile(dto: AddFileDto): Promise<AddFileResponseDto>;
     postUserFileAccess(dto: AddOrGetUserFileAccessDto): Promise<void>;

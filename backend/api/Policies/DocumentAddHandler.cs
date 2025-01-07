@@ -3,60 +3,40 @@ using application.dtos;
 using application.services;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
+using api.Policies.UtilMethods;
+using application.ports;
 
 namespace api.Policies;
 
-public class DocumentAddHandler(IUserService userService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentAddRequirement>
+public class DocumentAddHandler(IUserPort userAdapter, IHttpContextAccessor contextAccessor)
+    : AuthorizationHandler<DocumentAddRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
         DocumentAddRequirement requirement)
     {
-        var request = contextAccessor.HttpContext.Request;
-        request.EnableBuffering();
+        var accessor = contextAccessor.HttpContext;
+        if (accessor == null) throw new Exception("Http context is somehow null");
         
-        var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
-        
-        if (email == null) return; 
-        
-        var user = userService.GetUserByEmail(email);
+        var request = accessor.Request;
 
-        if (user == null) return;
-        
+        var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
+
+        if (email == null) return;
+
+        var user = userAdapter.GetUserByEmail(email);
+
         var userId = user.Id;
         
-        // Extract groupId from the body 
-        string groupId = null;
-        try
-        {
-            request.Body.Seek(0, SeekOrigin.Begin);
-            var reader = new StreamReader(request.Body);
-            var body = await reader.ReadToEndAsync();
-            var jsonObject = JsonSerializer.Deserialize<Dictionary<string, string>>(body);
-            if (jsonObject?.TryGetValue("GroupId", out var value) is true)
-            {
-                groupId = value;
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error reading body: " + ex.Message);
-        }
-        Console.WriteLine("FileId from body: " + groupId);
+        var dto = await BodyToDto.BodyToDtoConverter<AddFileDto>(request);
 
-    
-        
-   
         // GET User Groups and File group
-        var userGroup = userService.GetGroupsForUser(userId);
-        if (userGroup == null) return;
+        var userGroup = userAdapter.GetGroupsForUser(userId);
 
-        var res = userGroup.Where(group => group.Id == groupId);
-        if (res.Any())
+        var res = userGroup.Any(group => group.Id == dto.GroupId);
+        if (res)
         {
             authorizationHandlerContext.Succeed(requirement);
-            request.Body.Position = 0;
         }
-
     }
 }

@@ -14,19 +14,19 @@ public class GroupService(IGroupPort groupPort) : IGroupService
             CreatorEmail = email
         };
         var res = groupPort.AddGroup(converted);
+
         return new GroupDto()
         {
             Id = res.Id,
-            Name = res.Name
+            Name = res.Name,
+            GroupEmail = res.CreatorEmail
         };
     }
 
-    public GroupDto? GetGroup(string id)
+    public GroupDto GetGroup(string id)
     {
         var group = groupPort.GetGroup(id);
-        return group == null
-            ? null
-            : new GroupDto()
+        return new GroupDto()
             {
                 Id = group.Id,
                 Name = group.Name,
@@ -59,5 +59,10 @@ public class GroupService(IGroupPort groupPort) : IGroupService
     public void RemoveUserFromGroup(string groupId, string userId)
     {
         groupPort.RemoveUserFromGroup(groupId, userId);
+    }
+
+    public void DeleteGroup(string id)
+    {
+        groupPort.DeleteGroup(id);
     }
 }

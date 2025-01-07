@@ -1,6 +1,6 @@
 import {User} from "../models/user.model";
 
-export interface UserServiceInterface{
+export interface IUserService {
     getUserByEmail(email: string): Promise<User>;
     getUserIfNullRegister(email: string): Promise<User>;
     registerUser(email: string, password: string): Promise<User>;

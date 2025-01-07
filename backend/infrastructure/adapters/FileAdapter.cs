@@ -1,4 +1,5 @@
 ﻿using application.ports;
+using core.errors;
 using core.models;
 using Microsoft.EntityFrameworkCore;
 using File = core.models.File;
@@ -15,14 +16,16 @@ public class FileAdapter(Context context) : IFilePort
         return entity.Entity;
     }
 
-    public File? GetFile(string fileId)
+    public File GetFile(string fileId)
     {
-        return context.Files.FirstOrDefault(file => file.Id == fileId);
+        var res = context.Files.FirstOrDefault(file => file.Id == fileId);
+        if (res == null) throw new KeyNotFoundException($"Could not find file with id: {fileId}");
+        return res;
     }
 
     public bool UpdateFile(File file)
     {
-        var res= context.Files.Find(file.Id);
+        var res = context.Files.Find(file.Id);
         if (res == null) return false;
         res.Title = file.Title;
         res.FileContents = file.FileContents;
@@ -32,17 +35,37 @@ public class FileAdapter(Context context) : IFilePort
 
     public void AddUserFileAccess(UserFileAccess userFileAccess)
     {
+        var alreadyExists =
+            context.UserFileAccesses.Any(x => x.FileId == userFileAccess.FileId && x.UserId == userFileAccess.UserId);
+        if (alreadyExists) throw new EntityAlreadyExistsException("User already has access to this file!");
         context.UserFileAccesses.Add(userFileAccess);
         context.SaveChanges();
     }
 
-    public UserFileAccess? GetUserFileAccess(string userId, string fileId)
+    public UserFileAccess GetUserFileAccess(string userId, string fileId)
     {
-        return context.UserFileAccesses.FirstOrDefault(f => f.FileId == fileId && f.UserId == userId);
+        var res = context.UserFileAccesses.FirstOrDefault(f => f.FileId == fileId && f.UserId == userId);
+        if (res == null) throw new KeyNotFoundException("Could not find UserFileAccess with given ids.");
+        return res;
     }
 
-    public Group? GetFileGroup(string fileId)
+    public Group GetFileGroup(string fileId)
     {
-        return context.Files.Include(e=> e.Group).FirstOrDefault(e => e.Id == fileId)?.Group;
+        var res = context.Files.Include(e => e.Group).FirstOrDefault(e => e.Id == fileId);
+        if (res == null) throw new KeyNotFoundException($"Could not find file with id: {fileId}");
+        return res.Group;
+    }
+
+    public List<UserFileAccess> GetAllUserFileAccess(string fileId)
+    {
+        return context.UserFileAccesses.Where(x => x.FileId == fileId).ToList();
+    }
+
+    public void DeleteUserFileAccess(string userId, string fileId)
+    {
+        var access = context.UserFileAccesses.FirstOrDefault(f => f.FileId == fileId && f.UserId == userId);
+        if (access == null) throw new KeyNotFoundException("User file access not found");
+        context.UserFileAccesses.Remove(access);
+        context.SaveChanges();
     }
 }
