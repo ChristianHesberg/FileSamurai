@@ -1,13 +1,21 @@
 ﻿using application.dtos;
 using application.ports;
+using application.validation;
 using core.models;
+using FluentValidation;
 
 namespace application.services;
 
-public class GroupService(IGroupPort groupPort) : IGroupService
+public class GroupService(
+    IGroupPort groupPort,
+    IValidator<GroupCreationDto> groupCreationValidator
+    ) : IGroupService
 {
     public GroupDto AddGroup(GroupCreationDto group, string email)
     {
+        var validationResult = groupCreationValidator.Validate(group);
+        ValidationUtilities.ThrowIfInvalid(validationResult);
+        
         var converted = new Group()
         {
             Name = group.Name,

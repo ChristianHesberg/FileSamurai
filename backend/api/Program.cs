@@ -1,4 +1,3 @@
-using System.Text;
 using System.Text.Json.Serialization;
 using api.Policies;
 using api.Middleware;
@@ -8,12 +7,10 @@ using application.ports;
 using application.services;
 using application.validation;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using infrastructure;
 using infrastructure.adapters;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -37,8 +34,7 @@ builder.Services.AddScoped<IValidator<AddFileDto>, AddFileDtoValidator>();
 builder.Services.AddScoped<IValidator<GetFileOrAccessInputDto>, GetFileOrAccessInputDtoValidator>();
 builder.Services.AddScoped<IValidator<FileDto>, FileDtoValidator>();
 builder.Services.AddScoped<IValidator<AddOrGetUserFileAccessDto>, AddOrGetUserFileAccessDtoValidator>();
-
-//builder.Services.AddSwaggerGen(opt => opt.SchemaFilter<FluentValidationSchemaFilter>());
+builder.Services.AddScoped<IValidator<string>, GuidValidator>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

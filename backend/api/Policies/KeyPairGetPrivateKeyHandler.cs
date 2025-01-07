@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace api.Policies;
 
-public class KeyPairGetPrivateKeyHandler(IUserPort userAdapter, IHttpContextAccessor contextAccessor) : AuthorizationHandler<KeyPairGetPrivateKeyRequirement>
+public class KeyPairGetPrivateKeyHandler(IUserService userService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<KeyPairGetPrivateKeyRequirement>
 {
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext authorizationHandlerContext, KeyPairGetPrivateKeyRequirement requirement)
     {
@@ -21,7 +21,7 @@ public class KeyPairGetPrivateKeyHandler(IUserPort userAdapter, IHttpContextAcce
 
         try
         {
-            var user = userAdapter.GetUserByEmail(email);
+            var user = userService.GetUserByEmail(email);
         
             // Grabs the userid in which the user wants to retrieve private key from
             var userIdFromRoute = request.RouteValues["id"];

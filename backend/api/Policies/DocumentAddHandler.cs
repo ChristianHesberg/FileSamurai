@@ -8,7 +8,7 @@ using application.ports;
 
 namespace api.Policies;
 
-public class DocumentAddHandler(IUserPort userAdapter, IHttpContextAccessor contextAccessor)
+public class DocumentAddHandler(IUserService userService, IHttpContextAccessor contextAccessor)
     : AuthorizationHandler<DocumentAddRequirement>
 {
     protected override async Task HandleRequirementAsync(
@@ -26,14 +26,14 @@ public class DocumentAddHandler(IUserPort userAdapter, IHttpContextAccessor cont
 
         try
         {
-            var user = userAdapter.GetUserByEmail(email);
+            var user = userService.GetUserByEmail(email);
 
             var userId = user.Id;
         
             var dto = await BodyToDto.BodyToDtoConverter<AddFileDto>(request);
 
             // GET User Groups and File group
-            var userGroup = userAdapter.GetGroupsForUser(userId);
+            var userGroup = userService.GetGroupsForUser(userId);
 
             var res = userGroup.Any(group => group.Id == dto.GroupId);
             if (res)

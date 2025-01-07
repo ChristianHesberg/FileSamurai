@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Policies;
 
-public class DocumentChangeHandler(IUserPort userAdapter, IFilePort fileAdapter, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentChangeRequirement>
+public class DocumentChangeHandler(IUserService userService, IFileService fileService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentChangeRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
@@ -27,15 +27,17 @@ public class DocumentChangeHandler(IUserPort userAdapter, IFilePort fileAdapter,
 
         try
         {
-            var user = userAdapter.GetUserByEmail(email);
+            var user = userService.GetUserByEmail(email);
 
             var dto = await BodyToDto.BodyToDtoConverter<FileDto>(request);
         
-            var file = fileAdapter.GetFile(dto.Id);
-
-            var userAccess = fileAdapter.GetUserFileAccess(user.Id, file.Id); 
+            var file = fileService.GetFile(new GetFileOrAccessInputDto()
+            {
+                UserId = user.Id,
+                FileId = dto.Id
+            });
   
-            if (userAccess.Role == Roles.Editor)
+            if (file.UserFileAccess.Role == Roles.Editor)
             {
                 authorizationHandlerContext.Succeed(requirement); 
             }

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace api.Policies;
 
-public class GroupAddUserHandler(IGroupPort groupAdapter, IHttpContextAccessor contextAccessor) : AuthorizationHandler<GroupAddUserRequirement>
+public class GroupAddUserHandler(IGroupService groupService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<GroupAddUserRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
@@ -27,9 +27,9 @@ public class GroupAddUserHandler(IGroupPort groupAdapter, IHttpContextAccessor c
         {
             var dto = await BodyToDto.BodyToDtoConverter<AddUserToGroupDto>(request);
         
-            var group = groupAdapter.GetGroup(dto.GroupId);
+            var group = groupService.GetGroup(dto.GroupId);
         
-            if (group.CreatorEmail == email)
+            if (group.GroupEmail == email)
             {
                 authorizationHandlerContext.Succeed(requirement);
             }

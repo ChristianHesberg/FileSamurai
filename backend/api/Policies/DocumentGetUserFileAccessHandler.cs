@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace api.Policies;
 
-public class DocumentGetUserFileAccessHandler(IUserPort userAdapter, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentGetRequirement>
+public class DocumentGetUserFileAccessHandler(IUserService userService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentGetRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
@@ -22,7 +22,7 @@ public class DocumentGetUserFileAccessHandler(IUserPort userAdapter, IHttpContex
 
         try
         {
-            var user = userAdapter.GetUserByEmail(email);
+            var user = userService.GetUserByEmail(email);
 
             // Extract userId from the Query
             var userId = request.Query["userId"].ToString();
