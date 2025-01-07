@@ -11,11 +11,11 @@ export class ShareFileUseCase{
         private readonly cryptoService: ICryptographyService,
     ) {}
 
-    async execute(ownerId: string, recipientId: string, fileId: string, ownerPassword: string, role: string): Promise<void>{
+    async execute(ownerId: string, recipientId: string, fileId: string, ownerCryptoKey: CryptoKey, role: string): Promise<void>{
         const encryptedFileKey = await this.keyService.getEncryptedFileKey(ownerId, fileId);
         const privateKey = await this.keyService.getUserPrivateKey(ownerId);
 
-        const decryptedPrivateKey = await this.cryptoService.decryptPrivateKey(privateKey, ownerPassword);
+        const decryptedPrivateKey = await this.cryptoService.decryptPrivateKey(privateKey, ownerCryptoKey);
         const decryptedFEK = await this.cryptoService.decryptWithPrivateKey(Buffer.from(encryptedFileKey, 'base64'), decryptedPrivateKey);
 
         const shareePublicKey = await this.keyService.getUserPublicKey(recipientId);

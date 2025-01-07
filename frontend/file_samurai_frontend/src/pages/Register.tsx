@@ -4,6 +4,7 @@ import {faKey} from "@fortawesome/free-solid-svg-icons";
 import {RegisterUserUseCaseFactory} from "../use-cases/factories/register-user.use-case.factory";
 import {useAuth} from "../providers/AuthProvider";
 import {useNavigate} from "react-router-dom";
+import {useUseCases} from "../providers/UseCaseProvider";
 
 export function Register() {
     const [password, setPassword] = useState("");
@@ -11,6 +12,7 @@ export function Register() {
     const [error, setError] = useState(" ")
     const [showPassword, setShowPassword] = useState(false);
     const {user} = useAuth()
+    const { createUserKeyPairUseCase, createFileUseCase } = useUseCases();
     const registerUserUseCase = RegisterUserUseCaseFactory.create()
     const navigate = useNavigate()
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,8 +38,11 @@ export function Register() {
         e.preventDefault();
         if (!error && password && confirmPassword) {
             registerUserUseCase.execute(user!.email, password)
-                .then(() => navigate("/files"))
-                .catch(() => console.log("failed register"))
+                .then((u) => {
+                    createUserKeyPairUseCase.execute(password, u.email, u.id).then(
+                        () => navigate("/files")
+                    ).catch(() => console.log('failed to create key pair'))
+                }).catch(() => console.log("failed register"))
         }
     };
 

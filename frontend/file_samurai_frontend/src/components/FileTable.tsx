@@ -2,14 +2,25 @@ import TableOptionsBtn from "./TableOptionsBtn";
 import React from "react";
 import {faCloudArrowDown} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {useKey} from "../providers/KeyProvider";
+import {useUseCases} from "../providers/UseCaseProvider";
 
 const FileTable = () => {
+    const { retrieveKey } = useKey();
+    const { decryptFileUseCase } = useUseCases();
     const addMemberBtn = () => {
         return (
             <button
                 className="block px-4 py-2 text-sm bg-lime-900 hover:bg-lime-700 w-full rounded"
                 role="menuitem"
                 onClick={() => {
+
+
+                    const key = retrieveKey();
+                    console.log(key);
+                    const res = decryptFileUseCase.execute('2f486cba-c664-4689-acf3-6da89df99355', 'c0d4c997-6ee2-4b83-8146-8ac3880fb255', key!).then((v) => {
+                        console.log(v.toString('utf8'));
+                    })
                 }}
             >
                 Add member
