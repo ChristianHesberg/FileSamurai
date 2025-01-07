@@ -29,38 +29,22 @@ public class GroupController(IGroupService groupService) : ControllerBase
 
         return Ok(res);
     }
-
-    //todo do we need this
+    
+    //todo add policy
     [HttpGet("{id}")]
     [Authorize]
     public ActionResult<GroupDto> GetGroup(string id)
     {
         var group = groupService.GetGroup(id);
-        return group == null ? NotFound() : Ok(group);
+        return Ok(group);
     }
 
     [HttpPost("addUser")]
     [Authorize(Policy = "GroupAddUser")]
     public ActionResult<UserDto> AddUserToGroup(AddUserToGroupDto dto)
     {
-        try
-        {
             var res = groupService.AddUserToGroup(dto);
             return Ok(res);
-        }
-        catch (DuplicateNameException de)
-        {
-            return Conflict();
-        }
-        catch (KeyNotFoundException ke)
-        {
-            return NotFound();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
     }
     
     //todo missing auth
@@ -81,18 +65,12 @@ public class GroupController(IGroupService groupService) : ControllerBase
         return Ok(users);
     }
 
+    //todo missing auth
     [HttpDelete("removeUserFromGroup")]
     public ActionResult RemoveUserFromGroup(string groupId, string userId)
     {
-        try
-        {
             groupService.RemoveUserFromGroup(groupId, userId);
             return Ok();
-        }
-        catch (Exception e)
-        {
-            return BadRequest();
-        }
     }
 
     //todo auth

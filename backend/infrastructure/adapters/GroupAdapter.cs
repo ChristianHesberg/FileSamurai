@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using application.dtos;
 using application.ports;
+using core.errors;
 using core.models;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,7 +29,8 @@ public class GroupAdapter(Context context) : IGroupPort
         if (user == null) throw new KeyNotFoundException("no found user");
         var group = context.Groups.Include(g => g.Users).FirstOrDefault(group => group.Id == groupId);
         if (group == null) throw new KeyNotFoundException("no group found");
-        if (group.Users.Any(u => u.Id == user.Id)) throw new DuplicateNameException("user id already in the given group");
+        if (group.Users.Any(u => u.Id == user.Id))
+            throw new EntityAlreadyExistsException("user id already in the given group");
         group.Users.Add(user);
         context.SaveChanges();
         return user;
@@ -48,9 +50,11 @@ public class GroupAdapter(Context context) : IGroupPort
     public void RemoveUserFromGroup(string groupId, string userId)
     {
         var group = context.Groups.Include(u => u.Users).FirstOrDefault(g => g.Id == groupId);
-        var user = group?.Users.FirstOrDefault(u => u.Id == userId);
-        if (user == null) return;
-        group?.Users.Remove(user);
+        if (group == null) throw new KeyNotFoundException();
+
+        var user = group.Users.FirstOrDefault(u => u.Id == userId);
+        if (user == null) throw new KeyNotFoundException();
+        group.Users.Remove(user);
         context.SaveChanges();
     }
 

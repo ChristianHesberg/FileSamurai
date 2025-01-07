@@ -20,7 +20,7 @@ export const GroupsTable: React.FC<GroupsTableProps> = ({groups, setGroups}) => 
 
     const handleDeleteGroupClick = (groupId: string) => {
         deleteGroupUseCase.execute(groupId)
-            .then(r => setGroups(prevState => prevState.filter((group) => group.id !== groupId)))
+            .then(() => setGroups(prevState => prevState.filter((group) => group.id !== groupId)))
             .catch((e) => console.log("failed to delete group. Error: " + e))
 
     }
@@ -33,7 +33,7 @@ export const GroupsTable: React.FC<GroupsTableProps> = ({groups, setGroups}) => 
                     role="menuitem"
                     onClick={openModal}
                 >
-                    Add member
+                    Member
                 </button>
                 <Modal isOpen={isModalOpen} onClose={closeModal} child={<AddMembersModal groupId={groupId}/>}/>
             </div>
