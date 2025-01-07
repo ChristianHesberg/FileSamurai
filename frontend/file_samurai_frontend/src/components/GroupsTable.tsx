@@ -3,28 +3,31 @@ import Modal from "./Modal";
 import React, {useState} from "react";
 import {Group} from "../models/Group";
 import {AddMembersModal} from "./AddMembersModal";
+import {useUseCases} from "../providers/UseCaseProvider";
 
 interface GroupsTableProps {
     groups: Group[]
+    setGroups: React.Dispatch<React.SetStateAction<Group[]>>
 }
 
-export const GroupsTable: React.FC<GroupsTableProps> = ({groups}) => {
+export const GroupsTable: React.FC<GroupsTableProps> = ({groups, setGroups}) => {
     const [isModalOpen, setModalOpen] = useState(false);
-
+    const {deleteGroupUseCase} = useUseCases()
     const openModal = () => setModalOpen(true);
     const closeModal = () => {
         setModalOpen(false)
     };
-    const handleAddMemberClick = () => {
 
-    }
-    const handleDeleteGroupClick = () => {
+    const handleDeleteGroupClick = (groupId: string) => {
+        deleteGroupUseCase.execute(groupId)
+            .then(r => setGroups(prevState => prevState.filter((group) => group.id !== groupId)))
+            .catch((e) => console.log("failed to delete group. Error: " + e))
 
     }
 
     const addMemberBtn = (groupId: string) => {
         return (
-            <div  key={groupId}>
+            <div key={groupId}>
                 <button
                     className="block px-4 py-2 text-sm bg-lime-900 hover:bg-lime-700 w-full rounded"
                     role="menuitem"
@@ -37,13 +40,13 @@ export const GroupsTable: React.FC<GroupsTableProps> = ({groups}) => {
         )
     }
 
-    const deleteGroupBtn = (key:string) => {
+    const deleteGroupBtn = (groupId: string) => {
         return (
             <button
-                key={key}
+                key={groupId}
                 className="block px-4 py-2 text-sm bg-red-900 hover:bg-red-800 w-full  rounded"
                 role="menuitem"
-                onClick={handleDeleteGroupClick}
+                onClick={() => handleDeleteGroupClick(groupId)}
             >
                 Delete Group
             </button>

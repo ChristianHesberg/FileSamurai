@@ -1,4 +1,4 @@
-import {GroupService} from "../services/groupService";
+import {GroupService} from "../../services/groupService";
 
 export class GetUsersInGroupUseCase {
     constructor(private readonly groupService: GroupService) {

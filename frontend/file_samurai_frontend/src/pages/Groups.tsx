@@ -23,7 +23,7 @@ export function Groups() {
         if (newGroup.length === 0) return
         createGroupUseCase.execute(newGroup)
             .then((g) => setGroups((prevState) => [...prevState, g]))
-            .catch(() => console.log("error lmao"))
+            .catch((e) => console.log(e))
         setNewGroup("")
     }
 
@@ -48,7 +48,7 @@ export function Groups() {
                         <FontAwesomeIcon icon={faPeopleGroup} size={"xl"}/>
                     </button>
                 </div>
-                <GroupsTable groups={groups}/>
+                <GroupsTable groups={groups} setGroups={setGroups}/>
             </div>
 
         </div>

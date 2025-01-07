@@ -31,4 +31,8 @@ export class GroupService {
         return response.data
     }
 
+    async deleteGroup(groupId: string) {
+        const response = await axiosInstance.delete(`group/${groupId}`)
+        return response.data
+    }
 }
