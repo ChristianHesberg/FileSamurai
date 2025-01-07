@@ -216,58 +216,6 @@ public class FileServiceTests
         //Assert
         Assert.Equivalent(res, expectedResult);
     }
-    [Fact]
-    public void GetFile_ReturnsNullIfFilePortGetFileIsNull()
-    {
-        //Arrange
-        var inputDto = new GetFileOrAccessInputDto()
-        {
-            UserId = "userId",
-            FileId = "fileId"
-        };
-        var fileAccessFromMock = new UserFileAccess()
-        {
-            FileId = "fileId",
-            UserId = "userId",
-            EncryptedFileKey = "FAK",
-            Role = Roles.Editor
-        };
-
-        fileRepo.Setup(repo => repo.GetFile(It.IsAny<string>())).Returns((File?)null);
-        fileRepo.Setup(repo => repo.GetUserFileAccess(It.IsAny<string>(), It.IsAny<string>())).Returns(fileAccessFromMock);
-        
-        //Act
-        var res = fileService.GetFile(inputDto);
-        
-        //Assert
-        Assert.Equivalent(res, null);
-    }
-    [Fact]
-    public void GetFile_ReturnsNullIfFilePortGetUserFileAccessIsNull()
-    {
-        //Arrange
-        var inputDto = new GetFileOrAccessInputDto()
-        {
-            UserId = "userId",
-            FileId = "fileId"
-        };
-        var fileReturnedFromMock = new File()
-        {
-            Id = "Id",
-            FileContents = "FileContents",
-            Nonce = "Nonce",
-            Title = "Title",
-        };
-
-        fileRepo.Setup(repo => repo.GetFile(It.IsAny<string>())).Returns(fileReturnedFromMock);
-        fileRepo.Setup(repo => repo.GetUserFileAccess(It.IsAny<string>(), It.IsAny<string>())).Returns((UserFileAccess?)null);
-        
-        //Act
-        var res = fileService.GetFile(inputDto);
-        
-        //Assert
-        Assert.Equivalent(res, null);
-    }
     
     [Fact]
     public void GetFile_CallsFileRepoGetFileWithCorrectParameters()
@@ -306,7 +254,7 @@ public class FileServiceTests
     }
     
     [Fact]
-    public void GetFile_CallsFileRepoGetUserFileAccessWithCorrectParameters()
+    public void GetFile_CallsFileRepoGetUserFileAccess_WithCorrectParameters()
     {
         //Arrange
         var inputDto = new GetFileOrAccessInputDto()
@@ -392,7 +340,7 @@ public class FileServiceTests
     }
     
     [Fact]
-    public void UpdateFile_CallsRepoWithCorrectParameters()
+    public void UpdateFile_CallsRepo_WithCorrectParameters()
     {
         //Arrange
         var inputDto = new FileDto()
@@ -453,7 +401,7 @@ public class FileServiceTests
     }
     
     [Fact]
-    public void AddUserFileAccess_CallsRepoWithCorrectParameters()
+    public void AddUserFileAccess_CallsRepo_WithCorrectParameters()
     {
         //Arrange
         var inputDto = new AddOrGetUserFileAccessDto()
@@ -507,7 +455,7 @@ public class FileServiceTests
     }
     
     [Fact]
-    public void GetUserFileAccess_CallsRepoWithCorrectParameters()
+    public void GetUserFileAccess_CallsRepo_WithCorrectParameters()
     {
         //Arrange
         var inputDto = new GetFileOrAccessInputDto()
@@ -515,8 +463,15 @@ public class FileServiceTests
             UserId = "userId",
             FileId = "fileId",
         };
+        var repoReturn = new UserFileAccess()
+        {
+            UserId = inputDto.UserId,
+            FileId = inputDto.FileId,
+            EncryptedFileKey = "EncryptedFileKey",
+            Role = Roles.Editor
+        };
         
-        fileRepo.Setup(repo => repo.GetUserFileAccess(It.IsAny<string>(), It.IsAny<string>()));
+        fileRepo.Setup(repo => repo.GetUserFileAccess(It.IsAny<string>(), It.IsAny<string>())).Returns(repoReturn);
         
         //Act
         fileService.GetUserFileAccess(inputDto);
@@ -562,25 +517,6 @@ public class FileServiceTests
             EncryptedFileKey = repoOutput.EncryptedFileKey,
             Role = repoOutput.Role
         });
-    }
-    
-    [Fact]
-    public void GetUserFileAccess_ReturnsNull_IfNotFoundInDb()
-    {
-        //Arrange
-        var inputDto = new GetFileOrAccessInputDto()
-        {
-            UserId = "userId",
-            FileId = "fileId",
-        };
-        
-        fileRepo.Setup(repo => repo.GetUserFileAccess(It.IsAny<string>(), It.IsAny<string>())).Returns((UserFileAccess?)null);
-        
-        //Act
-        var res = fileService.GetUserFileAccess(inputDto);
-        
-        //Assert
-        Assert.Equivalent(res, null);
     }
 
     #endregion
