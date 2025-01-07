@@ -1,10 +1,8 @@
 import React, {useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faKey} from "@fortawesome/free-solid-svg-icons";
-import {RegisterUserUseCaseFactory} from "../use-cases/factories/register-user.use-case.factory";
 import {useAuth} from "../providers/AuthProvider";
 import {useNavigate} from "react-router-dom";
-import {useUseCases} from "../providers/UseCaseProvider";
 
 export function Register() {
     const [password, setPassword] = useState("");

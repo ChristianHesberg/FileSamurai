@@ -6,15 +6,14 @@ import Modal from "../components/Modal";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUnlock} from "@fortawesome/free-solid-svg-icons";
 import {NotFoundError} from "../errors/not-found.error";
-import {ValidatePasswordUseCaseFactory} from "../use-cases/factories/validate-password.use-case.factory";
+import {useUseCases} from "../providers/UseCaseProvider";
 
 export function Login() {
     const navigate = useNavigate()
     const {login, logout, initSecret} = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [error, setError] = useState<string>("")
-    const validatePasswordUseCase = ValidatePasswordUseCaseFactory.create()
-
+    const {validatePasswordUseCase} = useUseCases()
     const [password, setPassword] = useState<string>("")
     const handleSuccess = async (credentialResponse: CredentialResponse) => {
         login(credentialResponse)

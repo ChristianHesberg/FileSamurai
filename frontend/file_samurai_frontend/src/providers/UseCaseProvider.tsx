@@ -19,6 +19,7 @@ import {DeleteGroupUseCase} from "../use-cases/group/DeleteGroupUseCase";
 import {GetAllGroupsUserIsInUseCase} from "../use-cases/user/get-all-groups-user-is-in.use-case";
 import {RegisterUserUseCase} from "../use-cases/user/register-user.use-case";
 import {GetUserByEmailUseCase} from "../use-cases/user/get-user-by-email.use-case";
+import {ValidatePasswordUseCase} from "../use-cases/user/validate-password.use-case";
 
 interface UseCaseProviderProps {
     children: ReactNode
@@ -35,7 +36,8 @@ interface UseCaseContextType {
     createUserKeyPairUseCase: CreateUserKeyPairUseCase,
 
     //user stuff
-    registerUserUseCase: RegisterUserUseCase
+    registerUserUseCase: RegisterUserUseCase,
+    validatePasswordUseCase: ValidatePasswordUseCase
     getUserByEmailUseCase: GetUserByEmailUseCase
     getAllGroupsUserIsInUseCase: GetAllGroupsUserIsInUseCase,
 
@@ -76,7 +78,7 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     const getAllGroupsUserIsInUseCase = new GetAllGroupsUserIsInUseCase(userService)
     const getUserByEmailUseCase = new GetUserByEmailUseCase(userService)
     const registerUserUseCase = new RegisterUserUseCase(userService)
-
+    const validatePasswordUseCase= new ValidatePasswordUseCase(userService)
     return (
         <UseCaseContext.Provider value={{
             createFileUseCase,
@@ -91,7 +93,8 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
             deleteGroupUseCase,
             getAllGroupsUserIsInUseCase,
             getUserByEmailUseCase,
-            registerUserUseCase
+            registerUserUseCase,
+            validatePasswordUseCase
         }}>
             {children}
         </UseCaseContext.Provider>
