@@ -58,6 +58,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
         setUser(decoded);
         return await getUserByEmailUseCase.execute(decoded.email).then(user => {
             decoded.userId = user.id;
+            localStorage.setItem('user', JSON.stringify(decoded));
             return user
         })
     };
