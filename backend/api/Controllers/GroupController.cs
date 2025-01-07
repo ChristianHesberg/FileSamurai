@@ -92,6 +92,7 @@ public class GroupController(IGroupService groupService) : ControllerBase
         {
             return BadRequest();
         }
+    }
 
     //todo auth
     [HttpDelete("{id}")]
