@@ -48,6 +48,7 @@ public class FileController(IFileService fileService): ControllerBase
 
     [HttpGet("access")]
     [Authorize(Policy = "DocumentGetUserFileAccess")]
+    [ProducesResponseType(typeof(void), (int)HttpStatusCode.NotFound)]
     public ActionResult<AddOrGetUserFileAccessDto> GetUserFileAccess(
         [FromQuery, CustomDescription("Must be a valid GUID")] string fileId, 
         [FromQuery, CustomDescription("Must be a valid GUID")] string userId
