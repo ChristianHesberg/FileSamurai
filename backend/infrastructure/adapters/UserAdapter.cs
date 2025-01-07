@@ -13,9 +13,16 @@ public class UserAdapter(Context context) : IUserPort
         var foundUser = context.Users.FirstOrDefault(x => x.Email == user.Email);
         if (foundUser != null) throw new EntityAlreadyExistsException();
 
-        var added = context.Users.Add(user);
-        context.SaveChanges();
-        return added.Entity;
+        try
+        {
+            var added = context.Users.Add(user);
+            context.SaveChanges();
+            return added.Entity;
+        }
+        catch (Exception)
+        {
+            throw new DatabaseUpdateException();
+        }
     }
 
     public User GetUser(string id)
@@ -43,7 +50,14 @@ public class UserAdapter(Context context) : IUserPort
     {
         var user = context.Users.Find(id);
         if (user == null) throw new KeyNotFoundException("User not found");
-        context.Users.Remove(user);
-        context.SaveChanges();
+        try
+        {
+            context.Users.Remove(user);
+            context.SaveChanges();
+        }
+        catch (Exception)
+        {
+            throw new DatabaseUpdateException();
+        }
     }
 }

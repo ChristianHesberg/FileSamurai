@@ -65,7 +65,12 @@ public class ExceptionHandlingMiddleware
             case KeyNotFoundException:  
                 statusCode = HttpStatusCode.NotFound;  
                 message = exception.Message;  
-                break;  
+                break;
+            
+            case DatabaseUpdateException:
+                statusCode = HttpStatusCode.InternalServerError;  
+                message = exception.Message;  
+                break;
   
             default:  
                 statusCode = HttpStatusCode.InternalServerError;  
