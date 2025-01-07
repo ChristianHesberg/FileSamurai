@@ -35,7 +35,8 @@ public class FileServiceTests
             addFileValidator.Object,
             getFileOrAccessInputDtoValidator.Object,
             fileDtoValidator.Object,
-            addOrGetUserFileAccessDtoValidator.Object
+            addOrGetUserFileAccessDtoValidator.Object,
+            []
         );
     }
 

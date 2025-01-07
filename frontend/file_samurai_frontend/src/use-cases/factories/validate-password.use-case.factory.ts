@@ -1,4 +1,4 @@
-import {ValidatePasswordUseCase} from "../validate-password.use-case";
+import {ValidatePasswordUseCase} from "../user/validate-password.use-case";
 import {UserService} from "../../services/user.service";
 
 export class ValidatePasswordUseCaseFactory {

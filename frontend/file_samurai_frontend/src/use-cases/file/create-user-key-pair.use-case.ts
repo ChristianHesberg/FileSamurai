@@ -1,7 +1,7 @@
-import {KeyService} from "../services/key.service";
-import {EncryptedRsaKeyPairModel} from "../models/encryptedRsaKeyPair.model";
-import {AddUserKeyPairDto} from "../models/addUserKeyPairDto";
-import {ICryptographyService} from "../services/cryptography.service.interface";
+import {KeyService} from "../../services/key.service";
+import {EncryptedRsaKeyPairModel} from "../../models/encryptedRsaKeyPair.model";
+import {AddUserKeyPairDto} from "../../models/addUserKeyPairDto";
+import {ICryptographyService} from "../../services/cryptography.service.interface";
 
 export class CreateUserKeyPairUseCase {
     constructor(

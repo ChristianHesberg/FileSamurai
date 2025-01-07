@@ -1,5 +1,6 @@
 ﻿using application.dtos;
 using application.ports;
+using core.errors;
 using core.models;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +10,10 @@ public class UserAdapter(Context context) : IUserPort
 {
     public User AddUser(User user)
     {
-        var added =context.Users.Add(user);
+        var foundUser = context.Users.FirstOrDefault(x => x.Email == user.Email);
+        if (foundUser != null) throw new EntityAlreadyExistsException();
+
+        var added = context.Users.Add(user);
         context.SaveChanges();
         return added.Entity;
     }

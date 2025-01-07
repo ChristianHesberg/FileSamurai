@@ -1,4 +1,7 @@
-﻿using application.ports;
+﻿using System.Data;
+using application.dtos;
+using application.ports;
+using core.errors;
 using core.models;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,15 +23,39 @@ public class GroupAdapter(Context context) : IGroupPort
         return res;
     }
 
-    public bool AddUserToGroup(string userEmail, string groupId)
+    public User AddUserToGroup(string userEmail, string groupId)
     {
         var user = context.Users.FirstOrDefault(user => user.Email == userEmail);
-        if (user == null) return false;
+        if (user == null) throw new KeyNotFoundException("no found user");
         var group = context.Groups.Include(g => g.Users).FirstOrDefault(group => group.Id == groupId);
-        if (group == null || group.Users.Any(u => u.Id == user.Id)) return false;
+        if (group == null) throw new KeyNotFoundException("no group found");
+        if (group.Users.Any(u => u.Id == user.Id))
+            throw new EntityAlreadyExistsException("user id already in the given group");
         group.Users.Add(user);
         context.SaveChanges();
-        return true;
+        return user;
+    }
+
+    public List<Group> GetGroupsForEmail(string email)
+    {
+        return context.Groups.Where(x => x.CreatorEmail == email).ToList();
+    }
+
+    public List<User> GetUsersInGroup(string groupId)
+    {
+        var group = context.Groups.Include(x => x.Users).FirstOrDefault(x => x.Id == groupId);
+        return group == null ? [] : group.Users.ToList();
+    }
+
+    public void RemoveUserFromGroup(string groupId, string userId)
+    {
+        var group = context.Groups.Include(u => u.Users).FirstOrDefault(g => g.Id == groupId);
+        if (group == null) throw new KeyNotFoundException();
+
+        var user = group.Users.FirstOrDefault(u => u.Id == userId);
+        if (user == null) throw new KeyNotFoundException();
+        group.Users.Remove(user);
+        context.SaveChanges();
     }
 
     public void DeleteGroup(string id)
