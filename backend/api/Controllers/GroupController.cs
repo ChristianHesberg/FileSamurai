@@ -29,6 +29,7 @@ public class GroupController(IGroupService groupService) : ControllerBase
         return Ok(res);
     }
 
+    //todo do we need this
     [HttpGet("{id}")]
     [Authorize]
     public ActionResult<GroupDto> GetGroup(string id)

@@ -31,10 +31,15 @@ builder.Services.AddScoped<IGroupPort, GroupAdapter>();
 builder.Services.AddScoped<IGroupService, GroupService>();
 
 builder.Services.AddScoped<IValidator<AddFileDto>, AddFileDtoValidator>();
+builder.Services.AddScoped<IValidator<AddUserToGroupDto>, AddUserToGroupDtoValidator>();
 builder.Services.AddScoped<IValidator<GetFileOrAccessInputDto>, GetFileOrAccessInputDtoValidator>();
 builder.Services.AddScoped<IValidator<FileDto>, FileDtoValidator>();
 builder.Services.AddScoped<IValidator<AddOrGetUserFileAccessDto>, AddOrGetUserFileAccessDtoValidator>();
+builder.Services.AddScoped<IValidator<GroupCreationDto>, GroupCreationDtoValidator>();
+builder.Services.AddScoped<IValidator<UserRsaKeyPairDto>, UserRsaKeyPairValidator>();
+builder.Services.AddScoped<IValidator<UserCreationDto>, UserCreationDtoValidator>();
 builder.Services.AddScoped<IValidator<string>, GuidValidator>();
+builder.Services.AddScoped<IValidator<string>, EmailValidator>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

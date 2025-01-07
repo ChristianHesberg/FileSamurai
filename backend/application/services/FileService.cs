@@ -15,7 +15,7 @@ public class FileService(
     IValidator<GetFileOrAccessInputDto> getFileOrAccessInputDtoValidator,
     IValidator<FileDto> fileDtoValidator,
     IValidator<AddOrGetUserFileAccessDto> addOrGetUserFileAccessDtoValidator,
-    IValidator<string> guidValidator) : IFileService
+    IEnumerable<IValidator<string>> stringValidators ) : IFileService
 {
     public PostFileResultDto AddFile(AddFileDto file)
     {
@@ -129,16 +129,18 @@ public class FileService(
 
     public Group GetFileGroup(string fileId)
     {
-        var validationResult = guidValidator.Validate(fileId);
-        ValidationUtilities.ThrowIfInvalid(validationResult);
+        var guidValidator = ValidationUtilities.GetValidator<GuidValidator>(stringValidators);  
+        var validationResult = guidValidator.Validate(fileId);  
+        ValidationUtilities.ThrowIfInvalid(validationResult); 
         
         return filePort.GetFileGroup(fileId);
     }
 
     public List<UserFileAccess> GetAllUserFileAccess(string fileId)
     {
-        var validationResult = guidValidator.Validate(fileId);
-        ValidationUtilities.ThrowIfInvalid(validationResult);
+        var guidValidator = ValidationUtilities.GetValidator<GuidValidator>(stringValidators);  
+        var validationResult = guidValidator.Validate(fileId);  
+        ValidationUtilities.ThrowIfInvalid(validationResult); 
         
         return filePort.GetAllUserFileAccess(fileId);
     }
