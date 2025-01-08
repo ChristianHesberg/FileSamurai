@@ -10,7 +10,7 @@ import {useUseCases} from "../providers/UseCaseProvider";
 
 export function Login() {
     const navigate = useNavigate()
-    const {login, logout, initSecret} = useAuth();
+    const {user,login, logout, initSecret} = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [error, setError] = useState<string>("")
     const {validatePasswordHashUseCase} = useUseCases()
@@ -35,9 +35,8 @@ export function Login() {
         event.preventDefault();
         if (password.length === 0) return
         //validatePasswordUseCase.execute(password)
-        validatePasswordHashUseCase.execute(password,s)
+        validatePasswordHashUseCase.execute(password)
             .then(() => {
-                initSecret(password)
                 navigate("/files")
             })
             .catch(() => setError("Incorrect password"))

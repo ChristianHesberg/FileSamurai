@@ -69,7 +69,7 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     //Key
     const deriveEncryptionKeyUseCase = new DeriveEncryptionKeyUseCase(cryptoService, keyService);
     const generatePasswordHashUseCase = new GeneratePasswordHashUseCase(cryptoService)
-    const validatePasswordHashUseCase = new ValidatePasswordHashUseCase(cryptoService)
+    const validatePasswordHashUseCase = new ValidatePasswordHashUseCase(cryptoService,userService)
 
     //Group
     const createGroupUseCase = new CreateGroupUseCase(groupService);
@@ -106,7 +106,6 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
             getAllGroupsUserIsInUseCase,
             getUserByEmailUseCase,
             registerUserUseCase,
-
             deriveEncryptionKeyUseCase,
             validatePasswordHashUseCase,
             generatePasswordHashUseCase

@@ -22,7 +22,6 @@ interface AuthContextType {
     logout: () => void;
     register: (email: string, password: string) => Promise<User>
     secret: string;
-    initSecret: (string: string) => void;
 }
 
 // Create the context
@@ -94,15 +93,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
         setUser(null);
         localStorage.removeItem('user');
         localStorage.removeItem('jwtToken');
-        localStorage.removeItem('password');
     };
 
-    const initSecret = (pass: string) => {
-        setSecret(pass)
-        localStorage.setItem("password", pass)
-    }
+
     return (
-        <AuthContext.Provider value={{user, login, logout, isInitializing, secret, initSecret, register}}>
+        <AuthContext.Provider value={{user, login, logout, isInitializing, secret, register}}>
             {children}
         </AuthContext.Provider>
     );

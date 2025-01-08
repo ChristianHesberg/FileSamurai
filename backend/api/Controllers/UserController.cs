@@ -18,7 +18,7 @@ public class UserController(IUserService userService) : ControllerBase
         var email = JwtDecoder.DecodeJwtEmail(authHeaders);
 
         if (dto.Email != email) return Unauthorized();
-        
+
         var res = userService.AddUser(dto);
         return Ok(res);
     }
@@ -50,9 +50,19 @@ public class UserController(IUserService userService) : ControllerBase
 
     [HttpDelete("{id}")]
     [Authorize(Policy = "OwnsResourcePolicy")]
-    public ActionResult DeleteUser( string id)
+    public ActionResult DeleteUser(string id)
     {
         userService.DeleteUser(id);
         return Ok();
+    }
+
+
+    [HttpGet("private/")]
+    public ActionResult<PasswordHashDto> GetPasswordHash()
+    {
+        var headersAuthorization = Request.Headers.Authorization;
+        var email = JwtDecoder.DecodeJwtEmail(headersAuthorization.ToString());
+        var hash = userService.GetPasswordHash(email);
+        return Ok(hash);
     }
 }

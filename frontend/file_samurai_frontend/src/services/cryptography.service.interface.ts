@@ -16,4 +16,5 @@ export interface ICryptographyService {
     deriveKeyFromPassword(password: string, salt: Buffer, keyLength: number): Promise<CryptoKey>;
     generateKey(size: number): Promise<Buffer>;
     decryptPrivateKey(privateKey: UserPrivateKeyDto, cryptoKey: CryptoKey): Promise<Buffer>;
+    hashPassword(password: string, salt: Buffer): Promise<Buffer>
 }

@@ -2,6 +2,7 @@ import axiosInstance from "../api/axios-instance";
 import {User} from "../models/user.model";
 import {IUserService} from "./IUserService";
 import {Group} from "../models/Group";
+import {PasswordHash} from "../models/PasswordHash";
 
 export class UserService implements IUserService {
     async getUserByEmail(email: string): Promise<User> {
@@ -32,6 +33,11 @@ export class UserService implements IUserService {
 
     async getAllUsersInGroup(groupId: string) {
         const response = await axiosInstance.get(`users/inGroup/${groupId}`)
+        return response.data
+    }
+
+    async getPasswordHash(): Promise<PasswordHash> {
+        const response = await axiosInstance.get(`user/private/`)
         return response.data
     }
 }
