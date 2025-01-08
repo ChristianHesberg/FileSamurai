@@ -1,4 +1,4 @@
-import {RegisterUserUseCase} from "../register-user.use-case";
+import {RegisterUserUseCase} from "../user/register-user.use-case";
 import {UserService} from "../../services/user.service";
 
 export class RegisterUserUseCaseFactory {

@@ -1,4 +1,5 @@
-﻿using application.dtos;
+﻿using System.Data;
+using application.dtos;
 using application.services;
 using application.transformers;
 using Microsoft.AspNetCore.Authorization;
@@ -28,22 +29,48 @@ public class GroupController(IGroupService groupService) : ControllerBase
 
         return Ok(res);
     }
-
-    //todo do we need this
+    
+    //todo add policy
     [HttpGet("{id}")]
     [Authorize]
     public ActionResult<GroupDto> GetGroup(string id)
     {
         var group = groupService.GetGroup(id);
-        return group == null ? NotFound() : Ok(group);
+        return Ok(group);
     }
 
     [HttpPost("addUser")]
     [Authorize(Policy = "GroupAddUser")]
-    public ActionResult<bool> AddUserToGroup(AddUserToGroupDto dto)
+    public ActionResult<UserDto> AddUserToGroup(AddUserToGroupDto dto)
     {
-        var res = groupService.AddUserToGroup(dto);
-        return Ok(res);
+            var res = groupService.AddUserToGroup(dto);
+            return Ok(res);
+    }
+    
+    //todo missing auth
+    [HttpGet("groupsForEmail")]
+    public ActionResult<List<GroupDto>> GetGroupsForEmail()
+    {
+        var auth = Request.Headers.Authorization;
+        var email = JwtDecoder.DecodeJwtEmail(auth.ToString());
+
+        return Ok(groupService.GetGroupsForEmail(email));
+    }
+
+    //todo missing auth
+    [HttpGet("usersInGroup")]
+    public ActionResult<List<UserDto>> GetUsersInGroup(string groupId)
+    {
+        var users = groupService.GetUsersInGroup(groupId);
+        return Ok(users);
+    }
+
+    //todo missing auth
+    [HttpDelete("removeUserFromGroup")]
+    public ActionResult RemoveUserFromGroup(string groupId, string userId)
+    {
+            groupService.RemoveUserFromGroup(groupId, userId);
+            return Ok();
     }
 
     [HttpDelete("{id}")]

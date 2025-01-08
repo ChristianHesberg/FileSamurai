@@ -1,10 +1,10 @@
-import {AddFileResponseDto} from "../models/addFileResponseDto";
-import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
-import {EDITOR_ROLE} from "../constants";
-import {AddFileDto} from "../models/addFileDto";
-import {IFileService} from "../services/file.service.interface";
-import {IKeyService} from "../services/key.service.interface";
-import {ICryptographyService} from "../services/cryptography.service.interface";
+import {AddFileResponseDto} from "../../models/addFileResponseDto";
+import {AddOrGetUserFileAccessDto} from "../../models/addOrGetUserFileAccessDto";
+import {EDITOR_ROLE} from "../../constants";
+import {AddFileDto} from "../../models/addFileDto";
+import {IFileService} from "../../services/file.service.interface";
+import {IKeyService} from "../../services/key.service.interface";
+import {ICryptographyService} from "../../services/cryptography.service.interface";
 
 export class CreateFileUseCase {
     constructor(

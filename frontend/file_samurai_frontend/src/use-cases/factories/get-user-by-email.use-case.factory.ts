@@ -1,4 +1,4 @@
-import {GetUserByEmailUseCase} from "../get-user-by-email.use-case";
+import {GetUserByEmailUseCase} from "../user/get-user-by-email.use-case";
 import {UserService} from "../../services/user.service";
 
 export class GetUserByEmailUseCaseFactory {

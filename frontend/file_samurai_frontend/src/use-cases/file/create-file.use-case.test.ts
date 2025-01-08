@@ -1,12 +1,12 @@
 import {CreateFileUseCase} from './create-file.use-case';
-import {FileService} from "../services/file.service";
-import {KeyService} from "../services/key.service";
+import {FileService} from "../../services/file.service";
+import {KeyService} from "../../services/key.service";
 import {mock, mockReset} from 'jest-mock-extended'
-import {EDITOR_ROLE} from "../constants";
-import {AesGcmEncryptionOutput} from "../models/aesGcmEncryptionOutput.model";
-import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
-import {AddFileResponseDto} from "../models/addFileResponseDto";
-import {CryptographyService} from "../services/cryptography.service";
+import {EDITOR_ROLE} from "../../constants";
+import {AesGcmEncryptionOutput} from "../../models/aesGcmEncryptionOutput.model";
+import {AddOrGetUserFileAccessDto} from "../../models/addOrGetUserFileAccessDto";
+import {AddFileResponseDto} from "../../models/addFileResponseDto";
+import {CryptographyService} from "../../services/cryptography.service";
 
 describe('CreateFileUseCase', () => {
     const mockFileService = mock<FileService>();

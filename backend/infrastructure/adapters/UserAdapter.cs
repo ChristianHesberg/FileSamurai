@@ -1,5 +1,6 @@
 ﻿using application.dtos;
 using application.ports;
+using core.errors;
 using core.models;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,9 +10,19 @@ public class UserAdapter(Context context) : IUserPort
 {
     public User AddUser(User user)
     {
-        var added =context.Users.Add(user);
-        context.SaveChanges();
-        return added.Entity;
+        var foundUser = context.Users.FirstOrDefault(x => x.Email == user.Email);
+        if (foundUser != null) throw new EntityAlreadyExistsException();
+
+        try
+        {
+            var added = context.Users.Add(user);
+            context.SaveChanges();
+            return added.Entity;
+        }
+        catch (Exception)
+        {
+            throw new DatabaseUpdateException();
+        }
     }
 
     public User GetUser(string id)
@@ -39,7 +50,14 @@ public class UserAdapter(Context context) : IUserPort
     {
         var user = context.Users.Find(id);
         if (user == null) throw new KeyNotFoundException("User not found");
-        context.Users.Remove(user);
-        context.SaveChanges();
+        try
+        {
+            context.Users.Remove(user);
+            context.SaveChanges();
+        }
+        catch (Exception)
+        {
+            throw new DatabaseUpdateException();
+        }
     }
 }
