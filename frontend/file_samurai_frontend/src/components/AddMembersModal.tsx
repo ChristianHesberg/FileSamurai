@@ -11,11 +11,11 @@ interface AddMembersModalProps {
 
 export const AddMembersModal: React.FC<AddMembersModalProps> = ({groupId}) => {
     const [users, setUsers] = useState<User[]>([])
-    const {getUsersInGroup, addUserToGroupUseCase, removeUserFromGroup} = useUseCases()
+    const {getUsersInGroupUseCase, addUserToGroupUseCase, removeUserFromGroup} = useUseCases()
     const [email, setEmail] = useState<string>("")
 
     useEffect(() => {
-        getUsersInGroup.execute(groupId)
+        getUsersInGroupUseCase.execute(groupId)
             .then(r => setUsers(r))
             .catch(() => console.log("failed to get users in group"))
     }, []);

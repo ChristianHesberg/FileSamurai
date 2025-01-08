@@ -1,4 +1,5 @@
 import axiosInstance from "../api/axios-instance";
+import {User} from "../models/user.model";
 
 export class GroupService {
     async createGroup(name: string) {
@@ -12,7 +13,7 @@ export class GroupService {
         return response.data
     }
 
-    async getUsersInGroup(groupId: string) {
+    async getUsersInGroup(groupId: string): Promise<User[]> {
         const response = await axiosInstance.get(`group/usersInGroup?groupid=${groupId}`)
         return response.data
     }

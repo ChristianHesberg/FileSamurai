@@ -15,13 +15,13 @@ root.render(
     <React.StrictMode>
         <GoogleOAuthProvider clientId="503035586312-ujnij8557gd7nga1lbjsvi56vi98iubb.apps.googleusercontent.com">
             <BrowserRouter>
-                <AuthProvider>
-                    <UseCaseProvider>
-                        <KeyProvider>
+                <UseCaseProvider>
+                    <KeyProvider>
+                        <AuthProvider>
                             <App/>
-                        </KeyProvider>
-                    </UseCaseProvider>
-                </AuthProvider>
+                        </AuthProvider>
+                    </KeyProvider>
+                </UseCaseProvider>
             </BrowserRouter>
         </GoogleOAuthProvider>
     </React.StrictMode>

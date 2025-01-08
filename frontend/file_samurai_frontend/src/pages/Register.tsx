@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faKey} from "@fortawesome/free-solid-svg-icons";
-import {RegisterUserUseCaseFactory} from "../use-cases/factories/register-user.use-case.factory";
 import {useAuth} from "../providers/AuthProvider";
 import {useNavigate} from "react-router-dom";
 import {useUseCases} from "../providers/UseCaseProvider";
@@ -11,9 +10,9 @@ export function Register() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState(" ")
     const [showPassword, setShowPassword] = useState(false);
-    const {user} = useAuth()
-    const { createUserKeyPairUseCase } = useUseCases();
-    const registerUserUseCase = RegisterUserUseCaseFactory.create()
+
+    const {user, register, initSecret} = useAuth()
+
     const navigate = useNavigate()
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
@@ -34,15 +33,15 @@ export function Register() {
     const handleToggleShowPassword = () => {
         setShowPassword(!showPassword);
     };
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!error && password && confirmPassword) {
-            registerUserUseCase.execute(user!.email, password)
-                .then((u) => {
-                    createUserKeyPairUseCase.execute(password, u.email, u.id).then(
-                        () => navigate("/files")
-                    ).catch(() => console.log('failed to create key pair'))
-                }).catch(() => console.log("failed register"))
+            await register(user!.email, password)
+                .then(() => {
+                    navigate("/files")
+                    initSecret(password)
+                })
+                .catch((e) => console.log(e))
         }
     };
 
