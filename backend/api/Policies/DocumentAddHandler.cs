@@ -9,11 +9,11 @@ using application.ports;
 namespace api.Policies;
 
 public class DocumentAddHandler(IUserService userService, IHttpContextAccessor contextAccessor)
-    : AuthorizationHandler<DocumentAddRequirement>
+    : AuthorizationHandler<Requirements.DocumentAddRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
-        DocumentAddRequirement requirement)
+        Requirements.DocumentAddRequirement requirement)
     {
         var accessor = contextAccessor.HttpContext;
         if (accessor == null) throw new Exception("Http context is somehow null");

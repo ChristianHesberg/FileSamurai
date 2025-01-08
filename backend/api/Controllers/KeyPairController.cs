@@ -15,11 +15,6 @@ public class KeyPairController(IUserKeyPairService userKeyPairService) : Control
     public ActionResult<UserRsaPrivateKeyDto> GetPrivateKey(string id)  
     {  
         var userRsaKeyPair = userKeyPairService.GetUserPrivateKey(id);  
-  
-        if (userRsaKeyPair == null)  
-        {  
-            return NotFound();  
-        }  
         return Ok(userRsaKeyPair);  
     }
     
@@ -28,11 +23,6 @@ public class KeyPairController(IUserKeyPairService userKeyPairService) : Control
     public ActionResult<string> GetPublicKey(string id)  
     {  
         var publicKey = userKeyPairService.GetUserPublicKey(id);  
-  
-        if (publicKey == null)  
-        {  
-            return NotFound();  
-        }  
         return Ok(publicKey);  
     }
 

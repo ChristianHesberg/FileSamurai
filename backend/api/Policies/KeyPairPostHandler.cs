@@ -10,10 +10,10 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace api.Policies;
 
-public class KeyPairPostHandler(IUserService userService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<KeyPairPostRequirement>
+public class KeyPairPostHandler(IUserService userService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<Requirements.KeyPairPostRequirement>
 {
     
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext authorizationHandlerContext, KeyPairPostRequirement requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext authorizationHandlerContext, Requirements.KeyPairPostRequirement requirement)
     {
         var accessor = contextAccessor.HttpContext;
         if (accessor == null) throw new Exception("Http context is somehow null");

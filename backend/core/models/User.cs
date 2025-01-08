@@ -8,7 +8,7 @@ public class User
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public string Email { get; set; }
     public string HashedPassword { get; set; }
-    public byte[] Salt { get; set; }
+    public string Salt { get; set; }
     
     public UserRsaKeyPair UserRsaKeyPair { get; set; }
     public List<UserFileAccess>? UserFileAccesses { get; set; }

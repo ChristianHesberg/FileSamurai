@@ -1,20 +1,18 @@
 ﻿using System.Security.Claims;
-using System.Text.Json;
 using api.Policies.UtilMethods;
 using application.dtos;
 using application.ports;
-
 using application.services;
 using Microsoft.AspNetCore.Authorization;
 
 
 namespace api.Policies;
 
-public class GroupAddUserHandler(IGroupService groupService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<GroupAddUserRequirement>
+public class GroupAddUserHandler(IGroupService groupService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<Requirements.GroupAddUserRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
-        GroupAddUserRequirement requirement)
+        Requirements.GroupAddUserRequirement requirement)
     {
         var accessor = contextAccessor.HttpContext;
         if (accessor == null) throw new Exception("Http context is somehow null");
