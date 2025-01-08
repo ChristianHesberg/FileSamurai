@@ -32,11 +32,14 @@ public class UserController(IUserService userService) : ControllerBase
     }
 
 
-    [HttpGet("email/{email}")]
+    [HttpGet]
     [Authorize]
-    public ActionResult<UserDto> GetUserByEmail(string email)
+    public ActionResult<UserDto> GetUserByToken()
     {
-        var user = userService.GetUserByEmail(email);
+        var headersAuthorization = Request.Headers.Authorization;
+        var jwtEmail = JwtDecoder.DecodeJwtEmail(headersAuthorization.ToString());
+        
+        var user = userService.GetUserByEmail(jwtEmail);
         return Ok(user);
     }
 
