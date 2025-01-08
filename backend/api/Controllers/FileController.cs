@@ -71,6 +71,13 @@ public class FileController(IFileService fileService): ControllerBase
         fileService.AddUserFileAccess(userFileAccess);
         return Ok();
     }
+    [HttpPost("accesses")]
+    //todo add auth
+    public ActionResult PostUserFileAccesses(List<AddOrGetUserFileAccessDto> userFileAccessDtos)
+    {
+        fileService.AddUserFileAccesses(userFileAccessDtos);
+        return Ok();
+    }
     
     [HttpDelete("access")]
     [Authorize(Policy = "DeleteAccess")]
