@@ -6,6 +6,7 @@ import {GoogleOAuthProvider} from "@react-oauth/google";
 import {BrowserRouter} from "react-router";
 import {AuthProvider} from "./providers/AuthProvider";
 import {UseCaseProvider} from "./providers/UseCaseProvider";
+import {KeyProvider} from "./providers/KeyProvider";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -15,9 +16,11 @@ root.render(
         <GoogleOAuthProvider clientId="503035586312-ujnij8557gd7nga1lbjsvi56vi98iubb.apps.googleusercontent.com">
             <BrowserRouter>
                 <UseCaseProvider>
-                    <AuthProvider>
-                        <App/>
-                    </AuthProvider>
+                    <KeyProvider>
+                        <AuthProvider>
+                            <App/>
+                        </AuthProvider>
+                    </KeyProvider>
                 </UseCaseProvider>
             </BrowserRouter>
         </GoogleOAuthProvider>

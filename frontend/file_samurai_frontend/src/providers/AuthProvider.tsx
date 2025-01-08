@@ -38,7 +38,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
     const [user, setUser] = useState<GoogleUser | null>(null);
     const [isInitializing, setIsInitializing] = useState<boolean>(true);
     const [secret, setSecret] = useState<string>("");
-    const {getUserByEmailUseCase, registerUserUseCase} = useUseCases()
+    const {getUserByEmailUseCase, registerUserUseCase,createUserKeyPairUseCase} = useUseCases()
 
     useEffect(() => {
         const googleUser = getLocalStorageUser()
@@ -64,14 +64,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
     };
 
     const register = async (email: string, password: string) => {
-        return await registerUserUseCase.execute(email, password).then(user => {
-            let googleUser = getLocalStorageUser()
-            if (!googleUser) return Promise.reject()
-            googleUser.userId = user.id
-            setUser(googleUser)
-            localStorage.setItem("user", JSON.stringify(googleUser))
-            return user
-        })
+        const user=  await registerUserUseCase.execute(email, password);
+        let googleUser = getLocalStorageUser()
+        if (!googleUser) return Promise.reject()
+        await createUserKeyPairUseCase.execute(password,user.email,user.id)
+        googleUser.userId = user.id
+        setUser(googleUser)
+        localStorage.setItem("user", JSON.stringify(googleUser))
+        return user
+
     }
 
     const getLocalStorageUser = (): GoogleUser | null => {
