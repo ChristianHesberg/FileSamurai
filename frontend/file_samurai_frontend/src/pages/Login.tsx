@@ -13,7 +13,7 @@ export function Login() {
     const {login, logout, initSecret} = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [error, setError] = useState<string>("")
-    const {validatePasswordUseCase} = useUseCases()
+    const {validatePasswordHashUseCase} = useUseCases()
     const [password, setPassword] = useState<string>("")
     const handleSuccess = async (credentialResponse: CredentialResponse) => {
         login(credentialResponse)
@@ -34,7 +34,8 @@ export function Login() {
     function handlePasswordSubmit(event: React.FormEvent) {
         event.preventDefault();
         if (password.length === 0) return
-        validatePasswordUseCase.execute(password)
+        //validatePasswordUseCase.execute(password)
+        validatePasswordHashUseCase.execute(password,s)
             .then(() => {
                 initSecret(password)
                 navigate("/files")
