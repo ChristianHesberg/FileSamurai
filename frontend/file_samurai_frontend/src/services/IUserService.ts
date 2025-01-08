@@ -1,7 +1,7 @@
 import {User} from "../models/user.model";
 
 export interface IUserService {
-    getUserByEmail(email: string): Promise<User>;
+    getUserByToken(): Promise<User>;
 
     getUserIfNullRegister(email: string): Promise<User>;
 

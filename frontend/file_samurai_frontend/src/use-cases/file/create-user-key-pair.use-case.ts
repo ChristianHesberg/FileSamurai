@@ -15,7 +15,6 @@ export class CreateUserKeyPairUseCase {
         const key = await this.cryptoService.deriveKeyFromPassword(concatenatedPassword, salt, 32);
 
         const keyPair: EncryptedRsaKeyPairModel = await this.cryptoService.generateRsaKeyPairWithEncryption(key, salt);
-        console.log(keyPair.privateKey);
 
         const dto: AddUserKeyPairDto = {
             userId: userId,

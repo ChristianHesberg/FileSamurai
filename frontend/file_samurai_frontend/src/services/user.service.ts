@@ -5,8 +5,8 @@ import {Group} from "../models/Group";
 import {PasswordHash} from "../models/PasswordHash";
 
 export class UserService implements IUserService {
-    async getUserByEmail(email: string): Promise<User> {
-        const response = await axiosInstance.get<User>(`user/email/${email}`);
+    async getUserByToken(): Promise<User> {
+        const response = await axiosInstance.get<User>(`user`);
         return response.data;
     }
 

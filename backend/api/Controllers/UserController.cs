@@ -30,8 +30,7 @@ public class UserController(IUserService userService) : ControllerBase
         var user = userService.GetUser(id);
         return Ok(user);
     }
-
-
+    
     [HttpGet]
     [Authorize]
     public ActionResult<UserDto> GetUserByToken()

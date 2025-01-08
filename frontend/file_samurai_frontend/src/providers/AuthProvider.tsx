@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
     const [user, setUser] = useState<GoogleUser | null>(null);
     const [isInitializing, setIsInitializing] = useState<boolean>(true);
     const {
-        getUserByEmailUseCase,
+        getUserByTokenUseCase,
         registerUserUseCase,
         createUserKeyPairUseCase,
         generatePasswordHashUseCase
@@ -57,26 +57,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
         localStorage.setItem("jwtToken", credentials)
         localStorage.setItem('user', JSON.stringify(decoded));
         setUser(decoded);
-        return await getUserByEmailUseCase.execute(decoded.email).then(user => {
+
+        return await getUserByTokenUseCase.execute().then(user => {
             decoded.userId = user.id;
             localStorage.setItem('user', JSON.stringify(decoded));
+
             return user
         })
     };
 
-    const register = async (email: string, password: string) => {
+    const register = async (email: string, password: string): Promise<User> => {
         const hash = await generatePasswordHashUseCase.execute(password)
 
         const user = await registerUserUseCase.execute(email, hash.hashedPassword, hash.salt);
 
         let googleUser = getLocalStorageUser()
         if (!googleUser) return Promise.reject()
-        await createUserKeyPairUseCase.execute(password, user.email, user.id)
-        googleUser.userId = user.id
-        setUser(googleUser)
-        localStorage.setItem("user", JSON.stringify(googleUser))
-        return user
 
+        googleUser.userId = user.id
+        localStorage.setItem("user", JSON.stringify(googleUser))
+        setUser(googleUser)
+
+        await createUserKeyPairUseCase.execute(password, user.email, user.id)
+
+        return user
     }
 
     const getLocalStorageUser = (): GoogleUser | null => {

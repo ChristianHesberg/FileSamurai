@@ -19,7 +19,7 @@ import {DeleteGroupUseCase} from "../use-cases/group/DeleteGroupUseCase";
 
 import {GetAllGroupsUserIsInUseCase} from "../use-cases/user/get-all-groups-user-is-in.use-case";
 import {RegisterUserUseCase} from "../use-cases/user/register-user.use-case";
-import {GetUserByEmailUseCase} from "../use-cases/user/get-user-by-email.use-case";
+import {GetUserByTokenUseCase} from "../use-cases/user/get-user-by-token-use.case";
 
 import {DeriveEncryptionKeyUseCase} from "../use-cases/keys/derive-encryption-key.use-case";
 import {ValidatePasswordHashUseCase} from "../use-cases/keys/validate-password-hash.use-case";
@@ -44,7 +44,7 @@ interface UseCaseContextType {
 
     //user stuff
     registerUserUseCase: RegisterUserUseCase,
-    getUserByEmailUseCase: GetUserByEmailUseCase
+    getUserByTokenUseCase: GetUserByTokenUseCase
     getAllGroupsUserIsInUseCase: GetAllGroupsUserIsInUseCase,
 
     //group stuff
@@ -88,7 +88,7 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
 
     //user
     const getAllGroupsUserIsInUseCase = new GetAllGroupsUserIsInUseCase(userService)
-    const getUserByEmailUseCase = new GetUserByEmailUseCase(userService)
+    const getUserByTokenUseCase = new GetUserByTokenUseCase(userService)
     const registerUserUseCase = new RegisterUserUseCase(userService)
 
     return (
@@ -104,7 +104,7 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
             removeUserFromGroup,
             deleteGroupUseCase,
             getAllGroupsUserIsInUseCase,
-            getUserByEmailUseCase,
+            getUserByTokenUseCase,
             registerUserUseCase,
             deriveEncryptionKeyUseCase,
             validatePasswordHashUseCase,
