@@ -1,45 +1,50 @@
 ﻿using System.Security.Claims;
-using System.Text.Json;
 using api.Policies.UtilMethods;
 using application.dtos;
-using application.ports;
 using application.services;
 using core.models;
-using infrastructure;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 
 namespace api.Policies;
 
-public class DocumentChangeHandler(IUserService userService, IFileService fileService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<Requirements.DocumentChangeRequirement>
+public class DocumentDeleteAccessHandler(
+    IUserService userService,
+    IFileService fileService,
+    IHttpContextAccessor contextAccessor
+) : AuthorizationHandler<Requirements.DocumentDeleteAccessRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
-        Requirements.DocumentChangeRequirement requirement)
+        Requirements.DocumentDeleteAccessRequirement requirement)
     {
         var accessor = contextAccessor.HttpContext;
         if (accessor == null) throw new Exception("Http context is somehow null");
         
         var request = accessor.Request;
-    
+
         var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
         if (email == null) return;
 
         try
         {
             var user = userService.GetUserByEmail(email);
+            var userId = user.Id;
+            
+            // Extract groupId from the Query
+            var fileId =  request.Query["fileId"].ToString();
+            if (string.IsNullOrEmpty(fileId)) throw new BadHttpRequestException("id for user must be provided. ");
+            
+            var dto = new GetFileOrAccessInputDto()
+            {
+                FileId = fileId,
+                UserId = userId
+            };
 
-            var dto = await BodyToDto.BodyToDtoConverter<FileDto>(request);
-        
-            var file = fileService.GetFile(new GetFileOrAccessInputDto()
+            var access = fileService.GetUserFileAccess(dto);
+            
+            if (access.Role == Roles.Editor)
             {
-                UserId = user.Id,
-                FileId = dto.Id
-            });
-  
-            if (file.UserFileAccess.Role == Roles.Editor)
-            {
-                authorizationHandlerContext.Succeed(requirement); 
+                authorizationHandlerContext.Succeed(requirement);
             }
         }
         catch (KeyNotFoundException)

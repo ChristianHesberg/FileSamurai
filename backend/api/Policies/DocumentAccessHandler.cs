@@ -13,11 +13,11 @@ public class DocumentAccessHandler(
     IUserService userService,
     IFileService fileService,
     IHttpContextAccessor contextAccessor
-    ) : AuthorizationHandler<DocumentAccessRequirement>
+    ) : AuthorizationHandler<Requirements.DocumentAccessRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
-        DocumentAccessRequirement requirement)
+        Requirements.DocumentAccessRequirement requirement)
     {
         var accessor = contextAccessor.HttpContext;
         if (accessor == null) throw new Exception("Http context is somehow null");

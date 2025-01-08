@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Policies;
 
-public class DocumentGetHandler(IUserService userService, IFileService fileService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentGetRequirement>
+public class DocumentGetHandler(IUserService userService, IFileService fileService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<Requirements.DocumentGetRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
-        DocumentGetRequirement requirement)
+        Requirements.DocumentGetRequirement requirement)
     {
         var accessor = contextAccessor.HttpContext;
         if (accessor == null) throw new Exception("Http context is somehow null");

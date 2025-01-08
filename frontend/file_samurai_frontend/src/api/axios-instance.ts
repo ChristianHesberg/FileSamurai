@@ -78,7 +78,6 @@ function rejectError(error: HttpError): Promise<never> {
 }
 
 function getJwtToken(): string | null {
-
     return localStorage.getItem('jwtToken');
 }
 

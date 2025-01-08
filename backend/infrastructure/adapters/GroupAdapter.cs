@@ -11,9 +11,16 @@ public class GroupAdapter(Context context) : IGroupPort
 {
     public Group AddGroup(Group group)
     {
-        var added = context.Groups.Add(group);
-        context.SaveChanges();
-        return added.Entity;
+        try
+        {
+            var added = context.Groups.Add(group);
+            context.SaveChanges();
+            return added.Entity;
+        }
+        catch (Exception)
+        {
+            throw new DatabaseUpdateException();
+        }
     }
 
     public Group GetGroup(string id)
@@ -31,9 +38,16 @@ public class GroupAdapter(Context context) : IGroupPort
         if (group == null) throw new KeyNotFoundException("no group found");
         if (group.Users.Any(u => u.Id == user.Id))
             throw new EntityAlreadyExistsException("user id already in the given group");
-        group.Users.Add(user);
-        context.SaveChanges();
-        return user;
+        try
+        {
+            group.Users.Add(user);
+            context.SaveChanges();
+            return user;
+        }
+        catch (Exception)
+        {
+            throw new DatabaseUpdateException();
+        }
     }
 
     public List<Group> GetGroupsForEmail(string email)
@@ -54,15 +68,29 @@ public class GroupAdapter(Context context) : IGroupPort
 
         var user = group.Users.FirstOrDefault(u => u.Id == userId);
         if (user == null) throw new KeyNotFoundException();
-        group.Users.Remove(user);
-        context.SaveChanges();
+        try
+        {
+            group.Users.Remove(user);
+            context.SaveChanges();
+        }
+        catch (Exception)
+        {
+            throw new DatabaseUpdateException();
+        }
     }
 
     public void DeleteGroup(string id)
     {
         var group = context.Groups.Find(id);
         if (group == null) throw new KeyNotFoundException();
-        context.Groups.Remove(group);
-        context.SaveChanges();
+        try
+        {
+            context.Groups.Remove(group);
+            context.SaveChanges();
+        }
+        catch (Exception)
+        {
+            throw new DatabaseUpdateException();
+        }
     }
 }

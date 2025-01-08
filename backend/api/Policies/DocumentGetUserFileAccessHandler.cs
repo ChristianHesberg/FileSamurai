@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace api.Policies;
 
-public class DocumentGetUserFileAccessHandler(IUserService userService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentGetRequirement>
+public class DocumentGetUserFileAccessHandler(IUserService userService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<Requirements.DocumentGetUserFileAccessRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
-        DocumentGetRequirement requirement)
+        Requirements.DocumentGetUserFileAccessRequirement requirement)
     {
         var accessor = contextAccessor.HttpContext;
         if (accessor == null) throw new Exception("Http context is somehow null");

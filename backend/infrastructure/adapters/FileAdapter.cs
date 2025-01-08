@@ -11,9 +11,16 @@ public class FileAdapter(Context context) : IFilePort
 {
     public File AddFile(File file)
     {
-        var entity = context.Files.Add(file);
-        context.SaveChanges();
-        return entity.Entity;
+        try
+        {
+            var entity = context.Files.Add(file);
+            context.SaveChanges();
+            return entity.Entity;
+        }
+        catch (Exception)
+        {
+            throw new DatabaseUpdateException();
+        }
     }
 
     public File GetFile(string fileId)
@@ -26,11 +33,18 @@ public class FileAdapter(Context context) : IFilePort
     public bool UpdateFile(File file)
     {
         var res = context.Files.Find(file.Id);
-        if (res == null) return false;
-        res.Title = file.Title;
-        res.FileContents = file.FileContents;
-        context.SaveChanges();
-        return true;
+        if (res == null) throw new KeyNotFoundException();
+        try
+        {
+            res.Title = file.Title;
+            res.FileContents = file.FileContents;
+            context.SaveChanges();
+            return true;
+        }
+        catch (Exception)
+        {
+            throw new DatabaseUpdateException();
+        }
     }
 
     public void AddUserFileAccess(UserFileAccess userFileAccess)
@@ -38,8 +52,15 @@ public class FileAdapter(Context context) : IFilePort
         var alreadyExists =
             context.UserFileAccesses.Any(x => x.FileId == userFileAccess.FileId && x.UserId == userFileAccess.UserId);
         if (alreadyExists) throw new EntityAlreadyExistsException("User already has access to this file!");
-        context.UserFileAccesses.Add(userFileAccess);
-        context.SaveChanges();
+        try
+        {
+            context.UserFileAccesses.Add(userFileAccess);
+            context.SaveChanges();
+        }
+        catch (Exception)
+        {
+            throw new DatabaseUpdateException();
+        }
     }
 
     public UserFileAccess GetUserFileAccess(string userId, string fileId)
@@ -65,7 +86,14 @@ public class FileAdapter(Context context) : IFilePort
     {
         var access = context.UserFileAccesses.FirstOrDefault(f => f.FileId == fileId && f.UserId == userId);
         if (access == null) throw new KeyNotFoundException("User file access not found");
-        context.UserFileAccesses.Remove(access);
-        context.SaveChanges();
+        try
+        {
+            context.UserFileAccesses.Remove(access);
+            context.SaveChanges();
+        }
+        catch (Exception)
+        {
+            throw new DatabaseUpdateException();
+        }
     }
 }

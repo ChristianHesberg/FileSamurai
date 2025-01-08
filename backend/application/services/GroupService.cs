@@ -91,6 +91,7 @@ public class GroupService(
             Email = user.Email,
             Id = user.Id
         };
+
     }
     
     public void DeleteGroup(string id)
