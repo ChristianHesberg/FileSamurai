@@ -13,8 +13,8 @@ public class UserRsaKeyPairValidator : AbstractValidator<UserRsaKeyPairDto>
         RuleFor(x => x.Salt).NotEmpty();
         RuleFor(x => x.Salt).MaximumLength(100);        
         RuleFor(x => x.PublicKey).NotEmpty();
-        RuleFor(x => x.PublicKey).MaximumLength(500);        
+        RuleFor(x => x.PublicKey).MaximumLength(2000);        
         RuleFor(x => x.PrivateKey).NotEmpty();
-        RuleFor(x => x.PrivateKey).MaximumLength(500);
+        RuleFor(x => x.PrivateKey).MaximumLength(2000);
     }
 }

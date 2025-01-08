@@ -7,7 +7,28 @@ import {EncryptedRsaKeyPairModel} from "../models/encryptedRsaKeyPair.model";
 import {UserPrivateKeyDto} from "../models/userPrivateKeyDto";
 
 export class CryptographyService implements ICryptographyService {
-    async encryptAes256Gcm(plaintext: Buffer, key: Buffer): Promise<AesGcmEncryptionOutput> {
+    async encryptAes256Gcm(plaintext: Buffer, key: CryptoKey): Promise<AesGcmEncryptionOutput> {
+        const nonce = window.crypto.getRandomValues(new Uint8Array(12));
+
+        const encryptedData = await window.crypto.subtle.encrypt(
+            {
+                name: 'AES-GCM',
+                iv: nonce,
+                tagLength: 128,
+            },
+            key,
+            plaintext
+        );
+
+        return {
+            cipherText: Buffer.from(encryptedData).toString('base64'),
+            nonce: Buffer.from(nonce).toString('base64')
+        };
+    }
+
+    async encryptAes256GcmWithBufferKey(plaintext: Buffer, key: Buffer): Promise<AesGcmEncryptionOutput> {
+        const nonce = window.crypto.getRandomValues(new Uint8Array(12));
+
         const cryptoKey = await window.crypto.subtle.importKey(
             'raw',
             key,
@@ -15,8 +36,6 @@ export class CryptographyService implements ICryptographyService {
             false,
             ['encrypt']
         );
-
-        const nonce = window.crypto.getRandomValues(new Uint8Array(12));
 
         const encryptedData = await window.crypto.subtle.encrypt(
             {
@@ -34,11 +53,29 @@ export class CryptographyService implements ICryptographyService {
         };
     }
 
-    async decryptAes256Gcm(encryptedData: AesGcmEncryptionOutput, key: Buffer): Promise<Buffer> {
+    async decryptAes256Gcm(encryptedData: AesGcmEncryptionOutput, key: CryptoKey): Promise<Buffer> {
         try {
             const { cipherText, nonce } = encryptedData;
-            console.log("cipher text: ", cipherText);
-            console.log("nonce: ", nonce);
+
+            const decryptedData = await window.crypto.subtle.decrypt(
+                {
+                    name: 'AES-GCM',
+                    iv: Buffer.from(nonce, 'base64'),
+                    tagLength: 128,
+                },
+                key,
+                Buffer.from(cipherText, "base64")
+            );
+
+            return Buffer.from(decryptedData);
+        } catch (error) {
+            throw new DecryptionError('Decryption failed');
+        }
+    }
+
+    async decryptAes256GcmWithBufferKey(encryptedData: AesGcmEncryptionOutput, key: Buffer): Promise<Buffer> {
+        try {
+            const { cipherText, nonce } = encryptedData;
 
             const cryptoKey = await window.crypto.subtle.importKey(
                 'raw',
@@ -48,7 +85,6 @@ export class CryptographyService implements ICryptographyService {
                 ['decrypt']
             );
 
-            // Decrypt the data
             const decryptedData = await window.crypto.subtle.decrypt(
                 {
                     name: 'AES-GCM',
@@ -65,7 +101,8 @@ export class CryptographyService implements ICryptographyService {
         }
     }
 
-    async deriveKeyFromPassword(password: string, salt: Buffer, keyLength: number = 32): Promise<Buffer> {
+    //key is generated with salt. Salt needs to be saved with encrypted data
+    async deriveKeyFromPassword(password: string, salt: Buffer, keyLength: number = 32): Promise<CryptoKey> {
         const encodedPassword = Buffer.from(password, 'utf8');
 
         const passwordKey = await window.crypto.subtle.importKey(
@@ -76,7 +113,7 @@ export class CryptographyService implements ICryptographyService {
             ['deriveKey']
         );
 
-        const derivedKey = await window.crypto.subtle.deriveKey(
+        return await window.crypto.subtle.deriveKey(
             {
                 name: 'PBKDF2',
                 salt: salt,
@@ -88,12 +125,9 @@ export class CryptographyService implements ICryptographyService {
                 name: 'AES-GCM',
                 length: keyLength * 8
             },
-            true,
+            false,
             ['encrypt', 'decrypt']
         );
-
-        const derivedKeyBuffer = await window.crypto.subtle.exportKey('raw', derivedKey);
-        return Buffer.from(derivedKeyBuffer);
     }
 
     async generateRsaKeyPair(): Promise<RsaKeyPairModel> {
@@ -114,11 +148,9 @@ export class CryptographyService implements ICryptographyService {
         };
     }
 
-    async generateRsaKeyPairWithEncryption(password: string): Promise<EncryptedRsaKeyPairModel> {
-        const salt = await this.generateKey();
-        const key = await this.deriveKeyFromPassword(password, salt);
-
+    async generateRsaKeyPairWithEncryption(key: CryptoKey, salt: Buffer): Promise<EncryptedRsaKeyPairModel> {
         const { private_key, public_key } = await this.generateRsaKeyPair();
+        console.log("unencrypted private key: ", private_key);
         const { cipherText, nonce } = await this.encryptAes256Gcm(Buffer.from(private_key, 'base64'), key);
 
         return {
@@ -153,19 +185,19 @@ export class CryptographyService implements ICryptographyService {
         return Buffer.from(decryptedMessage);
     }
 
-    async decryptPrivateKey(privateKey: UserPrivateKeyDto, password: string): Promise<Buffer>{
-        const derivedKey = await this.deriveKeyFromPassword(password, Buffer.from(privateKey.salt, 'base64'));
+    async decryptPrivateKey(privateKey: UserPrivateKeyDto, cryptoKey: CryptoKey): Promise<Buffer>{
+        //const derivedKey = await this.deriveKeyFromPassword(password, Buffer.from(privateKey.salt, 'base64'));
         const aesInput = {
             cipherText: privateKey.privateKey,
             nonce: privateKey.nonce,
         }
         return await this.decryptAes256Gcm(
             aesInput,
-            derivedKey
+            cryptoKey
         );
     }
 
-    async generateKey(size: number = 12): Promise<Buffer> {
+    async generateKey(size: number): Promise<Buffer> {
         return Buffer.from(window.crypto.getRandomValues(new Uint8Array(size)));
     }
 

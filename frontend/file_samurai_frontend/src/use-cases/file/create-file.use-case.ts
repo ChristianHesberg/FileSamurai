@@ -5,6 +5,7 @@ import {AddFileDto} from "../../models/addFileDto";
 import {IFileService} from "../../services/file.service.interface";
 import {IKeyService} from "../../services/key.service.interface";
 import {ICryptographyService} from "../../services/cryptography.service.interface";
+import {Buffer} from 'buffer';
 
 export class CreateFileUseCase {
     constructor(
@@ -27,7 +28,7 @@ export class CreateFileUseCase {
     }
 
     async encryptFile(file: Buffer, key: Buffer, title: string, groupId: string): Promise<AddFileDto> {
-        const encryptedFile = await this.cryptoService.encryptAes256Gcm(file, key);
+        const encryptedFile = await this.cryptoService.encryptAes256GcmWithBufferKey(file, key);
         return {
             fileContents: encryptedFile.cipherText,
             nonce: encryptedFile.nonce,
