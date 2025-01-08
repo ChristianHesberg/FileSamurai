@@ -14,7 +14,7 @@ export class GroupService {
     }
 
     async getUsersInGroup(groupId: string): Promise<User[]> {
-        const response = await axiosInstance.get(`group/usersInGroup?groupid=${groupId}`)
+        const response = await axiosInstance.get(`group/users/${groupId}`)
         return response.data
     }
 

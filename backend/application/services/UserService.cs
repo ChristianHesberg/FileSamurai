@@ -51,6 +51,7 @@ public class UserService(
     {
         var guidValidator = ValidationUtilities.GetValidator<EmailValidator>(stringValidators);
         var validationResult = guidValidator.Validate(email);
+        Console.WriteLine("validation result: " + validationResult);
         ValidationUtilities.ThrowIfInvalid(validationResult);
 
         var user = userPort.GetUserByEmail(email);

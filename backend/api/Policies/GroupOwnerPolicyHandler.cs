@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace api.Policies;
 
-public class GroupOwnerPolicyHandler(IUserService userService, IGroupService groupService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<Requirements.GroupOwnerPolicyRequirement>
+public class GroupOwnerPolicyHandler(IGroupService groupService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<Requirements.GroupOwnerPolicyRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
