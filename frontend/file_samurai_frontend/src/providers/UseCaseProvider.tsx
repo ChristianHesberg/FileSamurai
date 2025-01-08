@@ -21,7 +21,7 @@ import {GetAllGroupsUserIsInUseCase} from "../use-cases/user/get-all-groups-user
 import {RegisterUserUseCase} from "../use-cases/user/register-user.use-case";
 import {GetUserByEmailUseCase} from "../use-cases/user/get-user-by-email.use-case";
 
-import {DeriveEncryptionKeyUseCase} from "../use-cases/file/derive-encryption-key.use-case";
+import {DeriveEncryptionKeyUseCase} from "../use-cases/keys/derive-encryption-key.use-case";
 import {ValidatePasswordHashUseCase} from "../use-cases/keys/validate-password-hash.use-case";
 import {GeneratePasswordHashUseCase} from "../use-cases/keys/generate-password-hash.use-case";
 

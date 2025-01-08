@@ -4,14 +4,16 @@ import {faKey} from "@fortawesome/free-solid-svg-icons";
 import {useAuth} from "../providers/AuthProvider";
 import {useNavigate} from "react-router-dom";
 import {useUseCases} from "../providers/UseCaseProvider";
+import {useKey} from "../providers/KeyProvider";
 
 export function Register() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState(" ")
     const [showPassword, setShowPassword] = useState(false);
-
-    const {user, register, initSecret} = useAuth()
+    const {deriveEncryptionKeyUseCase}= useUseCases()
+    const {storeKey} = useKey()
+    const {user, register} = useAuth()
 
     const navigate = useNavigate()
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,8 +41,11 @@ export function Register() {
         if (!error && password && confirmPassword) {
             await register(user!.email, password)
                 .then(() => {
-                    navigate("/files")
-                    initSecret(password)
+                    deriveEncryptionKeyUseCase.execute(password, user?.userId!)
+                        .then(key => {
+                            storeKey(key)
+                            navigate("/files")
+                        })
                 })
                 .catch((e) => console.log(e))
         }

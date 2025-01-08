@@ -7,14 +7,18 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUnlock} from "@fortawesome/free-solid-svg-icons";
 import {NotFoundError} from "../errors/not-found.error";
 import {useUseCases} from "../providers/UseCaseProvider";
+import {useKey} from "../providers/KeyProvider";
 
 export function Login() {
     const navigate = useNavigate()
-    const {user,login, logout, initSecret} = useAuth();
+    const {user, login, logout} = useAuth();
+    const {storeKey} = useKey()
+    const {validatePasswordHashUseCase, deriveEncryptionKeyUseCase} = useUseCases()
+
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [error, setError] = useState<string>("")
-    const {validatePasswordHashUseCase} = useUseCases()
     const [password, setPassword] = useState<string>("")
+
     const handleSuccess = async (credentialResponse: CredentialResponse) => {
         login(credentialResponse)
             .then(() => {
@@ -34,10 +38,13 @@ export function Login() {
     function handlePasswordSubmit(event: React.FormEvent) {
         event.preventDefault();
         if (password.length === 0) return
-        //validatePasswordUseCase.execute(password)
         validatePasswordHashUseCase.execute(password)
             .then(() => {
-                navigate("/files")
+                deriveEncryptionKeyUseCase.execute(password, user?.userId!)
+                    .then(key => {
+                        storeKey(key)
+                        navigate("/files")
+                    })
             })
             .catch(() => setError("Incorrect password"))
     }
