@@ -44,7 +44,7 @@ public class UserController(IUserService userService) : ControllerBase
     }
 
     [HttpGet("groups/{id}")]
-    [Authorize]
+    [Authorize(Policy = "OwnsResourcePolicy")]
     public ActionResult<List<GroupDto>> GetGroupsForUser(string id)
     {
         var groups = userService.GetGroupsForUser(id);
@@ -52,22 +52,24 @@ public class UserController(IUserService userService) : ControllerBase
     }
 
     [HttpGet("getUserIfNullRegister/{userEmail}")]
+    [Authorize]
     public ActionResult<UserDto> GetUserIfNullRegister(string userEmail)
     {
         //TODO GET MAIL FROM AUTH HEADER?
+        //TODO CHECK WITH VICTOR IS THIS NEEDED
         var user = userService.GetUserByEmail(userEmail)
                    ?? userService.AddUser(new UserCreationDto() { Email = userEmail });
         return Ok(user);
     }
 
-    [HttpPost("createUser")]
+    [HttpPost("createUser")]//TODO delete this and refactor
     public ActionResult<UserDto> CreateUser(UserCreationDto creationDto)
     {
         var userDto = userService.AddUser(creationDto);
         return Ok(userDto);
     }
 
-    [HttpGet("validatePassword")]
+    [HttpGet("validatePassword")] //TODO Delete or refactor
     public ActionResult<bool> ValidatePassword(string password)
     {
         var authHeaders = Request.Headers.Authorization.ToString();
@@ -78,6 +80,7 @@ public class UserController(IUserService userService) : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Policy = "OwnsResourcePolicy")]
     public ActionResult DeleteUser( string id)
     {
         userService.DeleteUser(id);

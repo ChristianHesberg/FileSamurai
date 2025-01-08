@@ -131,7 +131,9 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("GroupOwnerPolicy", policy =>
         policy.Requirements.Add(new Requirements.GroupOwnerPolicyRequirement()))
     .AddPolicy("GroupGet", policy =>
-        policy.Requirements.Add(new Requirements.GroupGetRequirement()));
+        policy.Requirements.Add(new Requirements.GroupGetRequirement()))
+    .AddPolicy("OwnsResourcePolicy", policy =>
+        policy.Requirements.Add(new Requirements.UserOwnsResourcePolicyRequirement()));
 
 
 builder.Services.AddCors(options =>
