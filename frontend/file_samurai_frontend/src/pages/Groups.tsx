@@ -9,7 +9,7 @@ export function Groups() {
     const [newGroup, setNewGroup] = useState<string>("")
     const [groups, setGroups] = useState<Group[]>([])
 
-    const {createGroupUseCase, getGroupsFromEmailUseCase, createFileUseCase, decryptFileUseCase, deriveEncryptionKeyUseCase} = useUseCases()
+    const {createGroupUseCase, getGroupsFromEmailUseCase} = useUseCases()
     useEffect(() => {
         getGroupsFromEmailUseCase.execute().then(g => setGroups(g)).catch(e => console.log(e))
 
