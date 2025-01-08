@@ -24,6 +24,7 @@ import {GetUserByTokenUseCase} from "../use-cases/user/get-user-by-token-use.cas
 import {DeriveEncryptionKeyUseCase} from "../use-cases/keys/derive-encryption-key.use-case";
 import {ValidatePasswordHashUseCase} from "../use-cases/keys/validate-password-hash.use-case";
 import {GeneratePasswordHashUseCase} from "../use-cases/keys/generate-password-hash.use-case";
+import {GetFileOptionsUseCase} from "../use-cases/file/get-file-options.use-case";
 
 
 interface UseCaseProviderProps {
@@ -54,6 +55,9 @@ interface UseCaseContextType {
     addUserToGroupUseCase: AddUserToGroupUseCase,
     removeUserFromGroup: RemoveUserFromGroupUseCase,
     deleteGroupUseCase: DeleteGroupUseCase
+
+    //file
+    getFileOptionsUseCase:GetFileOptionsUseCase
 }
 
 const UseCaseContext = createContext<UseCaseContextType | undefined>(undefined)
@@ -85,11 +89,13 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     const shareFileUseCase = new ShareFileUseCase(fileService, keyService, cryptoService)
     const createUserKeyPairUseCase = new CreateUserKeyPairUseCase(keyService, cryptoService)
 
-
     //user
     const getAllGroupsUserIsInUseCase = new GetAllGroupsUserIsInUseCase(userService)
     const getUserByTokenUseCase = new GetUserByTokenUseCase(userService)
     const registerUserUseCase = new RegisterUserUseCase(userService)
+
+    //File
+    const getFileOptionsUseCase = new GetFileOptionsUseCase(fileService)
 
     return (
         <UseCaseContext.Provider value={{
@@ -108,7 +114,8 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
             registerUserUseCase,
             deriveEncryptionKeyUseCase,
             validatePasswordHashUseCase,
-            generatePasswordHashUseCase
+            generatePasswordHashUseCase,
+            getFileOptionsUseCase
         }}>
             {children}
         </UseCaseContext.Provider>

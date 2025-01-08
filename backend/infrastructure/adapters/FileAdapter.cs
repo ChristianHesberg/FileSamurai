@@ -96,4 +96,9 @@ public class FileAdapter(Context context) : IFilePort
             throw new DatabaseUpdateException();
         }
     }
+
+    public List<File> GetAllFilesUserHasAccessTo(string userId)
+    {
+        return context.Files.Where(x => x.UserFileAccesses.Any(y => y.UserId == userId)).ToList();
+    }
 }

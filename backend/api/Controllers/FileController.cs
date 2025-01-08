@@ -3,6 +3,7 @@ using api.Models;
 using api.SchemaFilters;
 using application.dtos;
 using application.services;
+using application.transformers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,15 +11,17 @@ namespace api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class FileController(IFileService fileService): ControllerBase
+public class FileController(IFileService fileService) : ControllerBase
 {
     [HttpGet]
     [Authorize(Policy = "DocumentGet")]
     [ProducesResponseType(typeof(void), (int)HttpStatusCode.NotFound)]
     public ActionResult<GetFileDto> GetFile(
-        [FromQuery, CustomDescription("Must be a valid GUID")] string fileId, 
-        [FromQuery, CustomDescription("Must be a valid GUID")] string userId
-        )
+        [FromQuery, CustomDescription("Must be a valid GUID")]
+        string fileId,
+        [FromQuery, CustomDescription("Must be a valid GUID")]
+        string userId
+    )
     {
         var dto = new GetFileOrAccessInputDto()
         {
@@ -28,7 +31,7 @@ public class FileController(IFileService fileService): ControllerBase
         var result = fileService.GetFile(dto);
         return Ok(result);
     }
-    
+
     [HttpPost]
     [Authorize(Policy = "DocumentAdd")]
     public ActionResult<PostFileResultDto> PostFile(AddFileDto file)
@@ -49,16 +52,18 @@ public class FileController(IFileService fileService): ControllerBase
     [Authorize(Policy = "DocumentGetUserFileAccess")]
     [ProducesResponseType(typeof(void), (int)HttpStatusCode.NotFound)]
     public ActionResult<AddOrGetUserFileAccessDto> GetUserFileAccess(
-        [FromQuery, CustomDescription("Must be a valid GUID")] string fileId, 
-        [FromQuery, CustomDescription("Must be a valid GUID")] string userId
-        )
+        [FromQuery, CustomDescription("Must be a valid GUID")]
+        string fileId,
+        [FromQuery, CustomDescription("Must be a valid GUID")]
+        string userId
+    )
     {
         var dto = new GetFileOrAccessInputDto()
         {
             UserId = userId,
             FileId = fileId
         };
-        
+
         var result = fileService.GetUserFileAccess(dto);
         return Ok(result);
     }
@@ -71,21 +76,31 @@ public class FileController(IFileService fileService): ControllerBase
         fileService.AddUserFileAccess(userFileAccess);
         return Ok();
     }
-    
+
     [HttpDelete("access")]
     [Authorize(Policy = "DeleteAccess")]
     public ActionResult DeleteUserFileAccess(
-        [FromQuery, CustomDescription("Must be a valid GUID")] string fileId, 
-        [FromQuery, CustomDescription("Must be a valid GUID")] string userId
-        )
+        [FromQuery, CustomDescription("Must be a valid GUID")]
+        string fileId,
+        [FromQuery, CustomDescription("Must be a valid GUID")]
+        string userId
+    )
     {
         var dto = new GetFileOrAccessInputDto()
         {
             UserId = userId,
             FileId = fileId
         };
-        
+
         fileService.DeleteUserFileAccess(dto);
         return Ok();
+    }
+
+    //todo auth
+    [HttpGet("fileOptions/{id}")]
+    public ActionResult<List<FileDto>> GetFileOptions(string id)
+    {
+        var optionDtos = fileService.GetFileOptionDtos(id);
+        return Ok(optionDtos);
     }
 }

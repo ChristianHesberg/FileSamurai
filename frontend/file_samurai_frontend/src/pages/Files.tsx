@@ -1,13 +1,25 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import FileTable from "../components/FileTable";
 import UploadFileBtn from "../components/UploadFileBtn";
 import {FileDto} from "../models/FileDto";
 import Modal from "../components/Modal";
 import {NewFileModal} from "../components/NewFileModal";
+import {useUseCases} from "../providers/UseCaseProvider";
+import {FileOption} from "../models/FileOption";
+import {useAuth} from "../providers/AuthProvider";
 
 export function Files() {
-    const [files, setFiles] = useState<FileDto[]>([]) //todo get all files on load
+    const [files, setFiles] = useState<FileOption[]>([]) //todo get all files on load
     const [modalOpen, setModalOpen] = useState<boolean>(false)
+    const {getFileOptionsUseCase} = useUseCases()
+    const {user} = useAuth()
+    useEffect(() => {
+        getFileOptionsUseCase.execute(user?.userId!).then(r => {
+            setFiles(r)
+        }).catch(e => console.error(e))
+    }, []);
+
+
     const btn = () => {
         return (
             <button
@@ -18,6 +30,8 @@ export function Files() {
         )
 
     }
+
+    //Get all files -> into table
 
     return (
         <div className={"flex-col"}>

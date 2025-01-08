@@ -3,11 +3,12 @@ import React from "react";
 import {faCloudArrowDown} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {FileDto} from "../models/FileDto";
+import {FileOption} from "../models/FileOption";
 
 
 interface FileTableProps {
-    files: FileDto[]
-    setFiles: React.Dispatch<React.SetStateAction<FileDto[]>>
+    files: FileOption[]
+    setFiles: React.Dispatch<React.SetStateAction<FileOption[]>>
 }
 
 const FileTable: React.FC<FileTableProps> = ({files, setFiles}) => {
@@ -69,14 +70,17 @@ const FileTable: React.FC<FileTableProps> = ({files, setFiles}) => {
                 </tr>
                 </thead>
                 <tbody>
-                <tr className={"border-b border-neutral-200 transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-white/10 dark:hover:bg-neutral-600 group"}>
-                    <td>
-                        Very cool filler name!
-                    </td>
-                    <td className={"px-6 py-4"}>
-                        <TableOptionsBtn children={[buttons()]}/>
-                    </td>
-                </tr>
+                {files.map((f) =>
+                    <tr className={"border-b border-neutral-200 transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-white/10 dark:hover:bg-neutral-600 group"}>
+                        <td>
+                            {f.name}
+                        </td>
+                        <td className={"px-6 py-4"}>
+                            <TableOptionsBtn children={[buttons()]}/>
+                        </td>
+                    </tr>
+                )}
+
                 </tbody>
             </table>
         </div>

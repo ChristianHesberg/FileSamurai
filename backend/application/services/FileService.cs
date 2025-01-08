@@ -144,4 +144,10 @@ public class FileService(
         
         return filePort.GetAllUserFileAccess(fileId);
     }
+
+    public List<FileOptionDto> GetFileOptionDtos(string userId)
+    {
+        var files = filePort.GetAllFilesUserHasAccessTo(userId);
+        return files.Select(x => new FileOptionDto(){Id = x.Id,Name = x.Title}).ToList();
+    }
 }
