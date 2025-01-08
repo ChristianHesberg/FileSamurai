@@ -14,21 +14,16 @@ public class UserService(
     IEnumerable<IValidator<string>> stringValidators
     ) : IUserService
 {
-    //todo we should not be receiving a password here
     public UserDto AddUser(UserCreationDto user)
     {
         var validationResult = userCreationDtoValidator.Validate(user);
         ValidationUtilities.ThrowIfInvalid(validationResult);
         
-        var salt = PasswordHasher.GenerateSalt();
-        Console.WriteLine(JsonSerializer.Serialize(user));
-        var hashedPw = PasswordHasher.HashPassword(user.Password, salt);
-
         var converted = new User()
         {
             Email = user.Email,
-            HashedPassword = hashedPw,
-            Salt = salt
+            HashedPassword = user.HashedPassword,
+            Salt = user.Salt
         };
         var res = userPort.AddUser(converted);
         return new UserDto()
@@ -86,13 +81,7 @@ public class UserService(
 
         return list;
     }
-
-    //todo should be removed
-    public bool ValidatePassword(string password, string email)
-    {
-        var user = userPort.GetUserByEmail(email);
-        return PasswordHasher.VerifyPassword(password, user.HashedPassword, user.Salt);
-    }
+    
     
     public void DeleteUser(string id)
     {
