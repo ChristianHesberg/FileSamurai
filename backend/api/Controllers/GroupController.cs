@@ -30,16 +30,15 @@ public class GroupController(IGroupService groupService) : ControllerBase
         return Ok(res);
     }
     
-    //todo add policy
-    [HttpGet("{id}")]
-    [Authorize]
-    public ActionResult<GroupDto> GetGroup(string id)
+    [HttpGet("{groupId}")]
+    [Authorize(Policy = "GroupGet")]
+    public ActionResult<GroupDto> GetGroup(string groupId)
     {
-        var group = groupService.GetGroup(id);
+        var group = groupService.GetGroup(groupId);
         return Ok(group);
     }
 
-    [HttpPost("addUser")]
+    [HttpPost("users")]
     [Authorize(Policy = "GroupAddUser")]
     public ActionResult<UserDto> AddUserToGroup(AddUserToGroupDto dto)
     {
@@ -47,8 +46,8 @@ public class GroupController(IGroupService groupService) : ControllerBase
             return Ok(res);
     }
     
-    //todo missing auth
     [HttpGet("groupsForEmail")]
+    [Authorize]
     public ActionResult<List<GroupDto>> GetGroupsForEmail()
     {
         var auth = Request.Headers.Authorization;
@@ -57,27 +56,27 @@ public class GroupController(IGroupService groupService) : ControllerBase
         return Ok(groupService.GetGroupsForEmail(email));
     }
 
-    //todo missing auth
-    [HttpGet("usersInGroup")]
+    [HttpGet("users/{groupId}")]
+    [Authorize(Policy = "GroupGet")]
     public ActionResult<List<UserDto>> GetUsersInGroup(string groupId)
     {
         var users = groupService.GetUsersInGroup(groupId);
         return Ok(users);
     }
 
-    //todo missing auth
-    [HttpDelete("removeUserFromGroup")]
-    public ActionResult RemoveUserFromGroup(string groupId, string userId)
+    [HttpDelete("users")]
+    [Authorize(Policy = "GroupOwnerPolicy")]
+    public ActionResult RemoveUserFromGroup([FromQuery] string groupId, [FromQuery] string userId)
     {
             groupService.RemoveUserFromGroup(groupId, userId);
             return Ok();
     }
 
-    [HttpDelete("{id}")]
-    [Authorize(Policy = "GroupDelete")]
-    public ActionResult DeleteGroup(string id)
+    [HttpDelete("{groupId}")]
+    [Authorize(Policy = "GroupOwnerPolicy")]
+    public ActionResult DeleteGroup(string groupId)
     {
-        groupService.DeleteGroup(id);
+        groupService.DeleteGroup(groupId);
         return Ok();
     }
 }

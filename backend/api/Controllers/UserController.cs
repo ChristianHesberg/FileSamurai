@@ -11,9 +11,18 @@ namespace api.Controllers;
 public class UserController(IUserService userService) : ControllerBase
 {
     [HttpPost]
-    public ActionResult<UserDto> PostUser(UserCreationDto user)
+    [Authorize]
+    public ActionResult<UserDto> PostUser()
     {
-        var res = userService.AddUser(user);
+        var authHeaders = Request.Headers.Authorization.ToString();
+        var email = JwtDecoder.DecodeJwtEmail(authHeaders);
+
+        var dto = new UserCreationDto
+        {
+            Email = email
+        };
+        
+        var res = userService.AddUser(dto);
         return Ok(res);
     }
 
@@ -22,15 +31,16 @@ public class UserController(IUserService userService) : ControllerBase
     public ActionResult<UserDto> GetUser(string id)
     {
         var user = userService.GetUser(id);
-        return user == null ? NotFound() : Ok(user);
+        return Ok(user);
     }
 
 
     [HttpGet("email/{email}")]
+    [Authorize]
     public ActionResult<UserDto> GetUserByEmail(string email)
     {
         var user = userService.GetUserByEmail(email);
-        return user == null ? NotFound() : Ok(user);
+        return Ok(user);
     }
 
     [HttpGet("groups/{id}")]
@@ -38,7 +48,7 @@ public class UserController(IUserService userService) : ControllerBase
     public ActionResult<List<GroupDto>> GetGroupsForUser(string id)
     {
         var groups = userService.GetGroupsForUser(id);
-        return groups == null ? NotFound() : Ok(groups);
+        return Ok(groups);
     }
 
     [HttpGet("getUserIfNullRegister/{userEmail}")]

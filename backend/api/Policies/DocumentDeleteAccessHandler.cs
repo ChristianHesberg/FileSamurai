@@ -1,43 +1,51 @@
 ﻿using System.Security.Claims;
+using api.Policies.UtilMethods;
+using application.dtos;
 using application.services;
+using core.models;
 using Microsoft.AspNetCore.Authorization;
 
 namespace api.Policies;
 
-public class GroupGetHandler(IUserService userService, IGroupService groupService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<Requirements.GroupGetRequirement>
+public class DocumentDeleteAccessHandler(
+    IUserService userService,
+    IFileService fileService,
+    IHttpContextAccessor contextAccessor
+) : AuthorizationHandler<Requirements.DocumentDeleteAccessRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
-        Requirements.GroupGetRequirement requirement)
+        Requirements.DocumentDeleteAccessRequirement requirement)
     {
         var accessor = contextAccessor.HttpContext;
         if (accessor == null) throw new Exception("Http context is somehow null");
         
         var request = accessor.Request;
-        
+
         var email = authorizationHandlerContext.User.FindFirst(ClaimTypes.Email)?.Value;
         if (email == null) return;
 
         try
         {
-            // Extract groupId from the Query
-            var groupId = request.RouteValues["groupId"];
-            if (groupId == null) throw new BadHttpRequestException("groupId query parameter must be provided.");
-         
-            
-            if (string.IsNullOrEmpty(groupId.ToString())) throw new BadHttpRequestException("groupId query parameter must be provided.");
-
             var user = userService.GetUserByEmail(email);
+            var userId = user.Id;
+            
+            // Extract groupId from the Query
+            var fileId =  request.Query["fileId"].ToString();
+            if (string.IsNullOrEmpty(fileId)) throw new BadHttpRequestException("id for user must be provided. ");
+            
+            var dto = new GetFileOrAccessInputDto()
+            {
+                FileId = fileId,
+                UserId = userId
+            };
 
-            var userGroups = userService.GetGroupsForUser(user.Id);
+            var access = fileService.GetUserFileAccess(dto);
             
-            
-            
-            //CHECK if user belongs to group
-            if (userGroups.Any(x => x.Id == groupId.ToString()))
+            if (access.Role == Roles.Editor)
             {
                 authorizationHandlerContext.Succeed(requirement);
-            }            
+            }
         }
         catch (KeyNotFoundException)
         {

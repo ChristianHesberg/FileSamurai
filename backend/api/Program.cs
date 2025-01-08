@@ -120,14 +120,18 @@ builder.Services.AddAuthorizationBuilder()
         policy.Requirements.Add(new Requirements.DocumentAddRequirement()))
     .AddPolicy("DocumentGetUserFileAccess", policy =>
         policy.Requirements.Add(new Requirements.DocumentGetUserFileAccessRequirement()))
+    .AddPolicy("DeleteAccess", policy =>
+        policy.Requirements.Add(new Requirements.DocumentDeleteAccessRequirement()))
     .AddPolicy("PostRSAKeyPair", policy =>
         policy.Requirements.Add(new Requirements.KeyPairPostRequirement()))
     .AddPolicy("GetUserPK", policy =>
         policy.Requirements.Add(new Requirements.KeyPairGetPrivateKeyRequirement()))
     .AddPolicy("GroupAddUser", policy =>
         policy.Requirements.Add(new Requirements.GroupAddUserRequirement()))
-    .AddPolicy("GroupDelete", policy =>
-        policy.Requirements.Add(new Requirements.GroupDeleteRequirement()));
+    .AddPolicy("GroupOwnerPolicy", policy =>
+        policy.Requirements.Add(new Requirements.GroupOwnerPolicyRequirement()))
+    .AddPolicy("GroupGet", policy =>
+        policy.Requirements.Add(new Requirements.GroupGetRequirement()));
 
 
 builder.Services.AddCors(options =>

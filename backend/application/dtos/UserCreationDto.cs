@@ -12,5 +12,4 @@ public class UserCreationDto
         set => _email = InputSanitizer.Sanitize(value);
     }
 
-    public string Password { get; set; }
 }

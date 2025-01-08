@@ -13,7 +13,8 @@ public abstract class Requirements
     public class DocumentAddRequirement : IAuthorizationRequirement { }
     public class DocumentAccessRequirement() : IAuthorizationRequirement { }
     
-    public class GroupDeleteRequirement() : IAuthorizationRequirement { }
+    public class GroupOwnerPolicyRequirement() : IAuthorizationRequirement { }
     
     public class GroupGetRequirement() : IAuthorizationRequirement { }
+    public class DocumentDeleteAccessRequirement() : IAuthorizationRequirement { }
 }
