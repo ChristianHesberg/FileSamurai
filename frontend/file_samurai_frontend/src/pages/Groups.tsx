@@ -4,16 +4,12 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPeopleGroup} from "@fortawesome/free-solid-svg-icons";
 import {Group} from "../models/Group";
 import {useUseCases} from "../providers/UseCaseProvider";
-import {Buffer} from 'buffer';
-import {DeriveEncryptionKeyUseCase} from "../use-cases/file/derive-encryption-key.use-case";
-import {useKey} from "../providers/KeyProvider";
 
 export function Groups() {
     const [newGroup, setNewGroup] = useState<string>("")
     const [groups, setGroups] = useState<Group[]>([])
 
     const {createGroupUseCase, getGroupsFromEmailUseCase, createFileUseCase, decryptFileUseCase, deriveEncryptionKeyUseCase} = useUseCases()
-    const { storeKey } = useKey();
     useEffect(() => {
         getGroupsFromEmailUseCase.execute().then(g => setGroups(g)).catch(e => console.log(e))
 
@@ -24,21 +20,11 @@ export function Groups() {
     }
 
     function onNewGroupClick() {
-        let id ='';
-        createFileUseCase.execute('2f486cba-c664-4689-acf3-6da89df99355', "a17c7a4c-b31f-4c46-adf5-6bdfd7b1969c", Buffer.from('my_text'), 'title')
-            .then((v) => {
-                console.log(v)
-                id = v.id;
-                deriveEncryptionKeyUseCase.execute('cchesberg@gmail.com-password', '2f486cba-c664-4689-acf3-6da89df99355').then((v) => {
-                    storeKey(v);
-                    }
-                )
-            });
-        /*if (newGroup.length === 0) return
+        if (newGroup.length === 0) return
         createGroupUseCase.execute(newGroup)
             .then((g) => setGroups((prevState) => [...prevState, g]))
             .catch((e) => console.log(e))
-        setNewGroup("")*/
+        setNewGroup("")
     }
 
     return (

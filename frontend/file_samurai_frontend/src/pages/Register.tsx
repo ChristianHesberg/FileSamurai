@@ -12,7 +12,7 @@ export function Register() {
     const [error, setError] = useState(" ")
     const [showPassword, setShowPassword] = useState(false);
     const {user} = useAuth()
-    const { createUserKeyPairUseCase, createFileUseCase } = useUseCases();
+    const { createUserKeyPairUseCase } = useUseCases();
     const registerUserUseCase = RegisterUserUseCaseFactory.create()
     const navigate = useNavigate()
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
