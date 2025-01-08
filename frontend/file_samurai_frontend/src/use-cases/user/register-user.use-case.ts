@@ -5,7 +5,7 @@ export class RegisterUserUseCase {
     constructor(private readonly userService: UserService) {
     }
 
-    async execute(email:string,password:string): Promise<User>{
-        return await this.userService.registerUser(email,password)
+    async execute(email:string,hashedPassword:string,salt:string): Promise<User>{
+        return await this.userService.registerUser(email,hashedPassword,salt)
     }
 }

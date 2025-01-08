@@ -14,8 +14,8 @@ export class UserService implements IUserService {
         return response.data;
     }
 
-    async registerUser(email: string, password: string): Promise<User> {
-        const body = {email: email, Password: password}
+    async registerUser(email: string, hashedPassword: string, salt: string): Promise<User> {
+        const body = {email: email, hashedPassword: hashedPassword, salt: salt}
         const response = await axiosInstance.post<User>(`user`, body)
         return response.data
     }

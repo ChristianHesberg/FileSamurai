@@ -35,6 +35,7 @@ export function Register() {
     };
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         if (!error && password && confirmPassword) {
             await register(user!.email, password)
                 .then(() => {

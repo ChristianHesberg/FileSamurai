@@ -138,7 +138,7 @@ export class CryptographyService implements ICryptographyService {
             encodedPassword,
             'PBKDF2',
             false,
-            ['deriveKey']
+            ['deriveBits']
         );
 
         const derivedBits = await window.crypto.subtle.deriveBits(
@@ -151,7 +151,7 @@ export class CryptographyService implements ICryptographyService {
             passwordKey,
             512
         );
-
+        //const a = await window.crypto.subtle.exportKey("raw", derivedBits)
         return Buffer.from(derivedBits)
     }
 
@@ -175,7 +175,6 @@ export class CryptographyService implements ICryptographyService {
 
     async generateRsaKeyPairWithEncryption(key: CryptoKey, salt: Buffer): Promise<EncryptedRsaKeyPairModel> {
         const {private_key, public_key} = await this.generateRsaKeyPair();
-        console.log("unencrypted private key: ", private_key);
         const {cipherText, nonce} = await this.encryptAes256Gcm(Buffer.from(private_key, 'base64'), key);
 
         return {
