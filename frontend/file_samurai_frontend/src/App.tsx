@@ -9,12 +9,14 @@ import {Navigate, useLocation} from "react-router-dom";
 import Header from "./components/Header";
 import {useAuth} from "./providers/AuthProvider";
 import {Register} from "./pages/Register";
+import {KeyProvider} from "./providers/KeyProvider";
+import KeyProtectedRoute from "./providers/KeyProtectedRoute";
 
 function App() {
     const {user} = useAuth()
     const location = useLocation();
 
-    const hideHeaderOnRoutes = ["/login","/","/register"]
+    const hideHeaderOnRoutes = ["/login", "/", "/register"]
     const hideHeader = !hideHeaderOnRoutes.includes(location.pathname);
 
 
@@ -22,7 +24,7 @@ function App() {
         <div className={"bg-neutral-950 text-gray-300 flex h-screen"}>
 
             <div className={"container mx-auto"}>
-                {user && hideHeader && <Header />}
+                {user && hideHeader && <Header/>}
                 <Routes>
                     <Route path="/" element={
                         !user ?
@@ -33,11 +35,13 @@ function App() {
 
                     <Route path={"/files"} element={
                         <ProtectedRoute>
-                            <Files/>
+                            <KeyProtectedRoute>
+                                <Files/>
+                            </KeyProtectedRoute>
                         </ProtectedRoute>}/>
                     <Route path={"/groups"} element={
                         <ProtectedRoute>
-                            <Groups/>
+                                <Groups/>
                         </ProtectedRoute>}/>
                     <Route path={"/register"} element={
                         <ProtectedRoute>

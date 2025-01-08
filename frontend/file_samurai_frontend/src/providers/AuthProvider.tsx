@@ -3,6 +3,7 @@ import {CredentialResponse, googleLogout} from '@react-oauth/google';
 import {jwtDecode} from "jwt-decode";
 import {User} from "../models/user.model";
 import {useUseCases} from "./UseCaseProvider";
+import {useKey} from "./KeyProvider";
 
 // Define the user type based on Google's JWT payload
 interface GoogleUser {
@@ -21,7 +22,6 @@ interface AuthContextType {
     login: (credentialResponse: CredentialResponse) => Promise<User>;
     logout: () => void;
     register: (email: string, password: string) => Promise<User>
-    secret: string;
 }
 
 // Create the context
@@ -36,7 +36,6 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
     const [user, setUser] = useState<GoogleUser | null>(null);
     const [isInitializing, setIsInitializing] = useState<boolean>(true);
-    const [secret, setSecret] = useState<string>("");
     const {
         getUserByEmailUseCase,
         registerUserUseCase,
@@ -46,10 +45,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
 
     useEffect(() => {
         const googleUser = getLocalStorageUser()
-        const storedPassword = localStorage.getItem('password')
-        if (googleUser && storedPassword) {
+        if (googleUser) {
             setUser(googleUser);
-            setSecret(storedPassword)
         }
         setIsInitializing(false)
     }, []);
@@ -95,9 +92,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
         localStorage.removeItem('jwtToken');
     };
 
-
     return (
-        <AuthContext.Provider value={{user, login, logout, isInitializing, secret, register}}>
+        <AuthContext.Provider value={{user, login, logout, isInitializing, register}}>
             {children}
         </AuthContext.Provider>
     );
