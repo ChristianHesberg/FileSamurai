@@ -23,7 +23,7 @@ export class GroupService {
             userEmail: email,
             groupId: groupId
         }
-        const response = await axiosInstance.post('group/addUser', body)
+        const response = await axiosInstance.post('group/users', body)
         return response.data
     }
 
