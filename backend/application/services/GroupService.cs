@@ -56,8 +56,7 @@ public class GroupService(
         
         return groupPort.AddUserToGroup(dto.UserEmail, dto.GroupId);
     }
-
-    //todo add access control on this
+    
     public void DeleteGroup(string id)
     {
         var guidValidator = ValidationUtilities.GetValidator<GuidValidator>(stringValidators);  

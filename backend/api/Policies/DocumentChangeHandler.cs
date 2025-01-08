@@ -11,11 +11,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Policies;
 
-public class DocumentChangeHandler(IUserService userService, IFileService fileService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<DocumentChangeRequirement>
+public class DocumentChangeHandler(IUserService userService, IFileService fileService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<Requirements.DocumentChangeRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
-        DocumentChangeRequirement requirement)
+        Requirements.DocumentChangeRequirement requirement)
     {
         var accessor = contextAccessor.HttpContext;
         if (accessor == null) throw new Exception("Http context is somehow null");

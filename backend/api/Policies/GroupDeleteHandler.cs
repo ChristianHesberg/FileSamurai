@@ -1,16 +1,15 @@
 ﻿using System.Security.Claims;
 using application.dtos;
-using application.ports;
 using application.services;
 using Microsoft.AspNetCore.Authorization;
 
 namespace api.Policies;
 
-public class DocumentGetUserFileAccessHandler(IUserService userService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<Requirements.DocumentGetUserFileAccessRequirement>
+public class GroupDeleteHandler(IUserService userService, IGroupService groupService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<Requirements.GroupDeleteRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext authorizationHandlerContext,
-        Requirements.DocumentGetUserFileAccessRequirement requirement)
+        Requirements.GroupDeleteRequirement requirement)
     {
         var accessor = contextAccessor.HttpContext;
         if (accessor == null) throw new Exception("Http context is somehow null");
@@ -22,13 +21,15 @@ public class DocumentGetUserFileAccessHandler(IUserService userService, IHttpCon
 
         try
         {
-            var user = userService.GetUserByEmail(email);
-
-            // Extract userId from the Query
-            var userId = request.Query["userId"].ToString();
-            if (string.IsNullOrEmpty(userId)) throw new BadHttpRequestException("userId query parameter required");
-
-            if (userId == user.Id)
+            // Extract groupId from the Query
+            var groupId = request.Query["Id"].ToString();
+            if (string.IsNullOrEmpty(groupId)) throw new BadHttpRequestException("groupId query parameter must be provided.");
+            
+            
+            var group = groupService.GetGroup(groupId);
+            
+            //CHECK if user is owner of group
+            if (group.GroupEmail == email)
             {
                 authorizationHandlerContext.Succeed(requirement);
             }            

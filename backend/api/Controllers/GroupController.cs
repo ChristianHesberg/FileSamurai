@@ -46,8 +46,8 @@ public class GroupController(IGroupService groupService) : ControllerBase
         return Ok(res);
     }
 
-    //todo auth
     [HttpDelete("{id}")]
+    [Authorize(Policy = "GroupDelete")]
     public ActionResult DeleteGroup(string id)
     {
         groupService.DeleteGroup(id);

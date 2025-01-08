@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace api.Policies;
 
-public class KeyPairGetPrivateKeyHandler(IUserService userService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<KeyPairGetPrivateKeyRequirement>
+public class KeyPairGetPrivateKeyHandler(IUserService userService, IHttpContextAccessor contextAccessor) : AuthorizationHandler<Requirements.KeyPairGetPrivateKeyRequirement>
 {
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext authorizationHandlerContext, KeyPairGetPrivateKeyRequirement requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext authorizationHandlerContext, Requirements.KeyPairGetPrivateKeyRequirement requirement)
     {
         var accessor = contextAccessor.HttpContext;
         if (accessor == null) throw new Exception("Http context is somehow null");

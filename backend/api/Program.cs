@@ -111,21 +111,23 @@ builder.Services.AddScoped<IAuthorizationHandler, GroupAddUserHandler>();
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("FileAccess", policy =>
-        policy.Requirements.Add(new DocumentAccessRequirement()))
+        policy.Requirements.Add(new Requirements.DocumentAccessRequirement()))
     .AddPolicy("DocumentChange", policy =>
-        policy.Requirements.Add(new DocumentChangeRequirement()))
+        policy.Requirements.Add(new Requirements.DocumentChangeRequirement()))
     .AddPolicy("DocumentGet", policy =>
-        policy.Requirements.Add(new DocumentGetRequirement()))
+        policy.Requirements.Add(new Requirements.DocumentGetRequirement()))
     .AddPolicy("DocumentAdd", policy =>
-        policy.Requirements.Add(new DocumentAddRequirement()))
+        policy.Requirements.Add(new Requirements.DocumentAddRequirement()))
     .AddPolicy("DocumentGetUserFileAccess", policy =>
-        policy.Requirements.Add(new DocumentGetUserFileAccessRequirement()))
+        policy.Requirements.Add(new Requirements.DocumentGetUserFileAccessRequirement()))
     .AddPolicy("PostRSAKeyPair", policy =>
-        policy.Requirements.Add(new KeyPairPostRequirement()))
+        policy.Requirements.Add(new Requirements.KeyPairPostRequirement()))
     .AddPolicy("GetUserPK", policy =>
-        policy.Requirements.Add(new KeyPairGetPrivateKeyRequirement()))
+        policy.Requirements.Add(new Requirements.KeyPairGetPrivateKeyRequirement()))
     .AddPolicy("GroupAddUser", policy =>
-        policy.Requirements.Add(new GroupAddUserRequirement()));
+        policy.Requirements.Add(new Requirements.GroupAddUserRequirement()))
+    .AddPolicy("GroupDelete", policy =>
+        policy.Requirements.Add(new Requirements.GroupDeleteRequirement()));
 
 
 builder.Services.AddCors(options =>
