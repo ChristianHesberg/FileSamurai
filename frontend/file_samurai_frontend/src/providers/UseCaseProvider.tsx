@@ -16,6 +16,7 @@ import {KeyService} from "../services/key.service";
 import {CryptographyService} from "../services/cryptography.service";
 import {CreateUserKeyPairUseCase} from "../use-cases/file/create-user-key-pair.use-case";
 import {DeleteGroupUseCase} from "../use-cases/group/DeleteGroupUseCase";
+import {DeriveEncryptionKeyUseCase} from "../use-cases/file/derive-encryption-key.use-case";
 
 interface UseCaseProviderProps {
     children: ReactNode
@@ -24,6 +25,7 @@ interface UseCaseProviderProps {
 interface UseCaseContextType {
     //cryto
 
+    deriveEncryptionKeyUseCase: DeriveEncryptionKeyUseCase
     // createFileUseCase: CreateFileUseCase,
 
     createFileUseCase: CreateFileUseCase,
@@ -52,6 +54,9 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     const groupService = new GroupService()
     const userService = new UserService()
 
+    //Key
+    const deriveEncryptionKeyUseCase = new DeriveEncryptionKeyUseCase(cryptoService, keyService);
+
     //Group
     const createGroupUseCase = new CreateGroupUseCase(groupService);
     const getGroupsFromEmailUseCase = new GetGroupsForEmailUseCase(groupService);
@@ -76,7 +81,8 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
             getUsersInGroup,
             addUserToGroupUseCase,
             removeUserFromGroup,
-            deleteGroupUseCase
+            deleteGroupUseCase,
+            deriveEncryptionKeyUseCase
         }}>
             {children}
         </UseCaseContext.Provider>
