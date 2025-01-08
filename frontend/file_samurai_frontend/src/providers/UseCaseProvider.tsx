@@ -23,6 +23,8 @@ import {GetUserByEmailUseCase} from "../use-cases/user/get-user-by-email.use-cas
 import {ValidatePasswordUseCase} from "../use-cases/user/validate-password.use-case";
 
 import {DeriveEncryptionKeyUseCase} from "../use-cases/file/derive-encryption-key.use-case";
+import {ValidatePasswordHashUseCase} from "../use-cases/keys/validate-password-hash.use-case";
+import {GeneratePasswordHashUseCase} from "../use-cases/keys/generate-password-hash.use-case";
 
 
 interface UseCaseProviderProps {
@@ -30,8 +32,9 @@ interface UseCaseProviderProps {
 }
 
 interface UseCaseContextType {
-    //cryto
-
+    //keys
+    generatePasswordHashUseCase: GeneratePasswordHashUseCase
+    validatePasswordHashUseCase: ValidatePasswordHashUseCase
     deriveEncryptionKeyUseCase: DeriveEncryptionKeyUseCase
     // createFileUseCase: CreateFileUseCase,
 
@@ -67,6 +70,8 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
 
     //Key
     const deriveEncryptionKeyUseCase = new DeriveEncryptionKeyUseCase(cryptoService, keyService);
+    const generatePasswordHashUseCase = new GeneratePasswordHashUseCase(cryptoService)
+    const validatePasswordHashUseCase = new ValidatePasswordHashUseCase(cryptoService)
 
     //Group
     const createGroupUseCase = new CreateGroupUseCase(groupService);
@@ -82,11 +87,12 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     const shareFileUseCase = new ShareFileUseCase(fileService, keyService, cryptoService)
     const createUserKeyPairUseCase = new CreateUserKeyPairUseCase(keyService, cryptoService)
 
+
     //user
     const getAllGroupsUserIsInUseCase = new GetAllGroupsUserIsInUseCase(userService)
     const getUserByEmailUseCase = new GetUserByEmailUseCase(userService)
     const registerUserUseCase = new RegisterUserUseCase(userService)
-    const validatePasswordUseCase= new ValidatePasswordUseCase(userService)
+    const validatePasswordUseCase = new ValidatePasswordUseCase(userService)
 
     return (
         <UseCaseContext.Provider value={{
@@ -104,7 +110,9 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
             getUserByEmailUseCase,
             registerUserUseCase,
             validatePasswordUseCase,
-            deriveEncryptionKeyUseCase
+            deriveEncryptionKeyUseCase,
+            validatePasswordHashUseCase,
+            generatePasswordHashUseCase
         }}>
             {children}
         </UseCaseContext.Provider>
