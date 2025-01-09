@@ -15,6 +15,12 @@ export class KeyService implements IKeyService{
         return response.data;
     }
 
+    async getUserPublicKeys(ids: string[]): Promise<string[]> {
+        const idsAsString = ids.join(',');
+        const response = await axiosInstance.get<string[]>(`keypair/public?ids=${idsAsString}`);
+        return response.data;
+    }
+
     async getUserPrivateKey(userId: string): Promise<UserPrivateKeyDto> {
         const response = await axiosInstance.get<UserPrivateKeyDto>(`keypair/private/${userId}`);
         return response.data;

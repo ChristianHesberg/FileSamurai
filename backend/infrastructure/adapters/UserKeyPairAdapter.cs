@@ -33,12 +33,16 @@ public class UserKeyPairAdapter(Context context) : IUserKeyPairPort
         return entity.PublicKey;
     }
 
-    public List<string> GetPublicKeys(string[] idList)
+    public List<RsaPublicKeyWithId> GetPublicKeys(string[] idList)
     {
         var keyList = context.UserRsaKeyPairs.Where(key => idList.Contains(key.UserId)).ToList();
         if (keyList.Count != idList.Length)
             throw new KeyNotFoundException(
                 "One or more ids did not exist in database. Please check provided ids and try again.");
-        return keyList.Select(keypair => keypair.PublicKey).ToList();
+        return keyList.Select(keypair => new RsaPublicKeyWithId()
+        {
+            UserId = keypair.UserId,
+            PublicKey = keypair.PublicKey
+        }).ToList();
     }
 }

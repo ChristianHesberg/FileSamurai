@@ -21,7 +21,7 @@ public class UserKeyPairService(
         return userKeyPairPort.GetUserPublicKey(userId);
     }
     
-    public List<string> GetUserPublicKeys(string[] idList)
+    public List<RsaPublicKeyWithId> GetUserPublicKeys(string[] idList)
     {
         foreach (var id in idList)
         {

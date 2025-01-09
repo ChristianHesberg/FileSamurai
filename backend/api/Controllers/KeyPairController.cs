@@ -28,7 +28,7 @@ public class KeyPairController(IUserKeyPairService userKeyPairService) : Control
     
     [HttpGet("public")]  
     [Authorize] 
-    public ActionResult<List<string>> GetPublicKeys([FromQuery] string ids)
+    public ActionResult<List<RsaPublicKeyWithId>> GetPublicKeys([FromQuery] string ids)
     {
         var idList = ids.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         var publicKeys = userKeyPairService.GetUserPublicKeys(idList);  
