@@ -10,6 +10,7 @@ public interface IFilePort
     public File GetFile(string fileId);
     public bool UpdateFile(File file);
     public void AddUserFileAccess(UserFileAccess userFileAccess);
+    void AddUserFileAccesses(List<UserFileAccess> accesses);
     public UserFileAccess GetUserFileAccess(string userId, string fileId);
     public Group GetFileGroup(string fileId);
     public List<UserFileAccess> GetAllUserFileAccess(string fileId);

@@ -104,6 +104,26 @@ public class FileService(
         filePort.AddUserFileAccess(converted);
     }
 
+    public void AddUserFileAccesses(List<AddOrGetUserFileAccessDto> userFileAccessDtos)
+    {
+        foreach (var access in userFileAccessDtos)
+        {
+            var validationResult = addOrGetUserFileAccessDtoValidator.Validate(access);
+            ValidationUtilities.ThrowIfInvalid(validationResult);
+        }
+
+        var accesses = userFileAccessDtos.Select(userFileAccess => new UserFileAccess()
+        {
+            UserId = userFileAccess.UserId,
+            FileId = userFileAccess.FileId,
+            EncryptedFileKey = userFileAccess.EncryptedFileKey,
+            Role = userFileAccess.Role
+        }).ToList();
+        
+        
+        filePort.AddUserFileAccesses(accesses);
+    }
+
     public AddOrGetUserFileAccessDto GetUserFileAccess(GetFileOrAccessInputDto dto)
     {
         var validationResult = getFileOrAccessInputDtoValidator.Validate(dto);
@@ -144,10 +164,11 @@ public class FileService(
         
         return filePort.GetAllUserFileAccess(fileId);
     }
-
+    
     public List<FileOptionDto> GetFileOptionDtos(string userId)
     {
         var files = filePort.GetAllFilesUserHasAccessTo(userId);
         return files.Select(x => new FileOptionDto(){Id = x.Id,Name = x.Title}).ToList();
     }
+
 }
