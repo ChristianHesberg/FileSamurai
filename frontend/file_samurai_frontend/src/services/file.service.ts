@@ -49,6 +49,11 @@ export class FileService implements IFileService {
         const response = await axiosInstance.get<FileAccessDto[]>(`file/allFileAccess/${fileId}`)
         return response.data
     }
+
+    async deleteUserFileAccess(userId: string, fileId: string): Promise<void> {
+        const response = await axiosInstance.delete(`file/access?fileId=${fileId}&userId=${userId}`)
+        return response.data
+    }
 }
 
 

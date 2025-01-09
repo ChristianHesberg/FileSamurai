@@ -28,6 +28,7 @@ import {GetFileOptionsUseCase} from "../use-cases/file/get-file-options.use-case
 import {DownloadFileUseCase} from "../use-cases/file/download-file-use.case";
 import {GetAllFileAccessUseCase} from "../use-cases/file/get-all-file-access.use-case";
 import {ShareFileWithMultipleUsersUseCase} from "../use-cases/file/share-file-with-multiple-users.use-case";
+import {DeleteUserFileAccessUseCase} from "../use-cases/file/delete-user-file-access.use-case";
 
 
 interface UseCaseProviderProps {
@@ -61,9 +62,10 @@ interface UseCaseContextType {
     deleteGroupUseCase: DeleteGroupUseCase
 
     //file
-    getFileOptionsUseCase:GetFileOptionsUseCase
+    getFileOptionsUseCase: GetFileOptionsUseCase
     downloadFileUseCase: DownloadFileUseCase,
-    getAllFileAccessUseCase:GetAllFileAccessUseCase
+    getAllFileAccessUseCase: GetAllFileAccessUseCase
+    deleteUserFileAccessUseCase: DeleteUserFileAccessUseCase,
 }
 
 const UseCaseContext = createContext<UseCaseContextType | undefined>(undefined)
@@ -79,7 +81,7 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     //Key
     const deriveEncryptionKeyUseCase = new DeriveEncryptionKeyUseCase(cryptoService, keyService);
     const generatePasswordHashUseCase = new GeneratePasswordHashUseCase(cryptoService)
-    const validatePasswordHashUseCase = new ValidatePasswordHashUseCase(cryptoService,userService)
+    const validatePasswordHashUseCase = new ValidatePasswordHashUseCase(cryptoService, userService)
 
     //Group
     const createGroupUseCase = new CreateGroupUseCase(groupService);
@@ -93,7 +95,7 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     const createFileUseCase = new CreateFileUseCase(fileService, keyService, cryptoService)
     const decryptFileUseCase = new DecryptFileUseCase(fileService, keyService, cryptoService)
     const shareFileUseCase = new ShareFileUseCase(fileService, keyService, cryptoService)
-    const shareFileWithMultipleUsersUseCase = new ShareFileWithMultipleUsersUseCase(fileService,keyService,cryptoService)
+    const shareFileWithMultipleUsersUseCase = new ShareFileWithMultipleUsersUseCase(fileService, keyService, cryptoService)
     const createUserKeyPairUseCase = new CreateUserKeyPairUseCase(keyService, cryptoService)
 
     //user
@@ -105,6 +107,7 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     const getFileOptionsUseCase = new GetFileOptionsUseCase(fileService);
     const downloadFileUseCase = new DownloadFileUseCase();
     const getAllFileAccessUseCase = new GetAllFileAccessUseCase(fileService)
+    const deleteUserFileAccessUseCase = new DeleteUserFileAccessUseCase(fileService)
     return (
         <UseCaseContext.Provider value={{
             createFileUseCase,
@@ -126,7 +129,8 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
             getFileOptionsUseCase,
             downloadFileUseCase,
             getAllFileAccessUseCase,
-            shareFileWithMultipleUsersUseCase
+            shareFileWithMultipleUsersUseCase,
+            deleteUserFileAccessUseCase
         }}>
             {children}
         </UseCaseContext.Provider>

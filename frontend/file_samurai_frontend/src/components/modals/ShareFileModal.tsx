@@ -13,7 +13,12 @@ interface ShareFileModalProps {
 }
 
 export const ShareFileModal: React.FC<ShareFileModalProps> = ({selectedFile, onClose}) => {
-    const {getUsersInGroupUseCase, getAllFileAccessUseCase, shareFileWithMultipleUsersUseCase,} = useUseCases()
+    const {
+        getUsersInGroupUseCase,
+        getAllFileAccessUseCase,
+        shareFileWithMultipleUsersUseCase,
+        deleteUserFileAccessUseCase
+    } = useUseCases()
 
     const [roleOptions, setRoleOptions] = useState<SelectionOption[]>([{
         value: "Editor",
@@ -88,6 +93,9 @@ export const ShareFileModal: React.FC<ShareFileModalProps> = ({selectedFile, onC
     }
 
     const handleDelBtn = (fileId: string, userId: string) => {
+        deleteUserFileAccessUseCase.execute(userId, fileId)
+            .then(()=> setExistingAccesses(prevState => prevState.filter(fa => fa.userId !== userId)))
+
         return undefined;
     }
 
@@ -104,11 +112,11 @@ export const ShareFileModal: React.FC<ShareFileModalProps> = ({selectedFile, onC
             {existingAccesses ?
                 <div>
                     <h1>Shared with:</h1>
-                    {existingAccesses.map(fileAccess =>
+                    {existingAccesses.filter(ea => ea.userId !== user?.userId).map(fileAccess =>
                         <div className={"flex flex-row"}>
                             <p>{getEmailLabel(fileAccess.userId)} | {fileAccess.role}</p>
                             <button className={"bg-red-700 px-1.5 rounded ml-1"}
-                                    onClick={handleDelBtn(fileAccess.fileId, fileAccess.userId)}
+                                    onClick={() => handleDelBtn(fileAccess.fileId, fileAccess.userId)}
                             >X
                             </button>
                         </div>
