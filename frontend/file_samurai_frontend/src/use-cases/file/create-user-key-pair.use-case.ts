@@ -10,9 +10,8 @@ export class CreateUserKeyPairUseCase {
     ) {}
 
     async execute(password: string, email: string, userId: string): Promise<void> {
-        const concatenatedPassword: string = `${email}-${password}`;
         const salt = await this.cryptoService.generateKey(12);
-        const key = await this.cryptoService.deriveKeyFromPassword(concatenatedPassword, salt, 32);
+        const key = await this.cryptoService.deriveKeyFromPassword(password, email, salt, 32);
 
         const keyPair: EncryptedRsaKeyPairModel = await this.cryptoService.generateRsaKeyPairWithEncryption(key, salt);
 

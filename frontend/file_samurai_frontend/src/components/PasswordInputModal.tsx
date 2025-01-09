@@ -28,7 +28,7 @@ export const PasswordInputModal: React.FC<PasswordInputModalProps> = ({navigatio
                     setError("Wrong password")
                     return
                 }
-                deriveEncryptionKeyUseCase.execute(password, user?.userId!)
+                deriveEncryptionKeyUseCase.execute(password, user?.userId!, user?.email!)
                     .then(key => {
                         storeKey(key)
                         if (navigationRoute) {

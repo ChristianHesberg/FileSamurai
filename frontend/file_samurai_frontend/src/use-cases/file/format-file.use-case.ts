@@ -5,7 +5,7 @@ export class FormatFileUseCase{
     async execute(file: Buffer): Promise<void> {
         try {
 
-            const fileType = await fileTypeFromBuffer(file);
+            const fileType = await fileTypeFromBuffer(file.buffer);
             if(fileType == null) throw new Error("Invalid file type");
             // Create a Blob from the decrypted content
             const blob = new Blob([file], { type: fileType.mime });
@@ -28,7 +28,7 @@ export class FormatFileUseCase{
 
             console.log('File downloaded successfully.');
         } catch (error) {
-            console.error('Error decrypting or downloading the file:', error);
+            console.error(error);
         }
     }
 }

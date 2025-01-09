@@ -41,7 +41,7 @@ export function Register() {
         if (!error && password && confirmPassword) {
             await register(user!.email, password)
                 .then((u) => {
-                    deriveEncryptionKeyUseCase.execute(password, u.id)
+                    deriveEncryptionKeyUseCase.execute(password, u.id, u.email)
                         .then(key => {
                             storeKey(key)
                             navigate("/files")

@@ -5,6 +5,11 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {FileOption} from "../models/FileOption";
 import Modal from "./Modal";
 import {EditFileModal} from "./EditFileModal";
+import {FormatFileUseCase} from "../use-cases/file/format-file.use-case";
+import {Buffer} from "buffer";
+import {DecryptFileUseCase} from "../use-cases/file/decrypt-file.use-case";
+import {useUseCases} from "../providers/UseCaseProvider";
+import {useKey} from "../providers/KeyProvider";
 
 
 interface FileTableProps {
@@ -14,7 +19,8 @@ interface FileTableProps {
 
 const FileTable: React.FC<FileTableProps> = ({files, setFiles}) => {
     const [selectedFile, setSelectedFile] = useState<FileOption | null>(null)
-
+    const {decryptFileUseCase} = useUseCases();
+    const { retrieveKey } = useKey();
 
     const addMemberBtn = (fileOption: FileOption) => {
         return (
@@ -32,13 +38,20 @@ const FileTable: React.FC<FileTableProps> = ({files, setFiles}) => {
 
     }
     const downloadBtn = (fileOption: FileOption) => {
+        const useCase = new FormatFileUseCase();
         return (
             <button
                 key={"downloadBtn" + fileOption.id}
                 className="block px-4 py-2 text-sm bg-sky-600 hover:bg-sky-400 w-full rounded"
                 role="menuitem"
                 onClick={() => {
-
+                    const key = retrieveKey();
+                    if(key == null){
+                        console.log('aint got no key');
+                        return;
+                    }
+                    decryptFileUseCase.execute('31b37bcf-df12-48f0-816d-988e575690fe', 'f5fc717d-afcf-414c-9025-3abb08511d80', key)
+                        .then((file) => useCase.execute(file));
                 }}
             >
                 Download

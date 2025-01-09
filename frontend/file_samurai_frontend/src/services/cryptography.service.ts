@@ -102,8 +102,9 @@ export class CryptographyService implements ICryptographyService {
     }
 
     //key is generated with salt. Salt needs to be saved with encrypted data
-    async deriveKeyFromPassword(password: string, salt: Buffer, keyLength: number = 32): Promise<CryptoKey> {
-        const encodedPassword = Buffer.from(password, 'utf8');
+    async deriveKeyFromPassword(password: string, email: string, salt: Buffer, keyLength: number = 32): Promise<CryptoKey> {
+        const concatenatedPassword: string = `${email}-${password}`;
+        const encodedPassword = Buffer.from(concatenatedPassword, 'utf8');
 
         const passwordKey = await window.crypto.subtle.importKey(
             'raw',

@@ -18,10 +18,7 @@ export class DecryptFileUseCase{
         const file = response.file;
         const privateKey: UserPrivateKeyDto = await this.keyService.getUserPrivateKey(userId);
         const decryptedPrivateKey = await this.cryptoService.decryptPrivateKey(privateKey, cryptoKey);
-        console.log(decryptedPrivateKey);
         const decryptedFEK = await this.cryptoService.decryptWithPrivateKey(Buffer.from(userFileAccessResponse.encryptedFileKey, 'base64'), decryptedPrivateKey);
-        const decryptedFile = await this.cryptoService.decryptAes256GcmWithBufferKey({cipherText: file.fileContents, nonce: file.nonce}, decryptedFEK);
-
-        return decryptedFile;
+        return await this.cryptoService.decryptAes256GcmWithBufferKey({cipherText: file.fileContents, nonce: file.nonce}, decryptedFEK);
     }
 }

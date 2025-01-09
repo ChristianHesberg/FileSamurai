@@ -13,7 +13,7 @@ export interface ICryptographyService {
     generateRsaKeyPairWithEncryption(key: CryptoKey, salt: Buffer): Promise<EncryptedRsaKeyPairModel>;
     encryptWithPublicKey(data: Buffer, publicKey: string): Promise<Buffer>;
     decryptWithPrivateKey(encryptedData: Buffer, privateKey: Buffer): Promise<Buffer>;
-    deriveKeyFromPassword(password: string, salt: Buffer, keyLength: number): Promise<CryptoKey>;
+    deriveKeyFromPassword(password: string, email: string, salt: Buffer, keyLength: number): Promise<CryptoKey>;
     generateKey(size: number): Promise<Buffer>;
     decryptPrivateKey(privateKey: UserPrivateKeyDto, cryptoKey: CryptoKey): Promise<Buffer>;
     hashPassword(password: string, salt: Buffer): Promise<Buffer>
