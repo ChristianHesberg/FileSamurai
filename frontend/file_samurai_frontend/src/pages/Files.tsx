@@ -14,11 +14,14 @@ export function Files() {
     const {getFileOptionsUseCase} = useUseCases()
     const {user} = useAuth()
     useEffect(() => {
+        createFileOptions()
+    }, []);
+
+    const createFileOptions = ()=> {
         getFileOptionsUseCase.execute(user?.userId!).then(r => {
             setFiles(r)
         }).catch(e => console.error(e))
-    }, []);
-
+    }
 
     const btn = () => {
         return (
@@ -30,8 +33,11 @@ export function Files() {
         )
 
     }
+    const onClose = () => {
+        createFileOptions()
+        setModalOpen(false)
 
-    //Get all files -> into table
+    }
 
     return (
         <div className={"flex-col"}>
@@ -39,7 +45,8 @@ export function Files() {
                 <h1 className={"text-lg"}>All files</h1>
                 {btn()}
             </div>
-            <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} child={<NewFileModal/>}/>
+            <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}
+                   child={<NewFileModal onClose={()=>onClose()} />}/>
             <FileTable files={files} setFiles={setFiles}/>
         </div>
     )
