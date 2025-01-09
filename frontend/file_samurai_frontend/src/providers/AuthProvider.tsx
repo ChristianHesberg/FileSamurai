@@ -67,7 +67,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
     };
 
     const register = async (email: string, password: string): Promise<User> => {
-        const hash = await generatePasswordHashUseCase.execute(password)
+        const hash = await generatePasswordHashUseCase.execute(password, email);
 
         const user = await registerUserUseCase.execute(email, hash.hashedPassword, hash.salt);
 

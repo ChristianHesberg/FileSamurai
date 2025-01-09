@@ -4,8 +4,8 @@ export class FormatFileUseCase{
 
     async execute(file: Buffer): Promise<void> {
         try {
-
-            const fileType = await fileTypeFromBuffer(file.buffer);
+            
+            const fileType = await fileTypeFromBuffer(file);
             if(fileType == null) throw new Error("Invalid file type");
             // Create a Blob from the decrypted content
             const blob = new Blob([file], { type: fileType.mime });

@@ -10,6 +10,7 @@ import {Buffer} from "buffer";
 import {DecryptFileUseCase} from "../use-cases/file/decrypt-file.use-case";
 import {useUseCases} from "../providers/UseCaseProvider";
 import {useKey} from "../providers/KeyProvider";
+import {useAuth} from "../providers/AuthProvider";
 
 
 interface FileTableProps {
@@ -21,6 +22,7 @@ const FileTable: React.FC<FileTableProps> = ({files, setFiles}) => {
     const [selectedFile, setSelectedFile] = useState<FileOption | null>(null)
     const {decryptFileUseCase} = useUseCases();
     const { retrieveKey } = useKey();
+    const { user } = useAuth();
 
     const addMemberBtn = (fileOption: FileOption) => {
         return (
@@ -50,7 +52,7 @@ const FileTable: React.FC<FileTableProps> = ({files, setFiles}) => {
                         console.log('aint got no key');
                         return;
                     }
-                    decryptFileUseCase.execute('31b37bcf-df12-48f0-816d-988e575690fe', 'f5fc717d-afcf-414c-9025-3abb08511d80', key)
+                    decryptFileUseCase.execute(user?.userId!, fileOption.id, key)
                         .then((file) => useCase.execute(file));
                 }}
             >

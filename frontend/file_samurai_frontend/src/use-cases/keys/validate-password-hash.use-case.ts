@@ -7,9 +7,9 @@ export class ValidatePasswordHashUseCase {
     constructor(private readonly cryptographyService: ICryptographyService, private readonly userService: UserService) {
     }
 
-    async execute(password: string,): Promise<boolean> {
+    async execute(password: string, email: string): Promise<boolean> {
         const hash: PasswordHash = await this.userService.getPasswordHash()
-        const newHash = await this.cryptographyService.hashPassword(password, Buffer.from(hash.salt, "base64"))
+        const newHash = await this.cryptographyService.hashPassword(password, email, Buffer.from(hash.salt, "base64"))
 
         return newHash.toString("base64") === hash.passwordHash;
     }

@@ -22,7 +22,7 @@ export const PasswordInputModal: React.FC<PasswordInputModalProps> = ({navigatio
     function handlePasswordSubmit(event: React.FormEvent) {
         event.preventDefault();
         if (password.length === 0) return
-        validatePasswordHashUseCase.execute(password)
+        validatePasswordHashUseCase.execute(password, user?.email!)
             .then((validPassword) => {
                 if (!validPassword) {
                     setError("Wrong password")

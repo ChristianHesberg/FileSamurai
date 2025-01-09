@@ -131,8 +131,9 @@ export class CryptographyService implements ICryptographyService {
         );
     }
 
-    async hashPassword(password: string, salt: Buffer): Promise<Buffer> {
-        const encodedPassword = Buffer.from(password, 'utf8');
+    async hashPassword(password: string, email: string, salt: Buffer): Promise<Buffer> {
+        const concatenatedPassword: string = `${email}-${password}`;
+        const encodedPassword = Buffer.from(concatenatedPassword, 'utf8');
 
         const passwordKey = await window.crypto.subtle.importKey(
             'raw',
