@@ -7,6 +7,7 @@ public class FileOptionDto
 {
     public string Id { get; set; }
     private string _name;
+    public string GroupId { get; set; }
 
     public string Name
     {

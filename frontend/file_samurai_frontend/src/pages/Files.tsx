@@ -3,7 +3,7 @@ import FileTable from "../components/FileTable";
 import UploadFileBtn from "../components/UploadFileBtn";
 import {FileDto} from "../models/FileDto";
 import Modal from "../components/Modal";
-import {NewFileModal} from "../components/NewFileModal";
+import {NewFileModal} from "../components/modals/NewFileModal";
 import {useUseCases} from "../providers/UseCaseProvider";
 import {FileOption} from "../models/FileOption";
 import {useAuth} from "../providers/AuthProvider";

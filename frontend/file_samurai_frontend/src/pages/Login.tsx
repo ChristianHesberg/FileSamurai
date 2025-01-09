@@ -8,7 +8,7 @@ import {faUnlock} from "@fortawesome/free-solid-svg-icons";
 import {NotFoundError} from "../errors/not-found.error";
 import {useUseCases} from "../providers/UseCaseProvider";
 import {useKey} from "../providers/KeyProvider";
-import {PasswordInputModal} from "../components/PasswordInputModal";
+import {PasswordInputModal} from "../components/modals/PasswordInputModal";
 
 export function Login() {
     const navigate = useNavigate()

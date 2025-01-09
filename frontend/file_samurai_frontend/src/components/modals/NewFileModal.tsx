@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
-import UploadFileBtn from "./UploadFileBtn";
-import {Group} from "../models/Group";
-import {useUseCases} from "../providers/UseCaseProvider";
-import {useAuth} from "../providers/AuthProvider";
-import {Selector} from "./Selector";
-import {SelectionOption} from "../models/selectionOption";
-import {User} from "../models/user.model";
+import UploadFileBtn from "../UploadFileBtn";
+import {Group} from "../../models/Group";
+import {useUseCases} from "../../providers/UseCaseProvider";
+import {useAuth} from "../../providers/AuthProvider";
+import {Selector} from "../Selector";
+import {SelectionOption} from "../../models/selectionOption";
+import {User} from "../../models/user.model";
 import {Buffer} from "buffer";
 
 export const NewFileModal = () => {

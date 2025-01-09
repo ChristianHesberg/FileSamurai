@@ -1,9 +1,9 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUnlock} from "@fortawesome/free-solid-svg-icons";
 import React, {useState} from "react";
-import {useUseCases} from "../providers/UseCaseProvider";
-import {useKey} from "../providers/KeyProvider";
-import {useAuth} from "../providers/AuthProvider";
+import {useUseCases} from "../../providers/UseCaseProvider";
+import {useKey} from "../../providers/KeyProvider";
+import {useAuth} from "../../providers/AuthProvider";
 import {NavigateFunction} from "react-router/dist/production";
 import {useNavigate} from "react-router-dom";
 

@@ -15,7 +15,7 @@ public class FileService(
     IValidator<GetFileOrAccessInputDto> getFileOrAccessInputDtoValidator,
     IValidator<FileDto> fileDtoValidator,
     IValidator<AddOrGetUserFileAccessDto> addOrGetUserFileAccessDtoValidator,
-    IEnumerable<IValidator<string>> stringValidators ) : IFileService
+    IEnumerable<IValidator<string>> stringValidators) : IFileService
 {
     public PostFileResultDto AddFile(AddFileDto file)
     {
@@ -55,7 +55,7 @@ public class FileService(
             Nonce = file.Nonce,
             GroupId = file.GroupId
         };
-        
+
         var convertedAccessObject = new AddOrGetUserFileAccessDto()
         {
             FileId = accessObject.FileId,
@@ -63,7 +63,7 @@ public class FileService(
             EncryptedFileKey = accessObject.EncryptedFileKey,
             Role = accessObject.Role
         };
-        
+
         return new GetFileDto()
         {
             File = convertedFile,
@@ -84,7 +84,7 @@ public class FileService(
             FileContents = file.FileContents,
             Nonce = file.Nonce
         };
-        
+
         return filePort.UpdateFile(converted);
     }
 
@@ -100,7 +100,7 @@ public class FileService(
             EncryptedFileKey = userFileAccess.EncryptedFileKey,
             Role = userFileAccess.Role
         };
-        
+
         filePort.AddUserFileAccess(converted);
     }
 
@@ -119,8 +119,8 @@ public class FileService(
             EncryptedFileKey = userFileAccess.EncryptedFileKey,
             Role = userFileAccess.Role
         }).ToList();
-        
-        
+
+
         filePort.AddUserFileAccesses(accesses);
     }
 
@@ -131,44 +131,53 @@ public class FileService(
 
         var res = filePort.GetUserFileAccess(dto.UserId, dto.FileId);
         return new AddOrGetUserFileAccessDto()
-            {
-                UserId = res.UserId,
-                FileId = res.FileId,
-                EncryptedFileKey = res.EncryptedFileKey,
-                Role = res.Role
-            };
+        {
+            UserId = res.UserId,
+            FileId = res.FileId,
+            EncryptedFileKey = res.EncryptedFileKey,
+            Role = res.Role
+        };
     }
 
     public void DeleteUserFileAccess(GetFileOrAccessInputDto dto)
     {
         var validationResult = getFileOrAccessInputDtoValidator.Validate(dto);
         ValidationUtilities.ThrowIfInvalid(validationResult);
-        
+
         filePort.DeleteUserFileAccess(dto.UserId, dto.FileId);
     }
 
     public Group GetFileGroup(string fileId)
     {
-        var guidValidator = ValidationUtilities.GetValidator<GuidValidator>(stringValidators);  
-        var validationResult = guidValidator.Validate(fileId);  
-        ValidationUtilities.ThrowIfInvalid(validationResult); 
-        
+        var guidValidator = ValidationUtilities.GetValidator<GuidValidator>(stringValidators);
+        var validationResult = guidValidator.Validate(fileId);
+        ValidationUtilities.ThrowIfInvalid(validationResult);
+
         return filePort.GetFileGroup(fileId);
     }
 
     public List<UserFileAccess> GetAllUserFileAccess(string fileId)
     {
-        var guidValidator = ValidationUtilities.GetValidator<GuidValidator>(stringValidators);  
-        var validationResult = guidValidator.Validate(fileId);  
-        ValidationUtilities.ThrowIfInvalid(validationResult); 
-        
+        var guidValidator = ValidationUtilities.GetValidator<GuidValidator>(stringValidators);
+        var validationResult = guidValidator.Validate(fileId);
+        ValidationUtilities.ThrowIfInvalid(validationResult);
+
         return filePort.GetAllUserFileAccess(fileId);
     }
-    
+
     public List<FileOptionDto> GetFileOptionDtos(string userId)
     {
         var files = filePort.GetAllFilesUserHasAccessTo(userId);
-        return files.Select(x => new FileOptionDto(){Id = x.Id,Name = x.Title, Role = x.UserFileAccesses.First(a => a.UserId == userId).Role}).ToList();
+        return files.Select(x => new FileOptionDto()
+        {
+            Id = x.Id, Name = x.Title, GroupId = x.GroupId,
+            Role = x.UserFileAccesses.First(a => a.UserId == userId).Role
+        }).ToList();
     }
 
+    public List<FileAccessDto> GetAllUserFileAccessDto(string fileId)
+    {
+        var fa = filePort.GetAllUserFileAccess(fileId);
+        return fa.Select(x => new FileAccessDto(){FileId = x.FileId,Role = x.Role,UserId = x.UserId}).ToList();
+    }
 }

@@ -106,7 +106,7 @@ public class FileAdapter(Context context) : IFilePort
     {
         return context.UserFileAccesses.Where(x => x.FileId == fileId).ToList();
     }
-
+    
     public void DeleteUserFileAccess(string userId, string fileId)
     {
         var access = context.UserFileAccesses.FirstOrDefault(f => f.FileId == fileId && f.UserId == userId);

@@ -7,10 +7,11 @@ import {IFileService} from "./file.service.interface";
 import {FileDto} from "../models/FileDto";
 import {SelectionOption} from "../models/selectionOption";
 import {FileOption} from "../models/FileOption";
+import {FileAccessDto} from "../models/FileAccessDto";
 
 
-export class FileService implements IFileService{
-     async getFileInfo(userId: string, fileId: string): Promise<FileResponseDto> {
+export class FileService implements IFileService {
+    async getFileInfo(userId: string, fileId: string): Promise<FileResponseDto> {
         const response = await axiosInstance.get<FileResponseDto>(`file`, {
             params: {userId, fileId}
         });
@@ -39,8 +40,13 @@ export class FileService implements IFileService{
         }
     }
 
-    async getFileOptions(userId:string): Promise<FileOption[]> {
+    async getFileOptions(userId: string): Promise<FileOption[]> {
         const response = await axiosInstance.get<FileOption[]>(`file/fileOptions/${userId}`)
+        return response.data
+    }
+
+    async getAllFileAccess(fileId: string): Promise<FileAccessDto[]> {
+        const response = await axiosInstance.get<FileAccessDto[]>(`file/allFileAccess/${fileId}`)
         return response.data
     }
 }

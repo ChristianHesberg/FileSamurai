@@ -3,7 +3,7 @@ import {Navigate} from "react-router-dom";
 import {useAuth} from "./AuthProvider";
 import {useKey} from "./KeyProvider";
 import Modal from "../components/Modal";
-import {PasswordInputModal} from "../components/PasswordInputModal";
+import {PasswordInputModal} from "../components/modals/PasswordInputModal";
 
 interface KeyProtectedRouteProps {
     children: React.ReactNode;

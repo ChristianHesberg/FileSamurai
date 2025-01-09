@@ -26,6 +26,8 @@ import {ValidatePasswordHashUseCase} from "../use-cases/keys/validate-password-h
 import {GeneratePasswordHashUseCase} from "../use-cases/keys/generate-password-hash.use-case";
 import {GetFileOptionsUseCase} from "../use-cases/file/get-file-options.use-case";
 import {DownloadFileUseCase} from "../use-cases/file/download-file-use.case";
+import {GetAllFileAccessUseCase} from "../use-cases/file/get-all-file-access.use-case";
+import {ShareFileWithMultipleUsersUseCase} from "../use-cases/file/share-file-with-multiple-users.use-case";
 
 
 interface UseCaseProviderProps {
@@ -42,6 +44,7 @@ interface UseCaseContextType {
     createFileUseCase: CreateFileUseCase,
     decryptFileUseCase: DecryptFileUseCase,
     shareFileUseCase: ShareFileUseCase,
+    shareFileWithMultipleUsersUseCase: ShareFileWithMultipleUsersUseCase
     createUserKeyPairUseCase: CreateUserKeyPairUseCase,
 
     //user stuff
@@ -59,7 +62,8 @@ interface UseCaseContextType {
 
     //file
     getFileOptionsUseCase:GetFileOptionsUseCase
-    downloadFileUseCase: DownloadFileUseCase
+    downloadFileUseCase: DownloadFileUseCase,
+    getAllFileAccessUseCase:GetAllFileAccessUseCase
 }
 
 const UseCaseContext = createContext<UseCaseContextType | undefined>(undefined)
@@ -89,6 +93,7 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     const createFileUseCase = new CreateFileUseCase(fileService, keyService, cryptoService)
     const decryptFileUseCase = new DecryptFileUseCase(fileService, keyService, cryptoService)
     const shareFileUseCase = new ShareFileUseCase(fileService, keyService, cryptoService)
+    const shareFileWithMultipleUsersUseCase = new ShareFileWithMultipleUsersUseCase(fileService,keyService,cryptoService)
     const createUserKeyPairUseCase = new CreateUserKeyPairUseCase(keyService, cryptoService)
 
     //user
@@ -99,7 +104,7 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     //File
     const getFileOptionsUseCase = new GetFileOptionsUseCase(fileService);
     const downloadFileUseCase = new DownloadFileUseCase();
-
+    const getAllFileAccessUseCase = new GetAllFileAccessUseCase(fileService)
     return (
         <UseCaseContext.Provider value={{
             createFileUseCase,
@@ -119,7 +124,9 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
             validatePasswordHashUseCase,
             generatePasswordHashUseCase,
             getFileOptionsUseCase,
-            downloadFileUseCase
+            downloadFileUseCase,
+            getAllFileAccessUseCase,
+            shareFileWithMultipleUsersUseCase
         }}>
             {children}
         </UseCaseContext.Provider>

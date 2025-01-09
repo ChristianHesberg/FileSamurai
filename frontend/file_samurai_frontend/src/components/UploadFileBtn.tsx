@@ -56,7 +56,7 @@ const UploadFileBtn: React.FC<NewFileBtnProps> = ({setFile, currentFile}) => {
                    className="border-input border-neutral-700 bg-neutral-800 ring-offset-background placeholder:text-muted-foreground
            focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2  focus-visible:outline-none
             focus-visible:ring-2 focus-visible:ring-offset-2"
-                   placeholder="File Name"
+                   placeholder="New File Name"
             />
         </div>
     )

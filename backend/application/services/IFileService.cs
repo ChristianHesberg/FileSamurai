@@ -18,4 +18,5 @@ public interface IFileService
 
     public List<FileOptionDto> GetFileOptionDtos(string userId);
 
+    public List<FileAccessDto>GetAllUserFileAccessDto(string id);
 }

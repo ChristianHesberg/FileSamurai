@@ -1,9 +1,9 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPaperPlane} from "@fortawesome/free-solid-svg-icons";
 import React, {FormEvent, FormEventHandler, useEffect, useState} from "react";
-import {useUseCases} from "../providers/UseCaseProvider";
-import {User} from "../models/user.model";
-import {useAuth} from "../providers/AuthProvider";
+import {useUseCases} from "../../providers/UseCaseProvider";
+import {User} from "../../models/user.model";
+import {useAuth} from "../../providers/AuthProvider";
 
 interface AddMembersModalProps {
     groupId: string;

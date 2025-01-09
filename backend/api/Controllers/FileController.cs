@@ -4,6 +4,7 @@ using api.SchemaFilters;
 using application.dtos;
 using application.services;
 using application.transformers;
+using core.models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -84,7 +85,7 @@ public class FileController(IFileService fileService) : ControllerBase
         fileService.AddUserFileAccesses(userFileAccessDtos);
         return Ok();
     }
-    
+
 
     [HttpDelete("access")]
     [Authorize(Policy = "DeleteAccess")]
@@ -111,5 +112,12 @@ public class FileController(IFileService fileService) : ControllerBase
     {
         var optionDtos = fileService.GetFileOptionDtos(id);
         return Ok(optionDtos);
+    }
+//todo auth
+    [HttpGet("allFileAccess/{id}")]
+    public ActionResult<FileAccessDto> GetAllUserFileAccess(string id)
+    {
+        var userFileAccess = fileService.GetAllUserFileAccessDto(id);
+        return Ok(userFileAccess);
     }
 }
