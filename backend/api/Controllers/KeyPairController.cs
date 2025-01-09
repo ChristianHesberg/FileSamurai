@@ -25,6 +25,15 @@ public class KeyPairController(IUserKeyPairService userKeyPairService) : Control
         var publicKey = userKeyPairService.GetUserPublicKey(id);  
         return Ok(publicKey);  
     }
+    
+    [HttpGet("public")]  
+    [Authorize] 
+    public ActionResult<List<RsaPublicKeyWithId>> GetPublicKeys([FromQuery] string ids)
+    {
+        var idList = ids.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var publicKeys = userKeyPairService.GetUserPublicKeys(idList);  
+        return Ok(publicKeys);  
+    }
 
     [HttpPost]
     [Authorize(Policy = "PostRSAKeyPair")]

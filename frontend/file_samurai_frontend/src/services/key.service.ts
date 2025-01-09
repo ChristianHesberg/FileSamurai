@@ -4,6 +4,7 @@ import {AddOrGetUserFileAccessDto} from "../models/addOrGetUserFileAccessDto";
 import {AddUserKeyPairDto} from "../models/addUserKeyPairDto";
 import {AddFileResponseDto} from "../models/addFileResponseDto";
 import {IKeyService} from "./key.service.interface";
+import {RsaPublicKeyWithIdModel} from "../models/rsaPublicKeyWithId.model";
 
 export class KeyService implements IKeyService{
     async getUserPublicKey(userId: string): Promise<string> {
@@ -12,6 +13,12 @@ export class KeyService implements IKeyService{
                 'Accept': 'text/plain',
             },
         });
+        return response.data;
+    }
+
+    async getUserPublicKeys(ids: string[]): Promise<RsaPublicKeyWithIdModel[]> {
+        const idsAsString = ids.join(',');
+        const response = await axiosInstance.get<RsaPublicKeyWithIdModel[]>(`keypair/public?ids=${idsAsString}`);
         return response.data;
     }
 

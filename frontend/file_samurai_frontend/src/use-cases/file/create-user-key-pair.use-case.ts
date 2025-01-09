@@ -1,11 +1,11 @@
-import {KeyService} from "../../services/key.service";
 import {EncryptedRsaKeyPairModel} from "../../models/encryptedRsaKeyPair.model";
 import {AddUserKeyPairDto} from "../../models/addUserKeyPairDto";
 import {ICryptographyService} from "../../services/cryptography.service.interface";
+import {IKeyService} from "../../services/key.service.interface";
 
 export class CreateUserKeyPairUseCase {
     constructor(
-        private readonly keyService: KeyService,
+        private readonly keyService: IKeyService,
         private readonly cryptoService: ICryptographyService,
     ) {}
 

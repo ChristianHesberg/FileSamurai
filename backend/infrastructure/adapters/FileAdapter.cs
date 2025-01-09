@@ -65,13 +65,14 @@ public class FileAdapter(Context context) : IFilePort
 
     public void AddUserFileAccesses(List<UserFileAccess> accesses)
     {
-        var newAccesses = new List<UserFileAccess>();  
+        var newAccesses = new List<UserFileAccess>();
+        var duplicates = new List<UserFileAccess>();
   
         foreach (var userFileAccess in accesses)  
         {  
             var alreadyExists = context.UserFileAccesses.Any(x => x.FileId == userFileAccess.FileId && x.UserId == userFileAccess.UserId);
             if (alreadyExists) continue;
-            newAccesses.Add(userFileAccess);  
+            newAccesses.Add(userFileAccess);
         }
 
         if (newAccesses.Count == 0) return;
