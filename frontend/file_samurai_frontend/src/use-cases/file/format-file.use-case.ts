@@ -1,28 +1,42 @@
 import {fileTypeFromBuffer} from "file-type";
 
 export class FormatFileUseCase{
-
     async execute(file: Buffer): Promise<void> {
+        enum AllowedFileTypes {
+            JPEG = 'image/jpeg',
+            PNG = 'image/png',
+            PDF = 'application/pdf',
+            DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            MP3 = 'audio/mpeg',
+            M4A = 'audio/mp4',
+            WEBP = 'image/webp'
+        }
         try {
-            
             const fileType = await fileTypeFromBuffer(file);
             if(fileType == null) throw new Error("Invalid file type");
-            // Create a Blob from the decrypted content
+            switch (fileType.mime) {
+                case AllowedFileTypes.JPEG:
+                case AllowedFileTypes.PNG:
+                case AllowedFileTypes.WEBP:
+                case AllowedFileTypes.PDF:
+                case AllowedFileTypes.DOCX:
+                case AllowedFileTypes.MP3:
+                case AllowedFileTypes.M4A:
+                    break;
+                default:
+                    throw new Error(`File type not allowed: ${fileType.mime}`);
+            }
             const blob = new Blob([file], { type: fileType.mime });
 
-            // Create a URL for the Blob
             const url = URL.createObjectURL(blob);
 
-            // Create a link element
             const a = document.createElement('a');
             a.href = url;
             a.download = 'your download link';
 
-            // Append the link to the document body and trigger a click event
             document.body.appendChild(a);
             a.click();
 
-            // Clean up by revoking the Object URL and removing the link element
             URL.revokeObjectURL(url);
             document.body.removeChild(a);
 
