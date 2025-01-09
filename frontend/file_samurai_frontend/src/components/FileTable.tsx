@@ -5,9 +5,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {FileOption} from "../models/FileOption";
 import Modal from "./Modal";
 import {EditFileModal} from "./EditFileModal";
-import {FormatFileUseCase} from "../use-cases/file/format-file.use-case";
-import {Buffer} from "buffer";
-import {DecryptFileUseCase} from "../use-cases/file/decrypt-file.use-case";
 import {useUseCases} from "../providers/UseCaseProvider";
 import {useKey} from "../providers/KeyProvider";
 import {useAuth} from "../providers/AuthProvider";
@@ -20,7 +17,7 @@ interface FileTableProps {
 
 const FileTable: React.FC<FileTableProps> = ({files, setFiles}) => {
     const [selectedFile, setSelectedFile] = useState<FileOption | null>(null)
-    const {decryptFileUseCase} = useUseCases();
+    const {decryptFileUseCase, downloadFileUseCase} = useUseCases();
     const { retrieveKey } = useKey();
     const { user } = useAuth();
 
@@ -40,7 +37,6 @@ const FileTable: React.FC<FileTableProps> = ({files, setFiles}) => {
 
     }
     const downloadBtn = (fileOption: FileOption) => {
-        const useCase = new FormatFileUseCase();
         return (
             <button
                 key={"downloadBtn" + fileOption.id}
@@ -53,7 +49,7 @@ const FileTable: React.FC<FileTableProps> = ({files, setFiles}) => {
                         return;
                     }
                     decryptFileUseCase.execute(user?.userId!, fileOption.id, key)
-                        .then((file) => useCase.execute(file));
+                        .then((file) => downloadFileUseCase.execute(file, fileOption.name));
                 }}
             >
                 Download

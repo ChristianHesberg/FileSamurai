@@ -25,6 +25,7 @@ import {DeriveEncryptionKeyUseCase} from "../use-cases/keys/derive-encryption-ke
 import {ValidatePasswordHashUseCase} from "../use-cases/keys/validate-password-hash.use-case";
 import {GeneratePasswordHashUseCase} from "../use-cases/keys/generate-password-hash.use-case";
 import {GetFileOptionsUseCase} from "../use-cases/file/get-file-options.use-case";
+import {DownloadFileUseCase} from "../use-cases/file/download-file-use.case";
 
 
 interface UseCaseProviderProps {
@@ -58,6 +59,7 @@ interface UseCaseContextType {
 
     //file
     getFileOptionsUseCase:GetFileOptionsUseCase
+    downloadFileUseCase: DownloadFileUseCase
 }
 
 const UseCaseContext = createContext<UseCaseContextType | undefined>(undefined)
@@ -95,7 +97,8 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     const registerUserUseCase = new RegisterUserUseCase(userService)
 
     //File
-    const getFileOptionsUseCase = new GetFileOptionsUseCase(fileService)
+    const getFileOptionsUseCase = new GetFileOptionsUseCase(fileService);
+    const downloadFileUseCase = new DownloadFileUseCase();
 
     return (
         <UseCaseContext.Provider value={{
@@ -115,7 +118,8 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
             deriveEncryptionKeyUseCase,
             validatePasswordHashUseCase,
             generatePasswordHashUseCase,
-            getFileOptionsUseCase
+            getFileOptionsUseCase,
+            downloadFileUseCase
         }}>
             {children}
         </UseCaseContext.Provider>

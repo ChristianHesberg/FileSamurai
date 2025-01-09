@@ -1,7 +1,7 @@
 import {fileTypeFromBuffer} from "file-type";
 
-export class FormatFileUseCase{
-    async execute(file: Buffer): Promise<void> {
+export class DownloadFileUseCase {
+    async execute(file: Buffer, fileName: string): Promise<void> {
         enum AllowedFileTypes {
             JPEG = 'image/jpeg',
             PNG = 'image/png',
@@ -32,7 +32,7 @@ export class FormatFileUseCase{
 
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'your download link';
+            a.download = fileName;
 
             document.body.appendChild(a);
             a.click();
