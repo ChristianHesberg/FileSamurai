@@ -1,13 +1,13 @@
-import {FileService} from "../../services/file.service";
-import {KeyService} from "../../services/key.service";
 import {AddOrGetUserFileAccessDto} from "../../models/addOrGetUserFileAccessDto";
 import {ICryptographyService} from "../../services/cryptography.service.interface";
 import {Buffer} from 'buffer';
+import {IFileService} from "../../services/file.service.interface";
+import {IKeyService} from "../../services/key.service.interface";
 
 export class ShareFileUseCase{
     constructor(
-        private readonly fileService: FileService,
-        private readonly keyService: KeyService,
+        private readonly fileService: IFileService,
+        private readonly keyService: IKeyService,
         private readonly cryptoService: ICryptographyService,
     ) {}
 
