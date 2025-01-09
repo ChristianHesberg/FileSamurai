@@ -21,13 +21,13 @@ export class ShareFileWithMultipleUsersUseCase{
         const recipientPublicKeys = await this.keyService.getUserPublicKeys(recipientIds);
         console.log(recipientPublicKeys)
 
-        cosnt
+        const accesses: AddOrGetUserFileAccessDto[] = [];
         for(const key of recipientPublicKeys) {
-
+            const encryptedFAK = await this.cryptoService.encryptWithPublicKey(decryptedFEK, key.publicKey);
+            const addUserFileAccessDto: AddOrGetUserFileAccessDto = this.fileService.convertToUserFileAccessDto(encryptedFAK, key.userId, fileId, role);
+            accesses.push(addUserFileAccessDto);
         }
-        const encryptedFAK = await this.cryptoService.encryptWithPublicKey(decryptedFEK, shareePublicKey);
 
-        const addUserFileAccessDto: AddOrGetUserFileAccessDto = this.fileService.convertToUserFileAccessDto(encryptedFAK, recipientId, fileId, role);
-        await this.fileService.postUserFileAccess(addUserFileAccessDto);
+        await this.fileService.postUserFileAccesses(accesses);
     }
 }
