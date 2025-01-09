@@ -32,4 +32,13 @@ public class UserKeyPairAdapter(Context context) : IUserKeyPairPort
         if (entity == null) throw new KeyNotFoundException("No key pair found for user");
         return entity.PublicKey;
     }
+
+    public List<string> GetPublicKeys(string[] idList)
+    {
+        var keyList = context.UserRsaKeyPairs.Where(key => idList.Contains(key.UserId)).ToList();
+        if (keyList.Count != idList.Length)
+            throw new KeyNotFoundException(
+                "One or more ids did not exist in database. Please check provided ids and try again.");
+        return keyList.Select(keypair => keypair.PublicKey).ToList();
+    }
 }
