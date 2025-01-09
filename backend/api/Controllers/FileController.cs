@@ -107,7 +107,7 @@ public class FileController(IFileService fileService) : ControllerBase
 
     //todo auth
     [HttpGet("fileOptions/{id}")]
-    public ActionResult<List<FileDto>> GetFileOptions(string id)
+    public ActionResult<List<FileOptionDto>> GetFileOptions(string id)
     {
         var optionDtos = fileService.GetFileOptionDtos(id);
         return Ok(optionDtos);

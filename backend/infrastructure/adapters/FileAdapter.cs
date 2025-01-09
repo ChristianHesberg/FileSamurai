@@ -124,6 +124,7 @@ public class FileAdapter(Context context) : IFilePort
 
     public List<File> GetAllFilesUserHasAccessTo(string userId)
     {
-        return context.Files.Where(x => x.UserFileAccesses.Any(y => y.UserId == userId)).ToList();
+        return context.Files.Include(y => y.UserFileAccesses)
+            .Where(x => x.UserFileAccesses.Any(y => y.UserId == userId)).ToList();
     }
 }

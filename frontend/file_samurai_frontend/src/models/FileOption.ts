@@ -1,4 +1,5 @@
 export interface FileOption {
     id:string,
-    name:string
+    name:string,
+    role:string
 }
