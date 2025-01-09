@@ -30,7 +30,7 @@ export const EditFileModal: React.FC<EditFileModal> = ({selectedFile}) => {
 
         return <div className={"flex flex-col gap-y-2"}>
             <h1 className={"text-2xl text-center"}>Current File: {selectedFile.name}</h1>
-            <UploadFileBtn currentFile={newFile} setFile={setNewFile}/>
+
 
 
 

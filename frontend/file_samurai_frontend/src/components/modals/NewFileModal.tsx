@@ -18,6 +18,8 @@ export const NewFileModal = () => {
     const [userSearchValue, setUserSearchValue] = useState<string>("")
 
     const [file, setFile] = useState<File | null>(null)
+    const [fileName, setFileName] = useState<string>("")
+
 
     const {getAllGroupsUserIsInUseCase, getUsersInGroupUseCase, createFileUseCase} = useUseCases()
     const {user} = useAuth()
@@ -79,13 +81,12 @@ export const NewFileModal = () => {
     }
 
     const handleUploadClick = () => {
-        if (!file || !selectedGroup) return
+        if (!file || !selectedGroup || !fileName) return
         //get file -> encrypt -> send
-
         fileToBuffer(file).then(buff => {
-            createFileUseCase.execute(user!.userId!, selectedGroup.value, Buffer.from(buff), file.name)
-                .then(()=> console.log("yay"))
-                .catch(e=> console.log(e))
+            createFileUseCase.execute(user!.userId!, selectedGroup.value, Buffer.from(buff), fileName)
+                .then(() => console.log("yay"))
+                .catch(e => console.log(e))
         })
 
 
@@ -93,7 +94,7 @@ export const NewFileModal = () => {
     return (
         <div className={"flex flex-col space-y-2.5"}>
 
-            <UploadFileBtn setFile={setFile} currentFile={file}/>
+            <UploadFileBtn setFile={setFile} currentFile={file} fileName={fileName} setFileName={setFileName}/>
 
 
             <Selector searchValue={groupSearchValue} options={groupOptions} setSearchValue={setGroupSearchValue}
