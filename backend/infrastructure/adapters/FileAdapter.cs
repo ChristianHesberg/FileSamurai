@@ -63,6 +63,30 @@ public class FileAdapter(Context context) : IFilePort
         }
     }
 
+    public void AddUserFileAccesses(List<UserFileAccess> accesses)
+    {
+        var newAccesses = new List<UserFileAccess>();  
+  
+        foreach (var userFileAccess in accesses)  
+        {  
+            var alreadyExists = context.UserFileAccesses.Any(x => x.FileId == userFileAccess.FileId && x.UserId == userFileAccess.UserId);
+            if (alreadyExists) continue;
+            newAccesses.Add(userFileAccess);  
+        }
+
+        if (newAccesses.Count == 0) return;
+        
+        try  
+        {  
+            context.UserFileAccesses.AddRange(newAccesses);  
+            context.SaveChanges();  
+        }  
+        catch (Exception)  
+        {  
+            throw new DatabaseUpdateException("Failed to update the database.");  
+        }
+    }
+
     public UserFileAccess GetUserFileAccess(string userId, string fileId)
     {
         var res = context.UserFileAccesses.FirstOrDefault(f => f.FileId == fileId && f.UserId == userId);
