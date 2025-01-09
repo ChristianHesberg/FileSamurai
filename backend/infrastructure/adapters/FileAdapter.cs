@@ -127,4 +127,12 @@ public class FileAdapter(Context context) : IFilePort
         return context.Files.Include(y => y.UserFileAccesses)
             .Where(x => x.UserFileAccesses.Any(y => y.UserId == userId)).ToList();
     }
+
+    public void DeleteFile(string id)
+    {
+        var file = context.Files.Find(id);
+        if (file == null) throw new KeyNotFoundException();
+        context.Files.Remove(file);
+        context.SaveChanges();
+    }
 }

@@ -180,4 +180,9 @@ public class FileService(
         var fa = filePort.GetAllUserFileAccess(fileId);
         return fa.Select(x => new FileAccessDto(){FileId = x.FileId,Role = x.Role,UserId = x.UserId}).ToList();
     }
+
+    public void DeleteFile(string id)
+    {
+        filePort.DeleteFile(id);
+    }
 }

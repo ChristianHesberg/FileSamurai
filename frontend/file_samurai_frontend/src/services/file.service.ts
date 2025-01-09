@@ -54,6 +54,10 @@ export class FileService implements IFileService {
         const response = await axiosInstance.delete(`file/access?fileId=${fileId}&userId=${userId}`)
         return response.data
     }
+
+    async deleteFile(fileId: string) {
+        const response = await axiosInstance.delete(`file/${fileId}`)
+    }
 }
 
 

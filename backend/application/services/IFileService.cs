@@ -18,5 +18,6 @@ public interface IFileService
 
     public List<FileOptionDto> GetFileOptionDtos(string userId);
 
-    public List<FileAccessDto>GetAllUserFileAccessDto(string id);
+    public List<FileAccessDto> GetAllUserFileAccessDto(string id);
+    public void DeleteFile(string id);
 }

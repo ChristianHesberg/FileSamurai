@@ -20,9 +20,10 @@ const FileTable: React.FC<FileTableProps> = ({files, setFiles}) => {
     const [selectedFile, setSelectedFile] = useState<FileOption | null>(null)
     const [openShareModal, setOpenShareModal] = useState<boolean>(false)
     const [openEditModal, setOpenEditModal] = useState<boolean>(false)
-    const {decryptFileUseCase, downloadFileUseCase} = useUseCases();
+    const {decryptFileUseCase, downloadFileUseCase, deleteFileUseCase} = useUseCases();
     const {retrieveKey} = useKey();
-    const {user} = useAuth();
+    const {user} = useAuth()
+
 
     const editBtn = (fileOption: FileOption) => {
         return (
@@ -85,6 +86,9 @@ const FileTable: React.FC<FileTableProps> = ({files, setFiles}) => {
                 className="block px-4 py-2 text-sm bg-red-900 hover:bg-red-800 w-full rounded"
                 role="menuitem"
                 onClick={() => {
+                    deleteFileUseCase.execute(fileOption.id)
+                        .then(() => setFiles(prevState => prevState.filter(x => x.id !== fileOption.id)))
+                        .catch(e => console.log(e))
                 }}
             >
                 Delete File
@@ -112,7 +116,8 @@ const FileTable: React.FC<FileTableProps> = ({files, setFiles}) => {
     return (
         <div>
             {selectedFile ? <Modal isOpen={openShareModal} onClose={() => clearSelectedFile(setOpenShareModal)}
-                                   child={<ShareFileModal selectedFile={selectedFile} onClose={()=>clearSelectedFile(setOpenShareModal)} />}/> : <></>}
+                                   child={<ShareFileModal selectedFile={selectedFile}
+                                                          onClose={() => clearSelectedFile(setOpenShareModal)}/>}/> : <></>}
             {selectedFile ? <Modal isOpen={openEditModal} onClose={() => clearSelectedFile(setOpenEditModal)}
                                    child={<EditFileModal selectedFile={selectedFile}/>}/> : <></>}
 

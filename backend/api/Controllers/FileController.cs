@@ -113,11 +113,18 @@ public class FileController(IFileService fileService) : ControllerBase
         var optionDtos = fileService.GetFileOptionDtos(id);
         return Ok(optionDtos);
     }
-//todo auth
+    //todo auth
     [HttpGet("allFileAccess/{id}")]
     public ActionResult<FileAccessDto> GetAllUserFileAccess(string id)
     {
         var userFileAccess = fileService.GetAllUserFileAccessDto(id);
         return Ok(userFileAccess);
+    }
+
+    [HttpDelete("{id}")]
+    public ActionResult DeleteFile(string id)
+    {
+        fileService.DeleteFile(id);
+        return Ok();
     }
 }

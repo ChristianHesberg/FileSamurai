@@ -29,6 +29,7 @@ import {DownloadFileUseCase} from "../use-cases/file/download-file-use.case";
 import {GetAllFileAccessUseCase} from "../use-cases/file/get-all-file-access.use-case";
 import {ShareFileWithMultipleUsersUseCase} from "../use-cases/file/share-file-with-multiple-users.use-case";
 import {DeleteUserFileAccessUseCase} from "../use-cases/file/delete-user-file-access.use-case";
+import {DeleteFileUseCase} from "../use-cases/file/delete-file.use-case";
 
 
 interface UseCaseProviderProps {
@@ -66,6 +67,7 @@ interface UseCaseContextType {
     downloadFileUseCase: DownloadFileUseCase,
     getAllFileAccessUseCase: GetAllFileAccessUseCase
     deleteUserFileAccessUseCase: DeleteUserFileAccessUseCase,
+    deleteFileUseCase:DeleteFileUseCase
 }
 
 const UseCaseContext = createContext<UseCaseContextType | undefined>(undefined)
@@ -108,6 +110,7 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
     const downloadFileUseCase = new DownloadFileUseCase();
     const getAllFileAccessUseCase = new GetAllFileAccessUseCase(fileService)
     const deleteUserFileAccessUseCase = new DeleteUserFileAccessUseCase(fileService)
+    const deleteFileUseCase = new DeleteFileUseCase(fileService)
     return (
         <UseCaseContext.Provider value={{
             createFileUseCase,
@@ -130,7 +133,8 @@ export const UseCaseProvider: React.FC<UseCaseProviderProps> = ({children}) => {
             downloadFileUseCase,
             getAllFileAccessUseCase,
             shareFileWithMultipleUsersUseCase,
-            deleteUserFileAccessUseCase
+            deleteUserFileAccessUseCase,
+            deleteFileUseCase
         }}>
             {children}
         </UseCaseContext.Provider>
