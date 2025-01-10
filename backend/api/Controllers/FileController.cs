@@ -79,7 +79,7 @@ public class FileController(IFileService fileService) : ControllerBase
     }
 
     [HttpPost("accesses")]
-    //todo add auth
+    [Authorize(Policy = "FileAccess")]
     public ActionResult PostUserFileAccesses(List<AddOrGetUserFileAccessDto> userFileAccessDtos)
     {
         fileService.AddUserFileAccesses(userFileAccessDtos);
@@ -106,15 +106,17 @@ public class FileController(IFileService fileService) : ControllerBase
         return Ok();
     }
 
-    //todo auth
+
     [HttpGet("fileOptions/{id}")]
+    [Authorize(Policy = "OwnsResourcePolicy")]
     public ActionResult<List<FileOptionDto>> GetFileOptions(string id)
     {
         var optionDtos = fileService.GetFileOptionDtos(id);
         return Ok(optionDtos);
     }
-    //todo auth
+  
     [HttpGet("allFileAccess/{id}")]
+    [Authorize(Policy = "OwnsResourcePolicy")]
     public ActionResult<FileAccessDto> GetAllUserFileAccess(string id)
     {
         var userFileAccess = fileService.GetAllUserFileAccessDto(id);

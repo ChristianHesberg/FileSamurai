@@ -43,7 +43,7 @@ builder.Services.AddScoped<IValidator<string>, EmailValidator>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true; 
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); 
 });
 
@@ -85,15 +85,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.Authority = "https://accounts.google.com";
         options.Audience =
-            "503035586312-ujnij8557gd7nga1lbjsvi56vi98iubb.apps.googleusercontent.com"; // Replace with your client ID
+            "503035586312-ujnij8557gd7nga1lbjsvi56vi98iubb.apps.googleusercontent.com"; 
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidIssuer = "https://accounts.google.com",
             ValidAudience =
-                "503035586312-ujnij8557gd7nga1lbjsvi56vi98iubb.apps.googleusercontent.com", // Replace with your client ID
+                "503035586312-ujnij8557gd7nga1lbjsvi56vi98iubb.apps.googleusercontent.com", 
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidateLifetime = false, //TODO SET TRUE ONLY FALSE FOR TESTING
+            ValidateLifetime = true, 
             ValidateIssuerSigningKey = true
         };
     });
