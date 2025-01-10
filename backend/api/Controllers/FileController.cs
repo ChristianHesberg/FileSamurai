@@ -71,7 +71,7 @@ public class FileController(IFileService fileService) : ControllerBase
     }
 
     [HttpPost("accesses")]
-    [Authorize(Policy = "FileAccess")]
+    [Authorize(Policy = "ListAccessPolicy")]
     public ActionResult PostUserFileAccesses(List<AddOrGetUserFileAccessDto> userFileAccessDtos)
     {
         fileService.AddUserFileAccesses(userFileAccessDtos);
@@ -108,7 +108,7 @@ public class FileController(IFileService fileService) : ControllerBase
     }
   
     [HttpGet("allFileAccess/{id}")]
-    [Authorize(Policy = )]
+    [Authorize(Policy = "GetAllFileAccessPolicy" )]
     public ActionResult<FileAccessDto> GetAllUserFileAccess(string id)
     {
         var userFileAccess = fileService.GetAllUserFileAccessDto(id);
