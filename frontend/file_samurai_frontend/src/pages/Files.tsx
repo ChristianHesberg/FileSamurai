@@ -9,7 +9,7 @@ import {FileOption} from "../models/FileOption";
 import {useAuth} from "../providers/AuthProvider";
 
 export function Files() {
-    const [files, setFiles] = useState<FileOption[]>([]) //todo get all files on load
+    const [files, setFiles] = useState<FileOption[]>([])
     const [modalOpen, setModalOpen] = useState<boolean>(false)
     const {getFileOptionsUseCase} = useUseCases()
     const {user} = useAuth()
