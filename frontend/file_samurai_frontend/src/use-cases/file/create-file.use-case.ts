@@ -27,7 +27,7 @@ export class CreateFileUseCase {
         return fileResponse;
     }
 
-    async encryptFile(file: Buffer, key: Buffer, title: string, groupId: string): Promise<AddFileDto> {
+    private async encryptFile(file: Buffer, key: Buffer, title: string, groupId: string): Promise<AddFileDto> {
         const encryptedFile = await this.cryptoService.encryptAes256GcmWithBufferKey(file, key);
         return {
             fileContents: encryptedFile.cipherText,

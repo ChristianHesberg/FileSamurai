@@ -2,10 +2,11 @@ import axiosInstance from "../api/axios-instance";
 import {User} from "../models/user.model";
 import {IUserService} from "./IUserService";
 import {Group} from "../models/Group";
+import {PasswordHash} from "../models/PasswordHash";
 
 export class UserService implements IUserService {
-    async getUserByEmail(email: string): Promise<User> {
-        const response = await axiosInstance.get<User>(`user/email/${email}`);
+    async getUserByToken(): Promise<User> {
+        const response = await axiosInstance.get<User>(`user`);
         return response.data;
     }
 
@@ -14,9 +15,9 @@ export class UserService implements IUserService {
         return response.data;
     }
 
-    async registerUser(email: string, password: string): Promise<User> {
-        const body = {email: email, Password: password}
-        const response = await axiosInstance.post<User>(`user/createUser`, body)
+    async registerUser(email: string, hashedPassword: string, salt: string): Promise<User> {
+        const body = {email: email, hashedPassword: hashedPassword, salt: salt}
+        const response = await axiosInstance.post<User>(`user`, body)
         return response.data
     }
 
@@ -32,6 +33,11 @@ export class UserService implements IUserService {
 
     async getAllUsersInGroup(groupId: string) {
         const response = await axiosInstance.get(`users/inGroup/${groupId}`)
+        return response.data
+    }
+
+    async getPasswordHash(): Promise<PasswordHash> {
+        const response = await axiosInstance.get(`user/private/`)
         return response.data
     }
 }

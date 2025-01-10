@@ -15,4 +15,6 @@ public interface IFilePort
     public Group GetFileGroup(string fileId);
     public List<UserFileAccess> GetAllUserFileAccess(string fileId);
     public void DeleteUserFileAccess(string userId, string fileId);
+    public List<File> GetAllFilesUserHasAccessTo(string fileId);
+    public void DeleteFile(string id);
 }

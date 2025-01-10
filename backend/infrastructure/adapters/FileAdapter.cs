@@ -65,13 +65,14 @@ public class FileAdapter(Context context) : IFilePort
 
     public void AddUserFileAccesses(List<UserFileAccess> accesses)
     {
-        var newAccesses = new List<UserFileAccess>();  
+        var newAccesses = new List<UserFileAccess>();
+        var duplicates = new List<UserFileAccess>();
   
         foreach (var userFileAccess in accesses)  
         {  
             var alreadyExists = context.UserFileAccesses.Any(x => x.FileId == userFileAccess.FileId && x.UserId == userFileAccess.UserId);
             if (alreadyExists) continue;
-            newAccesses.Add(userFileAccess);  
+            newAccesses.Add(userFileAccess);
         }
 
         if (newAccesses.Count == 0) return;
@@ -105,7 +106,7 @@ public class FileAdapter(Context context) : IFilePort
     {
         return context.UserFileAccesses.Where(x => x.FileId == fileId).ToList();
     }
-
+    
     public void DeleteUserFileAccess(string userId, string fileId)
     {
         var access = context.UserFileAccesses.FirstOrDefault(f => f.FileId == fileId && f.UserId == userId);
@@ -119,5 +120,19 @@ public class FileAdapter(Context context) : IFilePort
         {
             throw new DatabaseUpdateException();
         }
+    }
+
+    public List<File> GetAllFilesUserHasAccessTo(string userId)
+    {
+        return context.Files.Include(y => y.UserFileAccesses)
+            .Where(x => x.UserFileAccesses.Any(y => y.UserId == userId)).ToList();
+    }
+
+    public void DeleteFile(string id)
+    {
+        var file = context.Files.Find(id);
+        if (file == null) throw new KeyNotFoundException();
+        context.Files.Remove(file);
+        context.SaveChanges();
     }
 }

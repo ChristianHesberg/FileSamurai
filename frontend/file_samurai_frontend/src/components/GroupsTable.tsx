@@ -2,7 +2,7 @@ import TableOptionsBtn from "./TableOptionsBtn";
 import Modal from "./Modal";
 import React, {useState} from "react";
 import {Group} from "../models/Group";
-import {AddMembersModal} from "./AddMembersModal";
+import {AddMembersModal} from "./modals/AddMembersModal";
 import {useUseCases} from "../providers/UseCaseProvider";
 
 interface GroupsTableProps {

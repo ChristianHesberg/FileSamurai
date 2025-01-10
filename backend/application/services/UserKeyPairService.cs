@@ -20,6 +20,18 @@ public class UserKeyPairService(
         
         return userKeyPairPort.GetUserPublicKey(userId);
     }
+    
+    public List<RsaPublicKeyWithId> GetUserPublicKeys(string[] idList)
+    {
+        foreach (var id in idList)
+        {
+            var guidValidator = ValidationUtilities.GetValidator<GuidValidator>(stringValidators);  
+            var validationResult = guidValidator.Validate(id);  
+            ValidationUtilities.ThrowIfInvalid(validationResult); 
+        }
+        
+        return userKeyPairPort.GetPublicKeys(idList);
+    }
 
     public UserRsaPrivateKeyDto GetUserPrivateKey(string userId)
     {

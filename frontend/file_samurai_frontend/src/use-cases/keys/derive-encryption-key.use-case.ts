@@ -8,9 +8,9 @@ export class DeriveEncryptionKeyUseCase {
         private readonly keyService: IKeyService
     ) {}
 
-    async execute(password: string, userId: string): Promise<CryptoKey> {
+    async execute(password: string, userId: string, email: string): Promise<CryptoKey> {
         const { salt } = await this.keyService.getUserPrivateKey(userId);
 
-        return this.cryptoService.deriveKeyFromPassword(password, Buffer.from(salt, 'base64'), 32);
+        return this.cryptoService.deriveKeyFromPassword(password, email, Buffer.from(salt, 'base64'), 32);
     }
 }

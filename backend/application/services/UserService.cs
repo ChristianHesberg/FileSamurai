@@ -12,13 +12,13 @@ public class UserService(
     IUserPort userPort,
     IValidator<UserCreationDto> userCreationDtoValidator,
     IEnumerable<IValidator<string>> stringValidators
-    ) : IUserService
+) : IUserService
 {
     public UserDto AddUser(UserCreationDto user)
     {
         var validationResult = userCreationDtoValidator.Validate(user);
         ValidationUtilities.ThrowIfInvalid(validationResult);
-        
+
         var converted = new User()
         {
             Email = user.Email,
@@ -35,38 +35,39 @@ public class UserService(
 
     public UserDto GetUser(string id)
     {
-        var guidValidator = ValidationUtilities.GetValidator<GuidValidator>(stringValidators);  
-        var validationResult = guidValidator.Validate(id);  
-        ValidationUtilities.ThrowIfInvalid(validationResult); 
-        
+        var guidValidator = ValidationUtilities.GetValidator<GuidValidator>(stringValidators);
+        var validationResult = guidValidator.Validate(id);
+        ValidationUtilities.ThrowIfInvalid(validationResult);
+
         var user = userPort.GetUser(id);
         return new UserDto()
-            {
-                Id = user.Id,
-                Email = user.Email
-            };
+        {
+            Id = user.Id,
+            Email = user.Email
+        };
     }
 
     public UserDto GetUserByEmail(string email)
     {
-        var guidValidator = ValidationUtilities.GetValidator<EmailValidator>(stringValidators);  
-        var validationResult = guidValidator.Validate(email);  
-        ValidationUtilities.ThrowIfInvalid(validationResult); 
-        
+        var guidValidator = ValidationUtilities.GetValidator<EmailValidator>(stringValidators);
+        var validationResult = guidValidator.Validate(email);
+        Console.WriteLine("validation result: " + validationResult);
+        ValidationUtilities.ThrowIfInvalid(validationResult);
+
         var user = userPort.GetUserByEmail(email);
         return new UserDto()
-            {
-                Id = user.Id,
-                Email = user.Email
-            };
+        {
+            Id = user.Id,
+            Email = user.Email
+        };
     }
 
     public List<GroupDto> GetGroupsForUser(string id)
     {
-        var guidValidator = ValidationUtilities.GetValidator<GuidValidator>(stringValidators);  
-        var validationResult = guidValidator.Validate(id);  
-        ValidationUtilities.ThrowIfInvalid(validationResult); 
-        
+        var guidValidator = ValidationUtilities.GetValidator<GuidValidator>(stringValidators);
+        var validationResult = guidValidator.Validate(id);
+        ValidationUtilities.ThrowIfInvalid(validationResult);
+
         var groups = userPort.GetGroupsForUser(id);
 
         var list = new List<GroupDto>();
@@ -81,14 +82,25 @@ public class UserService(
 
         return list;
     }
-    
-    
+
+
     public void DeleteUser(string id)
     {
-        var guidValidator = ValidationUtilities.GetValidator<GuidValidator>(stringValidators);  
-        var validationResult = guidValidator.Validate(id);  
-        ValidationUtilities.ThrowIfInvalid(validationResult); 
-        
-       userPort.DeleteUser(id);
+        var guidValidator = ValidationUtilities.GetValidator<GuidValidator>(stringValidators);
+        var validationResult = guidValidator.Validate(id);
+        ValidationUtilities.ThrowIfInvalid(validationResult);
+
+        userPort.DeleteUser(id);
+    }
+
+    public PasswordHashDto GetPasswordHash(string email)
+    {
+        var guidValidator = ValidationUtilities.GetValidator<EmailValidator>(stringValidators);
+        var validationResult = guidValidator.Validate(email);
+        ValidationUtilities.ThrowIfInvalid(validationResult);
+
+        var user = userPort.GetUserByEmail(email);
+
+        return new PasswordHashDto() { PasswordHash = user.HashedPassword, Salt = user.Salt };
     }
 }

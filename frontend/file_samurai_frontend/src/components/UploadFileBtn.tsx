@@ -7,17 +7,17 @@ import {log} from "node:util";
 interface NewFileBtnProps {
     currentFile: File | null
     setFile: React.Dispatch<React.SetStateAction<File | null>>
+    setFileName: React.Dispatch<React.SetStateAction<string>>
+    fileName:string
 }
 
-const UploadFileBtn: React.FC<NewFileBtnProps> = ({setFile, currentFile}) => {
+const UploadFileBtn: React.FC<NewFileBtnProps> = ({fileName,setFile, currentFile, setFileName}) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
-    const [fileName, setFileName] = useState<string>("")
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
         if (files && files.length > 0) {
             const pickedFile = files[0]
-            console.log(pickedFile)
             setFileName(pickedFile.name)
             setFile(pickedFile)
         }
@@ -27,7 +27,7 @@ const UploadFileBtn: React.FC<NewFileBtnProps> = ({setFile, currentFile}) => {
         if (!currentFile) return
         const value = e.target.value
         setFileName(value)
-        setFile((prevState) => prevState ? {...prevState, name: value} : null);
+        //setFile((prevState) => prevState ? {...prevState, name: value} : null);
 
     }
 
@@ -56,7 +56,7 @@ const UploadFileBtn: React.FC<NewFileBtnProps> = ({setFile, currentFile}) => {
                    className="border-input border-neutral-700 bg-neutral-800 ring-offset-background placeholder:text-muted-foreground
            focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2  focus-visible:outline-none
             focus-visible:ring-2 focus-visible:ring-offset-2"
-                   placeholder="File Name"
+                   placeholder="New File Name"
             />
         </div>
     )

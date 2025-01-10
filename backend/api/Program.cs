@@ -43,7 +43,7 @@ builder.Services.AddScoped<IValidator<string>, EmailValidator>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true; 
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); 
 });
 
@@ -85,49 +85,54 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.Authority = "https://accounts.google.com";
         options.Audience =
-            "503035586312-ujnij8557gd7nga1lbjsvi56vi98iubb.apps.googleusercontent.com"; // Replace with your client ID
+            "503035586312-ujnij8557gd7nga1lbjsvi56vi98iubb.apps.googleusercontent.com"; 
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidIssuer = "https://accounts.google.com",
             ValidAudience =
-                "503035586312-ujnij8557gd7nga1lbjsvi56vi98iubb.apps.googleusercontent.com", // Replace with your client ID
+                "503035586312-ujnij8557gd7nga1lbjsvi56vi98iubb.apps.googleusercontent.com", 
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidateLifetime = false, //TODO SET TRUE ONLY FALSE FOR TESTING
+            ValidateLifetime = true, 
             ValidateIssuerSigningKey = true
         };
     });
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddScoped<IAuthorizationHandler, DocumentAccessHandler>();
-builder.Services.AddScoped<IAuthorizationHandler, DocumentChangeHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, DocumentAccessHandler>(); 
+builder.Services.AddScoped<IAuthorizationHandler, DocumentChangeHandler>(); 
 builder.Services.AddScoped<IAuthorizationHandler, DocumentGetHandler>();
-builder.Services.AddScoped<IAuthorizationHandler, DocumentAddHandler>();
-builder.Services.AddScoped<IAuthorizationHandler, KeyPairPostHandler>();
-builder.Services.AddScoped<IAuthorizationHandler, KeyPairGetPrivateKeyHandler>();
-builder.Services.AddScoped<IAuthorizationHandler, GroupAddUserHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, DocumentAddHandler>(); 
+builder.Services.AddScoped<IAuthorizationHandler, KeyPairPostHandler>(); 
+builder.Services.AddScoped<IAuthorizationHandler, KeyPairGetPrivateKeyHandler>(); 
+builder.Services.AddScoped<IAuthorizationHandler, GroupAddUserHandler>(); 
+builder.Services.AddScoped<IAuthorizationHandler, DocumentGetUserFileAccessHandler>(); 
+builder.Services.AddScoped<IAuthorizationHandler, DocumentDeleteAccessHandler>(); 
+builder.Services.AddScoped<IAuthorizationHandler, GroupOwnerPolicyHandler>(); 
+builder.Services.AddScoped<IAuthorizationHandler, GroupGetHandler>(); 
+builder.Services.AddScoped<IAuthorizationHandler, UserOwnsResourcePolicyHandler>(); 
 
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("FileAccess", policy =>
-        policy.Requirements.Add(new Requirements.DocumentAccessRequirement()))
+        policy.Requirements.Add(new Requirements.DocumentAccessRequirement())) 
     .AddPolicy("DocumentChange", policy =>
-        policy.Requirements.Add(new Requirements.DocumentChangeRequirement()))
+        policy.Requirements.Add(new Requirements.DocumentChangeRequirement())) 
     .AddPolicy("DocumentGet", policy =>
-        policy.Requirements.Add(new Requirements.DocumentGetRequirement()))
+        policy.Requirements.Add(new Requirements.DocumentGetRequirement())) 
     .AddPolicy("DocumentAdd", policy =>
-        policy.Requirements.Add(new Requirements.DocumentAddRequirement()))
+        policy.Requirements.Add(new Requirements.DocumentAddRequirement())) 
     .AddPolicy("DocumentGetUserFileAccess", policy =>
-        policy.Requirements.Add(new Requirements.DocumentGetUserFileAccessRequirement()))
+        policy.Requirements.Add(new Requirements.DocumentGetUserFileAccessRequirement())) 
     .AddPolicy("DeleteAccess", policy =>
-        policy.Requirements.Add(new Requirements.DocumentDeleteAccessRequirement()))
+        policy.Requirements.Add(new Requirements.DocumentDeleteAccessRequirement())) 
     .AddPolicy("PostRSAKeyPair", policy =>
-        policy.Requirements.Add(new Requirements.KeyPairPostRequirement()))
+        policy.Requirements.Add(new Requirements.KeyPairPostRequirement())) 
     .AddPolicy("GetUserPK", policy =>
-        policy.Requirements.Add(new Requirements.KeyPairGetPrivateKeyRequirement()))
+        policy.Requirements.Add(new Requirements.KeyPairGetPrivateKeyRequirement())) 
     .AddPolicy("GroupAddUser", policy =>
-        policy.Requirements.Add(new Requirements.GroupAddUserRequirement()))
+        policy.Requirements.Add(new Requirements.GroupAddUserRequirement())) 
     .AddPolicy("GroupOwnerPolicy", policy =>
         policy.Requirements.Add(new Requirements.GroupOwnerPolicyRequirement()))
     .AddPolicy("GroupGet", policy =>

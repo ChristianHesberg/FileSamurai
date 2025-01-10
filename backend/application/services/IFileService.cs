@@ -15,5 +15,9 @@ public interface IFileService
     void DeleteUserFileAccess(GetFileOrAccessInputDto dto);
     public Group GetFileGroup(string dtoFileId);
     public List<UserFileAccess> GetAllUserFileAccess(string dtoFileId);
-    
+
+    public List<FileOptionDto> GetFileOptionDtos(string userId);
+
+    public List<FileAccessDto> GetAllUserFileAccessDto(string id);
+    public void DeleteFile(string id);
 }

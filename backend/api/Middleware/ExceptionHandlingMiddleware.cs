@@ -1,4 +1,6 @@
-﻿namespace api.Middleware;
+﻿using System.Security.Authentication;
+
+namespace api.Middleware;
 
 using Microsoft.AspNetCore.Http;  
 using Microsoft.Extensions.Logging;  
@@ -53,6 +55,11 @@ public class ExceptionHandlingMiddleware
                 break;  
             
             case UnauthorizedAccessException:  
+                statusCode = HttpStatusCode.Unauthorized;  
+                message = "Unauthorized access.";  
+                break;  
+            
+            case AuthenticationException:  
                 statusCode = HttpStatusCode.Unauthorized;  
                 message = "Unauthorized access.";  
                 break;  

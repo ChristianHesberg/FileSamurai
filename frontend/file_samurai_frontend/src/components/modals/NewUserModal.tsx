@@ -1,4 +1,4 @@
-import Modal from "./Modal";
+import Modal from "../Modal";
 import React, {useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUnlock} from "@fortawesome/free-solid-svg-icons";

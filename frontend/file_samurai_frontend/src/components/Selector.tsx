@@ -5,9 +5,10 @@ import {SelectionOption} from "../models/selectionOption";
 import {Group} from "../models/Group";
 import {SelectorStyle} from "../styles/SelectorStyle";
 import {isDisabled} from "@testing-library/user-event/dist/utils";
+import {PropsValue} from "react-select";
 
 interface selectorProps {
-    selectedValue: SelectionOption | null,
+    selectedValue: PropsValue<SelectionOption>,
     onChange: any,
     options: SelectionOption[],
     searchValue: string,

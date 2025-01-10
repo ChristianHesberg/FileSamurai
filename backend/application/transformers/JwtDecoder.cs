@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
+using System.Security.Authentication;
 
 namespace application.transformers;
 
@@ -7,13 +8,13 @@ public static class JwtDecoder
 {
     
 
-    public static string DecodeJwtEmail(string AuthHeader)
+    public static string DecodeJwtEmail(string authHeader)
     {
         
-        var token = AuthHeader.ToString().Split(' ').Last();
+        var token = authHeader.ToString().Split(' ').Last();
         if (string.IsNullOrEmpty(token))
         {
-            throw new Exception();
+            throw new AuthenticationException();
         }
         
         try
@@ -26,14 +27,14 @@ public static class JwtDecoder
             var emailClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
             if (emailClaim == null)
             {
-                throw new Exception();
+                throw new AuthenticationException();
             }
 
             return emailClaim;
         }
         catch (Exception ex)
         {
-            throw new Exception();
+            throw new AuthenticationException();
         }
         
         
