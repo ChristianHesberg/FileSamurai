@@ -13,6 +13,7 @@ export function Files() {
     const [modalOpen, setModalOpen] = useState<boolean>(false)
     const {getFileOptionsUseCase} = useUseCases()
     const {user} = useAuth()
+
     useEffect(() => {
         createFileOptions()
     }, []);
@@ -36,7 +37,6 @@ export function Files() {
     const onClose = () => {
         createFileOptions()
         setModalOpen(false)
-
     }
 
     return (
@@ -46,7 +46,7 @@ export function Files() {
                 {btn()}
             </div>
             <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}
-                   child={<NewFileModal onClose={()=>onClose()} />}/>
+                   child={<NewFileModal onClose={onClose} />}/>
             <FileTable files={files} setFiles={setFiles}/>
         </div>
     )
