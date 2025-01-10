@@ -29,29 +29,36 @@ public class GetAllFileAccessPolicyHandler(
 
         try
         {
+            //get user id
             var user = userService.GetUserByEmail(email);
             var userId = user.Id;
             
+            //get file id
             var fileId = request.RouteValues["id"];
             if (fileId == null) throw new BadHttpRequestException("id query parameter must be provided.");
             var fileIdString = fileId.ToString();
             if (string.IsNullOrEmpty(fileIdString)) throw new BadHttpRequestException("id query parameter must be provided.");
             
+            //get file
             var dto = new GetFileOrAccessInputDto {FileId = fileIdString,UserId = userId};
-
-            var access=fileService.GetUserFileAccess(dto);
-
-            if (access.Role != Roles.Editor) return;
+            var fileDto=fileService.GetFile(dto);
             
+            //Check if has access to share file
+            if (fileDto.UserFileAccess.Role != Roles.Editor) return;
             
+            //get users group
+            var userGroups = userService.GetGroupsForUser(userId);
+
+            //ensure that user is part of group
+            if (userGroups.Any(x => x.Id == fileDto.File.GroupId))
+            {
+                authorizationHandlerContext.Succeed(requirement);
+            }
         }
-        catch (Exception e)
+        catch (KeyNotFoundException)
         {
-            Console.WriteLine(e);
-            throw;
+            authorizationHandlerContext.Fail();
         }
 
-
-        throw new NotImplementedException();
     }
 }

@@ -112,6 +112,7 @@ builder.Services.AddScoped<IAuthorizationHandler, DocumentDeleteAccessHandler>()
 builder.Services.AddScoped<IAuthorizationHandler, GroupOwnerPolicyHandler>(); 
 builder.Services.AddScoped<IAuthorizationHandler, GroupGetHandler>(); 
 builder.Services.AddScoped<IAuthorizationHandler, UserOwnsResourcePolicyHandler>(); 
+builder.Services.AddScoped<IAuthorizationHandler, GetAllFileAccessPolicyHandler>(); 
 
 
 builder.Services.AddAuthorizationBuilder()
@@ -138,7 +139,9 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("GroupGet", policy =>
         policy.Requirements.Add(new Requirements.GroupGetRequirement()))
     .AddPolicy("OwnsResourcePolicy", policy =>
-        policy.Requirements.Add(new Requirements.UserOwnsResourcePolicyRequirement()));
+        policy.Requirements.Add(new Requirements.UserOwnsResourcePolicyRequirement()))
+    .AddPolicy("GetAllFileAccessPolicy", policy =>
+        policy.Requirements.Add(new Requirements.GetAllFileAccessPolicyRequirement()));
 
 
 builder.Services.AddCors(options =>
