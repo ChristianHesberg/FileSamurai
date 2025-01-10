@@ -41,14 +41,6 @@ public class FileController(IFileService fileService) : ControllerBase
         return Ok(res);
     }
 
-    [HttpPut]
-    [Authorize(Policy = "DocumentChange")]
-    public ActionResult PutFile(FileDto file)
-    {
-        var result = fileService.UpdateFile(file);
-        return result ? Ok() : NotFound();
-    }
-
     [HttpGet("access")]
     [Authorize(Policy = "DocumentGetUserFileAccess")]
     [ProducesResponseType(typeof(void), (int)HttpStatusCode.NotFound)]
