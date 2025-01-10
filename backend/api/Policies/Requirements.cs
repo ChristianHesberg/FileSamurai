@@ -18,4 +18,5 @@ public abstract class Requirements
     public class GroupGetRequirement() : IAuthorizationRequirement { }
     public class DocumentDeleteAccessRequirement() : IAuthorizationRequirement { }
     public class UserOwnsResourcePolicyRequirement() : IAuthorizationRequirement { }
+    public class GetAllFileAccessPolicyRequirement(): IAuthorizationRequirement{}
 }

@@ -108,7 +108,7 @@ public class FileController(IFileService fileService) : ControllerBase
     }
   
     [HttpGet("allFileAccess/{id}")]
-    [Authorize(Policy = "OwnsResourcePolicy")]
+    [Authorize(Policy = )]
     public ActionResult<FileAccessDto> GetAllUserFileAccess(string id)
     {
         var userFileAccess = fileService.GetAllUserFileAccessDto(id);
