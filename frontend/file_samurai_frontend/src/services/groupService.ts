@@ -28,7 +28,7 @@ export class GroupService {
     }
 
     async removeUserFromGroup(userId: string, groupId: string) {
-        const response = await axiosInstance.delete(`group/removeUserFromGroup?groupId=${groupId}&userId=${userId}`)
+        const response = await axiosInstance.delete(`group/users?groupId=${groupId}&userId=${userId}`)
         return response.data
     }
 
