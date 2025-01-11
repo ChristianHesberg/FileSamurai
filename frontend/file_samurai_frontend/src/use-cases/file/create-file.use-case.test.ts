@@ -6,12 +6,14 @@ import {EDITOR_ROLE} from "../../constants";
 import {AesGcmEncryptionOutput} from "../../models/aesGcmEncryptionOutput.model";
 import {AddOrGetUserFileAccessDto} from "../../models/addOrGetUserFileAccessDto";
 import {AddFileResponseDto} from "../../models/addFileResponseDto";
-import {CryptographyService} from "../../services/cryptography.service";
+import {IFileService} from "../../services/file.service.interface";
+import {ICryptographyService} from "../../services/cryptography.service.interface";
+import {IKeyService} from "../../services/key.service.interface";
 
 describe('CreateFileUseCase', () => {
-    const mockFileService = mock<FileService>();
-    const mockKeyService = mock<KeyService>();
-    const mockCryptoService = mock<CryptographyService>();
+    const mockFileService = mock<IFileService>();
+    const mockKeyService = mock<IKeyService>();
+    const mockCryptoService = mock<ICryptographyService>();
 
     const file = Buffer.from('file');
     const title = 'title';
@@ -32,7 +34,7 @@ describe('CreateFileUseCase', () => {
             mockCryptoService
         );
 
-        mockCryptoService.encryptAes256Gcm.mockResolvedValue(getAesEncryptionOutput());
+        mockCryptoService.encryptAes256GcmWithBufferKey.mockResolvedValue(getAesEncryptionOutput());
         mockCryptoService.encryptWithPublicKey.mockResolvedValue(getBuffer());
         mockCryptoService.generateKey.mockResolvedValue(getBuffer());
 
@@ -44,11 +46,14 @@ describe('CreateFileUseCase', () => {
 
     describe('it should call services with correct values', () => {
         it('should call cryptoService encryptAes256Gcm with correct parameters', async () => {
-            const spy = jest.spyOn(mockCryptoService, 'encryptAes256Gcm');
+            //arrange
+            const spy = jest.spyOn(mockCryptoService, 'encryptAes256GcmWithBufferKey');
             const keyReturnValue = getBuffer();
 
+            //act
             await useCase.execute(userId, groupId, file, title);
 
+            //assert
             expect(spy).toHaveBeenCalledTimes(1);
             expect(spy).toHaveBeenCalledWith(file, keyReturnValue);
         });
